@@ -25,7 +25,7 @@ We welcome contributions from the cybersecurity community! If you have a detecti
 **Review Proces**s: Our team will review your submission and provide feedback or approve the pull request.
 
 ## Support
-If you need assistance or have any questions, please file an issue in this repository or contact the Anvilogic Forge team at email@example.com.
+If you need assistance or have any questions, please file an issue in this repository or contact the Anvilogic Forge team at forge@anvilogic.com.
 
 ## License
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details. The GNU GPL is a widely used free software license that guarantees end users the freedom to run, study, share, and modify the software.
