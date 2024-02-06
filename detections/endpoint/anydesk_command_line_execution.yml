@@ -14,7 +14,7 @@ logic: '| avlsearchrest `get_rest_azure_data` `get_edr_data_azure_integration` |
   host '
 techniques:
 - command-and-control:remote access software
-technique_id: null
+technique_id: T1219
 data_category:
 - EDR Logs
 references:
