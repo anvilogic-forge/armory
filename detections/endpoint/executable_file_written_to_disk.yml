@@ -27,7 +27,7 @@ logic: '| avlsearchrest `get_rest_azure_data` `get_edr_data_azure_integration` |
   * by _time, host, file_path '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: T1105
 data_category:
 - EDR Logs
 - File monitoring
