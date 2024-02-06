@@ -1,0 +1,24 @@
+id: '1122.24844'
+title: File Download (Unix)
+description: 'This use case is for detecting when files have been downloaded on a
+  Unix machine. - Threat Actor Association: 8220 Gang, Sandworm Team, TeamTNT, Teal
+  Kurma (aka Sea Turtle, Marbled Dust, Cosmic Wolf), Winnti Group - Software Association:
+  Alchimist, Cyclops Blink, Mélofée, TeamTNT, WatchDog - Atomics T1074.001 Test#2
+  Atomics T1059.004 Test#2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(wget) OR TERM(curl) OR TERM(git)
+  OR TERM(lwp-download)) `map_endpoint_edr`| regex process="(?i)(wget|curl|git|lwp\-download).+:\/\/"|
+  regex process!="curl.+(PUT|\-d|\-\-data|-F|\-T|\-\-upload)"| rex field=process "(?i)(wget|curl|git|lwp\-download).+:\/\/(?<uri_path>.*)"|
+  rex field=uri_path "\/(?<file_name>[\w\.\-\+]+)$" | table _time, host, user process,
+  uri_path, file_name, process_* | bin span=1s | stats values(*) as * by _time, host
+  | eventstats c(uri_path) as c_uri by uri_path | eventstats c(file_name) as c_file
+  by file_name | where (isnull(file_name) AND c_uri < 10) OR c_file < 10 '
+techniques:
+- execution:command and scripting interpreter:unix shell
+- lateral-movement:lateral tool transfer
+- command-and-control:ingress tool transfer
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references: null

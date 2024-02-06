@@ -1,0 +1,37 @@
+id: '5343.5843'
+title: 'Remote Admin Tools  '
+description: 'PsExec, RemCom, PaExec, and CsExec are administrative command-line utilities
+  that allow remote command execution Threat Actor Association: Antlion, DarkSide,
+  BlackMatter, APT29/Nobelium, APT31, Carbanak, FIN6, FIN7, FIN8, FIN12, Fox Kitten,
+  GoldenJackal, Hello Kitty / Five Hands, MalKamak, Muddled Libra, OilRig, Traveling
+  Spider, UNC2596, Vice Society, Wizard Spider - Software Association: ALPHV/BlackCat,
+  AvosLocker, BianLian, Blackbyte, Blacksuit, Black Basta, Conti, Cuba, GhostShell,
+  Lockbit, Play, Prometheus/Spook, Prestige, PYSA/Mespinoza, Quantum, Rhysida, Royal,
+  Vice Society - Atomics T1021.002 Test#3'
+logic_format: Azure_Sentinel
+logic: let timeframe = 2h;let ProcessCreationEvents=() { let processEvents=SecurityEvent
+  | where EventID==4688 | project TimeGenerated, ComputerName=Computer, AccountName=SubjectUserName,
+  AccountDomain=SubjectDomainName, FileName=tostring(split(NewProcessName, '\\')[-1]),
+  ProcessCommandLine=CommandLine, InitiatingProcessFileName=ParentProcessName,InitiatingProcessCommandLine="",InitiatingProcessParentFileName="";
+  processEvents};ProcessCreationEvents| where TimeGenerated >= ago(timeframe)| where
+  ProcessCommandLine contains ".exe"| where ProcessCommandLine matches regex '(\\.exe(\\")?\\s+|\\/c.{1.}?)\x5c\x5c.{2,}'|
+  summarize by timestamp=bin(TimeGenerated, 1s), ComputerName, AccountName, FileName,
+  InitiatingProcessFileName, InitiatingProcessCommandLine, ProcessCommandLine| project
+  timestamp, ComputerName, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine|
+  extend HostCustomEntity=ComputerName, AccountCustomEntity=AccountName
+techniques:
+- execution:system services:service execution
+- lateral-movement:remote services
+- execution:command and scripting interpreter:windows command shell
+- lateral-movement:lateral tool transfer
+technique_id:
+- T1569.002
+- T1059.003
+data_category:
+- Network intrusion detection system
+- Windows event logs
+- Linux audit logs
+- Process use of network
+- Network protocol analysis
+references:
+- https://redcanary.com/blog/threat-hunting-psexec-lateral-movement/

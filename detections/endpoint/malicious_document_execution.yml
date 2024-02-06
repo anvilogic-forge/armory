@@ -1,0 +1,36 @@
+id: '1050.5815'
+title: Malicious Document Execution
+description: 'This rule is attempting to detect anytime a Microsoft Office OR Adobe
+  program (ex. Word, Excel, Adobe) spawns a process that could be indicative of those
+  Office programs used to deliver malicious code. -- Threat Actor Association: Actinium/Gamaredon/Primitive
+  Bear, APT10/menuPass, APT29, APT34/OilRig, APT37, Arid Viper/APT C-23, Blind Eagle/APT-C-36,
+  Carbanak, Evilnum, FIN6, FIN7, Gamaredon Group/Shuckworm, Kimsuky, Lazarus, ModifiedElephant,
+  MuddyWater, NewsPenguin, RedEyes, RomCom, SideWinder, TA428, TA505, TA551, Turla
+  (akaSecret Blizzard, KRYPTON, and UAC-0003), Winter Vivern, WIRTE, Wizard Spider
+  -- Software Association: Bazarloder, Black Basta, Clop, Conti, Dridex, Emotet, GlowSand,
+  Hancitor, IcedID, Lockbit, MINEBRIDGE, MirrorBlast, PowerShortShell, QakBot, RATDispenser,
+  Sodinokibi/REvil, SquirrelWaffle, Trickbot, Zumkong -- #TrendingThreat #Russia #Ukraine'
+logic_format: Azure_Sentinel
+logic: let timeframe = 2h;let ProcessCreationEvents=() { let processEvents=SecurityEvent
+  | where EventID==4688 | project TimeGenerated, ComputerName=Computer, AccountName=SubjectUserName,
+  AccountDomain=SubjectDomainName, FileName=tostring(split(NewProcessName, '\\')[-1]),
+  ProcessCommandLine=CommandLine, InitiatingProcessFileName=ParentProcessName,InitiatingProcessCommandLine="",InitiatingProcessParentFileName="";
+  processEvents};ProcessCreationEvents| where TimeGenerated >= ago(timeframe) | where
+  InitiatingProcessFileName matches regex "(?i)(Microsoft Office)|(WINWORD\\.EXE)|(EXCEL\\.EXE)|(ONENOTE\\.EXE)|(POWERPNT\\.EXE)|(MSACCESS\\.EXE)|(OUTLOOK\\.EXE)|(VISIO\\.EXE)|(WINPROJ\\.EXE)|(AcroRd32\\.exe)|(Acrobat\\.exe)|(FoxitPhantomPDF\\.exe)|(FoxitReader\\.exe)"
+  and ProcessCommandLine matches regex "(?i)(powershell|cmd|wscript|cscript)\\.exe"|
+  summarize by timestamp=bin(TimeGenerated, 1s), ComputerName, AccountName, FileName,
+  InitiatingProcessFileName, InitiatingProcessCommandLine, ProcessCommandLine| project
+  timestamp, ComputerName, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine|
+  extend HostCustomEntity=ComputerName, AccountCustomEntity=AccountName
+techniques:
+- initial-access:phishing:spearphishing attachment
+- execution:user execution:malicious link
+- execution:user execution:malicious file
+technique_id:
+- T1566.001
+- T1204.001
+- T1204.002
+data_category:
+- Windows event logs
+references:
+- https://success.trendmicro.com/solution/000279049

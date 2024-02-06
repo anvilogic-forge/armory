@@ -1,0 +1,23 @@
+id: '1139.5836'
+title: Tunneling Process Created
+description: 'Adversaries may tunnel network communications to and from a victim system
+  within a separate protocol to avoid detection/network filtering and/or enable access
+  to otherwise unreachable systems. Common tools include Iodine, DNSCat, and Plink
+  -- Threat Actor Association: Agrius, Alloy Taurus/Gallium, APT34, FIN6, Lazarus,
+  Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm), Magnat,
+  Memento Team, OilRig, TRACER KITTEN -- Software Association: BadHatch, Lockbit,
+  LV, Royal, Snatch'
+logic_format: Azure_Sentinel
+logic: 'SecurityEvent '
+techniques:
+- command-and-control:protocol tunneling
+- command-and-control:non-application layer protocol
+technique_id: null
+data_category:
+- Host network interface
+- Windows event logs
+- Process use of network
+references:
+- https://github.com/yarrick/iodine
+- https://github.com/iagox86/dnscat2
+- https://github.com/kdsnice/Invoke-Plink

@@ -13,16 +13,16 @@ The Anvilogic Forge team is dedicated to illuminating the dark corners of the we
 ## Getting Started
 To get started with Armory, we recommend the following steps:
 
-**Explore the Detections**: Browse through the detections available in this repository to understand their scope and application.
-**Implementation Guide**: Refer to our detailed documentation for instructions on how to implement and adapt these detections in your own security operations.
-**Contribute**: If you're interested in contributing to Armory, please see the contribution guidelines below.
+**Explore the Detections**: Browse through the detections available in this repository to understand their scope and application. Each piece of detection logic is stored in YAML format along with certain enrichment components such as MITRE ATT&CK mappings.
+**Implementation**: Detection logic contains macros as placeholders to call respective data sets such as endpoint, web, etc. These macros will need to be replaced with the appropriate logic to function. Once replaced, feel free to copy, paste, and run!
+**Contribute**: If you're interested in contributing to Armory, please see the contribution guidelines below or feel free to contact us via the support email.
 
 ## Contribution Guidelines
 We welcome contributions from the cybersecurity community! If you have a detection rule or an enhancement suggestion, please follow these steps:
 
 **Fork the Repository**: Start by forking the repository to your GitHub account.
 **Create a Pull Request**: After making your changes or adding a new detection, submit a pull request to the main repository.
-**Review Proces**s: Our team will review your submission and provide feedback or approve the pull request.
+**Review Process**: Our team will review your submission and provide feedback or approve the pull request.
 
 ## Support
 If you need assistance or have any questions, please file an issue in this repository or contact the Anvilogic Forge team at forge@anvilogic.com.

@@ -1,0 +1,33 @@
+id: '1071.5818'
+title: Create_Modify Schtasks
+description: 'Detects possible persistent backdoor access using schtasks -- Threat
+  Group Association: Actinium/Gamaredon/Primitive Bear, Alloy Taurus/Gallium, APT29/Nobelium/Cozy
+  Bear, APT31, APT33, APT34/OilRig, APT35/Phosphorus/Magic Hound, APT41, APT43, BlackByte,
+  BlackCat, Blind Eagle/APT-C-36, Evilnum, FIN7, FIN12, Gamaredon Group/Shuckworm,
+  GoldenJackal, Lazarus, Memento Team, MuddyWater, Redfly, TA428, Turla (akaSecret
+  Blizzard, KRYPTON, and UAC-0003), Vice Society, WinterVivern/UAC-0114, WIRTE, Witchetty
+  - Software Association: Blackbyte, Black Basta, BianLian, Cactus, Conti, GoMet,
+  HermeticWiper/Trojan.Killdisk, Lockbit, Lorenz, LV, NanoCore, Play, Prestige, Prometheus/Spook,
+  Rhysida, Trickbot, XingLocker - Atomics T1036.004 Test #1 Atomics T1053.005 Test#1
+  Atomics T1053.005 Test#2 Atomics T1053.005 Test#3 Atomics T1053.005 Test#4 - #TrendingThreat
+  #Russia #Ukraine'
+logic_format: Azure_Sentinel
+logic: let timeframe = 2h;let ProcessCreationEvents=() { let processEvents=SecurityEvent
+  | where EventID==4688 | project TimeGenerated, ComputerName=Computer, AccountName=SubjectUserName,
+  AccountDomain=SubjectDomainName, FileName=tostring(split(NewProcessName, '\\')[-1]),
+  ProcessCommandLine=CommandLine, InitiatingProcessFileName=ParentProcessName,InitiatingProcessCommandLine="",InitiatingProcessParentFileName="";
+  processEvents};ProcessCreationEvents| where TimeGenerated >= ago(timeframe)| where
+  ProcessCommandLine contains "schtasks" and ProcessCommandLine matches regex "/(create|change)"|
+  summarize by timestamp=bin(TimeGenerated, 1s), ComputerName, AccountName, FileName,
+  InitiatingProcessFileName, InitiatingProcessCommandLine, ProcessCommandLine| project
+  timestamp, ComputerName, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine|
+  extend HostCustomEntity=ComputerName, AccountCustomEntity=AccountName
+techniques:
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+technique_id:
+- T1053.005
+data_category:
+- Windows event logs
+references:
+- https://attack.mitre.org/techniques/T1053/005/

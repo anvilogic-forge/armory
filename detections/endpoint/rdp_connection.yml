@@ -1,0 +1,29 @@
+id: '9037.44983'
+title: RDP Connection
+description: 'This use case looks for when an RDP network connection has been established.
+  -- Threat Actor Association: Agrius, APT35/Phosphorus/Magic Hound, Daixin Team,
+  Flax Typhoon, Karakurt, Lapsus$, Muddled Libra, Scattered Spider (aka. 0ktapus,
+  UNC3944), UNC5221, UTA0178 - Software Association: Akira, AvosLocker, BianLian,
+  Blackcat/ALPHV, BlackByte, Lockbit, LV, Play, Quantum, Ransom Cartel, Rhysida, Royal,
+  Snatch, Trigona'
+logic_format: Splunk
+logic: '| avlsearchrest `get_rest_azure_data` `get_edr_data_azure_integration` | extend
+  event_simpleName_s = column_ifexists(''event_simpleName_s'', '''') | extend port_d
+  = column_ifexists(''port_d'', ''0'') | extend port_d = iff(port_d == ''0'', toint(RemotePort),
+  toint(port_d)) | extend port_s = column_ifexists(''port_s'', ''0'') | extend port_s
+  = iff(port_s == ''0'', toint(LocalPort), toint(port_s)) | search ( (''RDP'' or ''mstsc.exe'')
+  and ((event_simpleName_s==''NetworkConnection'' and port_d==''3389'') or (ActionType
+  ==''ConnectionSuccess'' and (port_d==''3389'' or port_s==''3389''))))| extend time_15m
+  = bin(Timestamp, 15m)| summarize Count = count(), arg_max(Timestamp, *) by time_15m,
+  DeviceId" `map_endpoint_edr` | table _time, host, user dest, direction, event_id,
+  eventtype, parent_*, process, process_*, user, user_id, src_*, dest_* | bin span=1s
+  | stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+- initial-access:external remote services
+technique_id:
+- T1021.001
+data_category:
+- EDR Logs
+references:
+- https://www.group-ib.com/resources/threat-research/silence_moving-into-the-darkside.pdf

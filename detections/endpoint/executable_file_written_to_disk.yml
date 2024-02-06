@@ -1,0 +1,35 @@
+id: '1040.5810'
+title: Executable File Written to Disk
+description: 'Detects when a potentially malicious file is written to the disk. -
+  Threat Actor Association: Alloy Taurus/Gallium, Andariel, APT28 (aka.Fancy Bear,
+  Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM), APT29/Nobelium/Cozy
+  Bear, APT34/OilRig, APT37, APT41, Arid Viper/APT C-23, Babuk, Carbanak, Evilnum,
+  FIN6, FIN7, FIN8, Gamaredon (aka. Armageddon, UAC-0010), Kimsuky, Lazarus, MalKamak,
+  Memento Team, Mustang Panda, Night Spider, TA2541, TA,505, TA551, Prophet Spider,
+  Phosphorus/Magic Hound/APT35, SaintBear (aka UAC-0056, UNC2589, TA471), Scatter
+  Swine, TA576, Wizard Spider -- Software Association: BadHatch, Bazar, Black Basta,
+  BlackByte, Clop, Conti, Cring, Emotet, GhostShell, Hancitor, Harvester, IcedID,
+  Lapsus$, MirrorBlast, PYSA/Mespinoza, QakBot, Ransom Cartel, Remcos, Ryuk, SquirrelWaffle,
+  TargetCompany, Trickbot, Vidar Stealer, WhisperGate, XingLocker, Yanluowang, Zloader'
+logic_format: Azure_Sentinel
+logic: '| avlsearchrest `get_rest_azure_data` `get_edr_data_azure_integration` | extend
+  TableName = column_ifexists(''TableName'', '''') | extend FileName = column_ifexists(''FileName'',
+  '''') | extend FolderPath = column_ifexists(''FolderPath'', '''') | extend derived_host
+  = extract(@''[^.]+'',1,''DeviceName'')| extend host = column_ifexists(''host'',
+  ''derived_host'') | search Type==''DeviceFileEvents'' and ActionType has_any (''FileCreated'',''FileRenamed'')
+  and FileName has_any (''bat'',''bin'',''cmd'',''com'',''e_e'',''ex_'',''exe'',''hta'',''out'',''plx'',''ps1'',''rgs'',''script'',''sct'',''server'',''vb'',''ws'',''xll'',''otm'',''sldm'')
+  | where FileName matches regex ''[.]{1}(bat|bin|cmd|com|e_e|ex_|exe|hta|jar|js|out|plx|ps1|py|pyc|rgs|script|sct|server|vb|ws|docm|dotm|xlm|xlsm|xltm|xla|xlam|xll|otm|pptm|potm|ppsm|sldm)$''
+  | where not(FileName matches regex ''__PSScriptPolicyTest_.*ps1'') "| rex field=FolderPath
+  "(?<file_path>.*)(\/|\\\)"| rename FileName as file_name| eventstats c(file_path)
+  as c_file_path by file_path| eventstats c(file_name) as c_file_name by file_name|where
+  c_file_path < 10 AND c_file_name < 10| eval _time = Timestamp| table _time, host,
+  user process, file_path, file_name, process_* | bin span=1s | stats values(*) as
+  * by _time, host, file_path '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- EDR Logs
+- File monitoring
+references:
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4656

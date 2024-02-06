@@ -1,0 +1,29 @@
+id: '5763.6035'
+title: Rare Scheduled Task
+description: 'Adversaries may abuse task scheduling functionality to facilitate initial
+  or recurring execution of malicious code. Utilities exist within all major operating
+  systems to schedule programs or scripts to be executed at a specified date and time.
+  -- Threat Actor Association: APT33, APT34/OilRig, FIN7, TA505, TA551, Turla (akaSecret
+  Blizzard, KRYPTON, and UAC-0003) -- Software Association: BianLian, Clop, Cring,
+  IcedID, NanoCore, Sodinokibi/REvil, Trickbot -- Atomics T1053.005 Test#1 Atomics
+  T1053.005 Test#2 Atomics T1053.005 Test#3 Atomics T1053.005 Test#4 Atomics T1053.005
+  Test#5 Atomics T1053.005 Test#6'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4702) OR
+  "<EventID>4702<" OR TERM(EventCode=4700) OR "<EventID>4700<" OR TERM(EventCode=4698)
+  OR "<EventID>4698<") `map_endpoint_winevent`| rex field=body "\<Command\>(?<process>.{1,}\Q</Command>\E)"|
+  rex field=body "\<Arguments\>(?<process_exec>.{1,}\Q</Arguments>\E)"| rex field=process
+  mode=sed "s/\<\/Command\>//g"| rex field=process_exec mode=sed "s/\<\/Arguments\>//g"|
+  rename Task_Name as task_name | where isnotnull(process) | table _time, host, user,
+  signature_id, task_name, process, process_exec | eventstats count by task_name process
+  signature_id| where count=1 '
+techniques:
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+- privilege-escalation:scheduled task/job:scheduled task
+- exfiltration:scheduled transfer
+technique_id:
+- T1053.005
+data_category:
+- Windows event logs
+references: null
