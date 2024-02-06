@@ -28,5 +28,4 @@ data_category:
 - File monitoring
 - Process command-line parameters
 - Windows event logs
-- Linux audit logs
 references: null
