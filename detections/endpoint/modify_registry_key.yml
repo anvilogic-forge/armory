@@ -16,7 +16,7 @@ logic: '| avlsearchrest rest_name=devo query="from edr.cbef.endpoint_event.regmo
   | fields - Operation_*, New_*, Old_* `hec_collect`'
 techniques:
 - defense-evasion:modify registry
-technique_id: null
+technique_id: T1112
 data_category:
 - EDR Logs
 - File monitoring
