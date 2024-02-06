@@ -26,6 +26,8 @@ techniques:
 technique_id:
 - T1059.001
 - T1059.003
+- T1570
+- T1095
 data_category:
 - Windows event logs
 references:
