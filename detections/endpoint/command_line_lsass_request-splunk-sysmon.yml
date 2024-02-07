@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` TERM(lsass) (TERM(cmd) OR
   | stats values(*) as * by _time, host '
 techniques:
 - credential-access:os credential dumping
-technique_id: null
+technique_id: 
+- T1007
 data_category:
 - Windows Sysmon
 references:

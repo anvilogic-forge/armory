@@ -24,7 +24,10 @@ techniques:
 - execution:command and scripting interpreter:windows command shell
 - collection:automated collection
 technique_id:
+- T1059
+- T1020
 - T1059.003
+- T1119
 data_category:
 - Windows event logs
 references:

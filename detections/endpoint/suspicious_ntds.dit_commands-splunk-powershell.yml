@@ -19,7 +19,7 @@ technique_id:
 - T1003.003
 data_category:
 - Process command-line parameters
-- Windows event logs
+- PowerShell logs
 references:
 - https://www.ired.team/offensive-security/credential-access-and-credential-dumping/ntds.dit-enumeration
 - https://www.n00py.io/2022/03/manipulating-user-passwords-without-mimikatz/

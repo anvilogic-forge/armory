@@ -25,7 +25,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4656) O
   tag | bin span=1s | stats values(*) as * by _time, host, file_path '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - Windows event logs
 references:

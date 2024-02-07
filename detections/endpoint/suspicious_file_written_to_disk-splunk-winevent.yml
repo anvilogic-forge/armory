@@ -19,7 +19,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4656) O
   < 3 and event_count < 4 '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - File monitoring
 - Windows event logs

@@ -15,6 +15,7 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` (".zip" ".exe") | table _ti
 techniques:
 - defense-evasion:obfuscated files or information
 technique_id: null
+- T1027
 data_category:
 - EDR Logs
 - Process command-line parameters
