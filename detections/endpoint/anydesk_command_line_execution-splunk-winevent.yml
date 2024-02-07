@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   host '
 techniques:
 - command-and-control:remote access software
-technique_id: null
+technique_id: 
+- T1219
 data_category:
 - Windows event logs
 - Process command-line parameters
