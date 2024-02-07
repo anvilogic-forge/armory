@@ -1,0 +1,21 @@
+id: '9038.12147'
+title: RDP Logon_Logoff Event
+description: 'This use case looks for Other Logon/Logoff Events, where an rdp logon/logoff
+  event has occurred. -- Threat Actor Association: Agrius, Daixin Team, Flax Typhoon,
+  Karakurt, Muddled Libra, Scattered Spider (aka. 0ktapus, UNC3944), UNC5221, UTA0178
+  - Software Association: Akira, AvosLocker, BianLian, Blackcat/ALPHV, BlackByte,
+  Lockbit, LV, Play, Quantum, Rhysida, Royal, Snatch, Trigona'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (EventCode=4778 OR "Event>ID>4778<"
+  OR EventCode=4779 OR "Event>ID>4779<") TERM(RDP) | table _time, host, user dest,
+  direction, event_id, eventtype, parent_*, process, process_*, user, user_id, src_*,
+  dest_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+- initial-access:external remote services
+technique_id:
+- T1021.001
+data_category:
+- Windows event logs
+references:
+- https://www.group-ib.com/resources/threat-research/silence_moving-into-the-darkside.pdf

@@ -1,0 +1,28 @@
+id: '1139.1231'
+title: Tunneling Process Created
+description: 'Adversaries may tunnel network communications to and from a victim system
+  within a separate protocol to avoid detection/network filtering and/or enable access
+  to otherwise unreachable systems. Common tools include Iodine, DNSCat, and Plink
+  -- Threat Actor Association: Agrius, Alloy Taurus/Gallium, APT34, FIN6, Lazarus,
+  Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm), Magnat,
+  Memento Team, OilRig, TRACER KITTEN -- Software Association: BadHatch, Lockbit,
+  LV, Royal, Snatch'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ( TERM(plink) AND "127.0.0.1:3389")
+  OR ( signature_id=5156 AND dest_port=22 ) | rex field=process (?<service>"(?i)plink.exe")|
+  rex field=process (?<local>"127.0.0.1:3389")| rex field=process (?<remote_forward>"-R")|
+  rex field=process (?<ssh_port>"-P 22")| table _time, host, user, service, local,
+  remote_forward, process, process_*, parent_process_*, dest_port, ssh_port, signature_id
+  | bin span=1s | stats values(*) as * by _time, host `add_enrichment_rule(r1231)`|
+  where isnotnull(service) AND isnotnull(remote_forward) AND isnotnull(local) AND
+  isnotnull(ssh_port) AND match(signature_id,"5156") '
+techniques:
+- command-and-control:protocol tunneling
+- command-and-control:non-application layer protocol
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://github.com/yarrick/iodine
+- https://github.com/iagox86/dnscat2
+- https://github.com/kdsnice/Invoke-Plink

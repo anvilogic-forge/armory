@@ -1,0 +1,26 @@
+id: '8335.10406'
+title: Modify Registry Key
+description: 'Adversaries may interact with the Windows Registry to hide configuration
+  information within Registry keys, remove information as part of cleaning up, or
+  as part of other techniques to aid in persistence and execution. Threat Actor Association:
+  APT27/Emissary Panda, APT29/Nobelium, APT30, APT41, APT43, Flax Typhoon, InvisiMole,
+  Kimsuky, Lazarus, MuddyWater, RedEyes, REvil, Velvet Cholllima -- Software Association:
+  Avos, BabyShark, BadRabbit, BianLian, BlackByte, DarkWatchman, Dharma, Dridex, Karius,
+  Koxic, LockBit, Play, QBot/Qakbot, Ransom Cartel, SunBurst, Trojan.Killdisk/HermeticWiper,
+  Trigona, Ursnif, VawTrack'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4657) OR
+  "<EventID>4657<") Operation_Type="Existing registry value modified" | table _time,
+  host, user parent_*, process, process_*, signature_id, Object_*, Operation_*, New_*,
+  Old_*| eval note=Object_Name | bin span=1s | stats values(*) as * by _time, host
+  | fields - Operation_*, New_*, Old_* `hec_collect`'
+techniques:
+- defense-evasion:modify registry
+technique_id: null
+data_category:
+- File monitoring
+- Windows event logs
+references:
+- https://blog.trendmicro.com/trendlabs-security-intelligence/poweliks-malware-hides-in-windows-registry/
+- https://www.netwrix.com/how_to_detect_modification_to_startup_items.html
+- https://static1.squarespace.com/static/552092d5e4b0661088167e5c/t/5d497aefe58b7e00011f6947/1565096688890/Windows+Registry+Auditing+Cheat+Sheet+ver+Aug+2019.pdf

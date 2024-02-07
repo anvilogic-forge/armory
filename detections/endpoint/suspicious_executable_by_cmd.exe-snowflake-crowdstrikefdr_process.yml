@@ -1,0 +1,19 @@
+id: '8823.14710'
+title: Suspicious Executable by CMD.exe
+description: 'Detect when an executable has been launched by cmd.exe. Such as spawning
+  powershell.exe, cscript rundll32 and similar processes being a child process of
+  cmd. -- Threat Actor Association: APT28 (aka.Fancy Bear, Fighting Ursa, Forest Blizzard,
+  Pawn Storm, TA422, STRONTIUM), APT34/OilRig, APT43, FIN8, Flax Typhoon, REvil, WinterVivern/UAC-0114
+  - Software Association: Alchimist, AvosLocker, Black Basta, MagicRAT, Rhysida'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(parent_process_name, ''.*(cmd\\\.exe).*'',
+  ''i'') and regexp_like(process_path, ''.*(((powershell)|(services)|(dllhost)|(rundll32)|(cscript)|(regsvr32)|(mshta))\\\.exe).*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://secure.anvilogic.com/use_cases?id=AVL_UC1041#more_info

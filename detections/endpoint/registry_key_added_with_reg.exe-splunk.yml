@@ -1,0 +1,19 @@
+id: '6732.15497'
+title: Registry key added with reg.exe
+description: 'Reg is a Windows utility used to interact with the Windows Registry.
+  It can be used at the command-line interface to add information. -- Threat Actor
+  Association: APT35/Phosphorus/Magic Hound, APT37, APT41, FIN6, Flax Typhoon, Gorgon
+  Group, Harvester, Lazarus, TA428, UNC2465, Vice Society, Witchetty -- Software Association:
+  BianLian, BlackByte, Blackcat/ALPHV, Conti, Hive, Lorenz, Prestige, SmokedHAM, Snatch,
+  Sodinokibi/REvil, Remcos, WIRTE, Vice Society, XingLocker, Zumkong -- Atomics T1021.001
+  Test #4 Atomics T1546.010 Test #1'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- defense-evasion:modify registry
+technique_id: null
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://unit42.paloaltonetworks.com/unit42-rancor-targeted-attacks-south-east-asia-using-plaintee-ddkong-malware-families/

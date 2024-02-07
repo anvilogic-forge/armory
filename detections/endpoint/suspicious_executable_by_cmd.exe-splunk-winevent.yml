@@ -1,0 +1,21 @@
+id: '8823.11630'
+title: Suspicious Executable by CMD.exe
+description: 'Detect when an executable has been launched by cmd.exe. Such as spawning
+  powershell.exe, cscript rundll32 and similar processes being a child process of
+  cmd. -- Threat Actor Association: APT28 (aka.Fancy Bear, Fighting Ursa, Forest Blizzard,
+  Pawn Storm, TA422, STRONTIUM), APT34/OilRig, APT43, FIN8, Flax Typhoon, REvil, WinterVivern/UAC-0114
+  - Software Association: Alchimist, AvosLocker, Black Basta, MagicRAT, Rhysida'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<") "cmd.exe" ("powershell.exe" OR "services.exe" OR "dllhost.exe"
+  OR "rundll32.exe" OR "cscript.exe" OR "regsvr32.exe" OR "mshta.exe") | regex parent_process_name="(?i)(cmd\.exe)"
+  | regex process_path="(?i)((powershell)|(services)|(dllhost)|(rundll32)|(cscript)|(regsvr32)|(mshta))\.exe"
+  | table _time, host, user event_id, parent_*, process_*, process, signature_id,
+  src_*, dest_* | bin span=1s | stats values(*) as * by _time, host | where isnotnull(user) '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://secure.anvilogic.com/use_cases?id=AVL_UC1041#more_info

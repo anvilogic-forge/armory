@@ -1,0 +1,19 @@
+id: '9037.15623'
+title: RDP Connection
+description: 'This use case looks for when an RDP network connection has been established.
+  -- Threat Actor Association: Agrius, APT35/Phosphorus/Magic Hound, Daixin Team,
+  Flax Typhoon, Karakurt, Lapsus$, Muddled Libra, Scattered Spider (aka. 0ktapus,
+  UNC3944), UNC5221, UTA0178 - Software Association: Akira, AvosLocker, BianLian,
+  Blackcat/ALPHV, BlackByte, Lockbit, LV, Play, Quantum, Ransom Cartel, Rhysida, Royal,
+  Snatch, Trigona'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+- initial-access:external remote services
+technique_id:
+- T1021.001
+data_category:
+- Windows event logs
+references:
+- https://www.group-ib.com/resources/threat-research/silence_moving-into-the-darkside.pdf

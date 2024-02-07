@@ -1,0 +1,22 @@
+id: '5982.15088'
+title: MSHTA.exe execution
+description: 'Detect use of MSHTA. -- Threat Actor Association: Actinium/Gamaredon/Primitive
+  Bear, APT37, APT43, FIN7, Kimsuky, MuddyWater, TA551, TA576, UAC-0057 (GhostWriter),
+  Wizard Spider -- Software Association: Bazar, Conti, PYSA/Mespinoza, Trickbot, XingLocker,
+  Zloader Atomics T1218.005 Test#1 Atomics T1218.005 Test#2 Atomics T1218.005 Test#3
+  Atomics T1218.005 Test#4 Atomics T1218.005 Test#5 Atomics T1218.005 Test#6 Atomics
+  T1218.005 Test#7 Atomics T1218.005 Test#8 Atomics T1218.005 Test#9 Atomics T1218.005
+  Test#10 Atomics T1059.001 Test #9 - #TrendingThreat #Russia #Ukraine'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and process_path ilike '%mshta.exe'
+techniques:
+- defense-evasion:system binary proxy execution:mshta
+technique_id:
+- T1218.005
+data_category:
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Mshta/
+- ired.team/offensive-security/code-execution/t1170-mshta-code-execution
+- https://attackiq.com/2020/04/20/fingerprinting-fin7/

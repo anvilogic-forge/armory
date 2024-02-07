@@ -1,0 +1,27 @@
+id: '20632.36764'
+title: Suspicious ntds.dit Commands
+description: 'Adversaries may attempt to access or create a copy of the Active Directory
+  domain database in order to steal credential information, as well as obtain other
+  information about domain members such as devices, users, and access rights. This
+  use case detects patterns of commands associated with ntds.dit dumping and/or exfiltration.
+  -- Threat Actor Association: UNC5221, UTA0178 -- Software Association: Akira --
+  Atomics T1003.003 Test #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(ntdsutil) OR TERM(ntds) OR "ntds.dit") (((TERM(ac) TERM(i)) OR (TERM(activate)
+  TERM(instance)) TERM(create) TERM(full)) OR TERM(copy)) | regex process="(?i)(ac\s+i\s+ntds.+create\s+full)|(copy\s+.+?ntds\.dit)|(activate\s+instance\s+ntds.*create\s+full)"
+  | table _time, host, user, process*, parent_process_path | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- credential-access:os credential dumping:ntds
+technique_id:
+- T1003.003
+data_category:
+- Windows Sysmon
+- Process command-line parameters
+references:
+- https://www.ired.team/offensive-security/credential-access-and-credential-dumping/ntds.dit-enumeration
+- https://www.n00py.io/2022/03/manipulating-user-passwords-without-mimikatz/
+- https://pentestlab.blog/tag/ntds-dit/
+- https://github.com/zcgonvh/NTDSDumpEx
+- https://blog.talosintelligence.com/2022/08/recent-cyber-attack.html?m=1

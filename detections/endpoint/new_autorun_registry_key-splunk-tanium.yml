@@ -1,0 +1,33 @@
+id: '1042.5039'
+title: New AutoRun Registry Key
+description: 'Detects when common autorun scripts in the Windows registry are modified.
+  -- Threat Actor Association: APT27/Emissary Panda, APT28, APT29/Nobelium/Cozy Bear,
+  APT33, APT37, APT40, APT43, Blind Eagle/APT-C-36, Carbanak, FIN6, FIN7, FIN13, Lazarus,
+  MuddyWater, Mustang Panda, NewsPenguin, RedEyes, RomCom, SaintBear (aka UAC-0056,
+  UNC2589, TA471), Sandworm Team, TA2541, TA505, UAC-0056, UNC4990 - Software Association:
+  ALPHV/BlackCat, Bazarloader, Blackbyte, Havex, LockBit, MirrorBlast, NanoCore, Phosphorus/Magic
+  Hound/APT35, Prometheus / Spook, Sodinokibi/REvil, Ransom Cartel, Remcos RAT, Trigona,
+  Vice Society, Zloader -- Atomics T1547.001 Test#3 Atomics T1547.001 Test#4'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_tanium` TERM(CurrentVersion)| regex
+  "(?i)CurrentVersion|ActiveSetup|ShellEx|Classes|KnownDlls|Desktop\x5cScrnsave|Catalog_Entries"
+  | eval reg_proc_id=client_host."|".registry_path."|".registry_key_name."|".process_hash."|".process
+  | fields _time, index, sourcetype, source, client_host, cient_nt_host, client_ip,
+  user, process, process_name, process_path, process_hash, registry_hive, registry_path,
+  registry_key_name, reg_proc_id| search NOT [ search index=paypal_tanium sourcetype=tanium:inventory:registry
+  earliest=-4d@d latest=-2d@d | regex "(?i)CurrentVersion|ActiveSetup|ShellEx|Classes|KnownDlls|Desktop\x5cScrnsave|Catalog_Entries"
+  | eval reg_proc_id=client_host."|".registry_path."|".registry_key_name."|".process_hash."|".process
+  | table reg_proc_id ] | stats values(*) as * by _time, reg_proc_id| streamstats
+  dc(client_host) as dc_hash_client_host by process_hash| streamstats dc(client_host)
+  as dc_proc_client_host by process| where dc_proc_client_host < 5 '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+- privilege-escalation:boot or logon autostart execution:registry run keys / startup
+  folder
+technique_id:
+- T1547.001
+data_category:
+- Process command-line parameters
+- Linux audit logs
+- Windows Registry
+references: null

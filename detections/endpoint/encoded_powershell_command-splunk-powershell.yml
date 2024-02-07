@@ -1,0 +1,34 @@
+id: '1001.1001'
+title: Encoded Powershell Command
+description: 'PowerShell is a powerful interactive command-line interface and scripting
+  environment included in the Windows operating system. Adversaries can use PowerShell
+  to perform a number of actions, including discovery of information and execution
+  of code. Encoded commands could be a way for an attacker to obfuscate malicious
+  scripts they are executing on the victim machine. -- Threat Actor Association: Actinium/Gamaredon/Primitive
+  Bear, APT28 (aka.Fancy Bear, Fighting Ursa, Forest Blizzard, Pawn Storm, TA422,
+  STRONTIUM), APT29/Nobelium, APT35/Phosphorus/Magic Hound, BlackByte, DarkSide, BlackMatter,
+  FIN7, Memento Team, MuddyWater, Turla (akaSecret Blizzard, KRYPTON, and UAC-0003),
+  Vice Society, Volt Typhoon - Software Attribution: ALPHV/BlackCat, Bazarloader,
+  Black Basta, Conti, Emotet, LV, MirrorBlast, Prestige, PYSA/Mespinoza, Ransom Cartel,
+  TargetCompany, TrickBot, XingLocker, Yellow Cocaktoo/Jupiter Infostealer, WhisperGate
+  - #TrendingThreat #Russia #Ukraine - Atomics T1027 Test #2 Atomics T1027 Test #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "EventID>4103<" OR TERM(EventCode=4104) OR "EventID>4104<") (("-e" OR "-en" OR "-ec"
+  OR "-enco" OR "-encodedcommand" OR "-encod" OR "-encode" OR "-encoded" OR "-encodedc*")
+  OR ("/e" OR "/en" OR "/ec" OR "/enco" OR "/encodedcommand" OR "/encod" OR "/encode"
+  OR "/encoded" OR "/encodedc*") OR "frombase64string") | rex field=Message "(?i)powershell.exe\"?(?<trun_cmd>.{60})"
+  | regex process="(?i)(powershell.*\s+(\-|\/)(e|en|ec|enc|enco|encod|encode|ecode[dcoman]+)\s+\S+)|frombase64string"
+  | table _time, host, user process, process_*, signature_id | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- defense-evasion:obfuscated files or information
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://unit42.paloaltonetworks.com/unit42-pulling-back-the-curtains-on-encodedcommand-powershell-attacks/
+- https://www.microsoft.com/security/blog/2022/02/04/actinium-targets-ukrainian-organizations/?utm_campaign=Threat%20Report%20Newsletter&utm_medium=email&_hsmi=203254280&_hsenc=p2ANqtz-_lmhDqWF4dK1aEuVSrgJUOHdLMvJ7ORkr-vdksakqAPIxGFhGLMHMGAUiX4y9HTdUyzYWBQlJ

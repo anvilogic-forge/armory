@@ -1,0 +1,25 @@
+id: '1025.15272'
+title: Create_Add Local_Domain User
+description: 'Detects the addition of a nonprivileged user that is added to a privileged
+  local or domain group, or when a user is created. -- Threat Actor Association: Alloy
+  Taurus/Gallium, APT29, APT35/Phosphorus/Magic Hound, CL-STA-0043, DarkSide, BlackMatter,
+  FIN12, Lapsus$, Lazarus, Phosphorus/Magic Hound/APT35, UNC2596 -- Software Association:
+  Akira, Avos, Bazarloader, BianLian, Blackbyte, Blackcat/ALPHV, Cactus, Conti, Cring,
+  Cuba, Hafnium, Insekt, Lockbit, Qakbot/Qbot, Royal, SmokedHAM, TargetCompany, Trigona,
+  Vice Society - Atomics T1078.003 Test#1 Atomics T1136.001 Test#3 Atomics T1136.001
+  Test#4 Atomics T1136.001 Test#6 Atomics T1136.002 Test#1 Atomics T1136.002 Test#2
+  Atomics T1136.002 Test#3'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- persistence:account manipulation
+- persistence:create account:local account
+- persistence:create account:domain account
+technique_id:
+- T1136.002
+- T1136.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.sans.org/reading-room/whitepapers/logging/paper/37367

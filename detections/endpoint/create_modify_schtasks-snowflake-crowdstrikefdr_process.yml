@@ -1,0 +1,26 @@
+id: '1071.14616'
+title: Create_Modify Schtasks
+description: 'Detects possible persistent backdoor access using schtasks -- Threat
+  Group Association: Actinium/Gamaredon/Primitive Bear, Alloy Taurus/Gallium, APT29/Nobelium/Cozy
+  Bear, APT31, APT33, APT34/OilRig, APT35/Phosphorus/Magic Hound, APT41, APT43, BlackByte,
+  BlackCat, Blind Eagle/APT-C-36, Evilnum, FIN7, FIN12, Gamaredon Group/Shuckworm,
+  GoldenJackal, Lazarus, Memento Team, MuddyWater, Redfly, TA428, Turla (akaSecret
+  Blizzard, KRYPTON, and UAC-0003), Vice Society, WinterVivern/UAC-0114, WIRTE, Witchetty
+  - Software Association: Blackbyte, Black Basta, BianLian, Cactus, Conti, GoMet,
+  HermeticWiper/Trojan.Killdisk, Lockbit, Lorenz, LV, NanoCore, Play, Prestige, Prometheus/Spook,
+  Rhysida, Trickbot, XingLocker - Atomics T1036.004 Test #1 Atomics T1053.005 Test#1
+  Atomics T1053.005 Test#2 Atomics T1053.005 Test#3 Atomics T1053.005 Test#4 - #TrendingThreat
+  #Russia #Ukraine'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and process ilike '%schtasks%' and (process ilike '%/create%'
+  or process ilike '%/change%')
+techniques:
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+technique_id:
+- T1053.005
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1053/005/

@@ -1,0 +1,36 @@
+id: '12724.31063'
+title: Windows - Service Stop
+description: 'This use case detects any service stop commands on Windows endpoints.
+  Adversaries may stop or disable services on a system to render those services unavailable
+  to legitimate users. Stopping critical services or processes can inhibit or stop
+  response to an incident or aid in the adversary''s overall objectives to cause damage
+  to the environment. Adversaries may accomplish this by disabling individual services
+  of high importance to an organization, such as MSExchangeIS, which will make Exchange
+  content inaccessible. In some cases, adversaries may stop or disable many or all
+  services to render systems unusable. Services or processes may not allow for modification
+  of their data stores while running. Adversaries may stop services or processes in
+  order to conduct Data Destruction or Data Encrypted for Impact on the data stores
+  of services like Exchange and SQL Server. -- Threat Actor Association: APT28 (aka.Fancy
+  Bear, Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM), APT29/Nobelium/Cozy
+  Bear, Cadet Blizzard, FIN6, GoldenJackal, Kimsuky, Lapsus$, Magic Hound (aka APT35,
+  Charming Kitten, Phosphorus, and Mint Sandstorm) , TA2541, Traveling Spider - Software
+  Association: AvosLocker, BianLian, BlackByte, Blackcat/ALPHV, Black Basta, Conti,
+  Cring, Cuba, GhostShell, Hive, Lockbit, Nefilim, Prestige, Prometheus / Spook, Rhysida,
+  Royal, Ryuk, Snatch, TeamTNT, Trigona, WatchDog, WhisperGate, XingLocker -- Atomics
+  T1489 Test #1 Atomics T1489 Test #2 Atomics T1489 Test #3'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_platform
+  ilike '%Win%' and (regexp_like(process, '.*taskkill(\\\.exe)?(\\\"?).*\\\/(IM|PID|T|F)+.*',
+  'i') or regexp_like(process, '.*(net|sc)(\\\.exe)?(\\\")?\\\s+stop\\\s+.*', 'i')
+  or regexp_like(process, '.*sc(\\\.exe)?(\\\")?\\\s+.*config.*start=.*disabled.*',
+  'i'))
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+- impact:service stop
+technique_id:
+- T1562.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1489/T1489.md#atomic-test-1---windows---stop-service-using-service-controller

@@ -1,0 +1,21 @@
+id: '13733.20161'
+title: AnyDesk Command Line Execution
+description: 'For most users, normal AnyDesk activity is executed via the GUI. This
+  use case detects anydesk.exe calls from cmd.exe or PowerShell.exe. Install commands
+  have been filtered out by default. - Threat Actor Association: Alloy Taurus/Gallium,
+  Gamaredon (aka. Armageddon, UAC-0010), Muddled Libra, Scattered Spider (aka. 0ktapus,
+  UNC3944), Scatter Swine, UNC2659 - Software Association: Akira, ALPHV/BlackCat,
+  AvosLocker, BianLian, BlackByte, BumbleBee, Clop, Conti, Diavol, Rhysida, Royal'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  TERM(AnyDesk) (TERM(cmd) OR TERM(powershell)) | regex process!="(?i)(install)"|
+  where match(process, "(?i)anydesk.exe") | table _time, host, user, process, process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:remote access software
+technique_id: null
+data_category:
+- Process command-line parameters
+- Windows Sysmon
+references:
+- https://blog.talosintelligence.com/2022/05/the-blackbyte-ransomware-group-is.html

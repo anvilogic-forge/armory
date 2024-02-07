@@ -1,0 +1,26 @@
+id: '5477.5647'
+title: Task Manager lsass Dump
+description: 'The Windows Task Manager may be used to dump the memory space of lsass.exe
+  to disk for processing with a credential access tool such as Mimikatz. This is performed
+  by launching Task Manager as a privileged user, selecting lsass.exe, and clicking
+  “Create dump file”. This saves a dump file to disk with a deterministic name that
+  includes the name of the process being dumped. - Threat Actor Association: APT29/Nobelium,
+  UNC2465, UNC5221, UTA0178 - Software Association: Blackcat/ALPHV, Lockbit, Play,
+  PYSA/Mespinoza, Rhysida, SmokedHAM - Atomics T1003.001 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (taskmgr.exe AND lsass.exe
+  AND (TERM(EventCode=4663) OR "<EventID>4663<" OR TERM(EventCode=4656) OR "<EventID>4656<")
+  AND TERM(Read) AND TERM(from) AND TERM(Process) AND TERM(memory)) OR (taskmgr.exe
+  AND (TERM(EventCode=4688) OR "<EventID>4688<" OR Type=Process)) OR (TERM(EventCode=4673)
+  OR "<EventID>4673<" AND "lsass.exe") | table _time, host, user signature_id, user,
+  process_id, process_name, process_path, process, parent_process_id, parent_process_name,
+  parent_process_path | bin span=5s | stats values(*) as * by _time, host | where
+  mvcount(signature_id)>1 '
+techniques:
+- credential-access:os credential dumping:lsass memory
+technique_id:
+- T1003.001
+data_category:
+- Windows event logs
+references:
+- https://medium.com/@markmotig/some-ways-to-dump-lsass-exe-c4a75fdc49bf

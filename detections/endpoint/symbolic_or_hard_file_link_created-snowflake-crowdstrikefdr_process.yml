@@ -1,0 +1,25 @@
+id: '6105.14642'
+title: Symbolic OR Hard File Link Created
+description: 'Symbolic links are ways of referencing other files or programs that
+  will be opened or executed when the shortcut is clicked or executed by a system
+  startup process. -- Threat Actor Association: APT29/Nobelium, APT43, Arid Viper/APT
+  C-23, Kimsuky, Lancefly, Gamaredon Group/Shuckworm,/Armageddon, SideWinder, TA505,
+  TA576, UAC-0057 (GhostWriter), UNC2589, UNC4990, Wizard Spider -- Software Association:
+  Astaroth, Black Basta, Bumblebee, Emotet, MINEBRIDGE, Qakbot/Qbot, Trickbot, Remcos
+  RAT - #TrendingThreat #Russia #Ukraine - Atomics T1546.008 Test #3'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*mklink\\\s.*'',
+  ''i'') '
+techniques:
+- persistence:boot or logon autostart execution:shortcut modification
+- privilege-escalation:boot or logon autostart execution:shortcut modification
+- execution:user execution:malicious file
+technique_id:
+- T1547.009
+- T1204.002
+data_category:
+- EDR Logs
+references:
+- https://blog-assets.f-secure.com/wp-content/uploads/2019/10/15163408/BlackEnergy_Quedagh.pdf
+- https://www.fireeye.com/blog/threat-research/2019/01/apt39-iranian-cyber-espionage-group-focused-on-personal-information.html

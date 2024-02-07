@@ -1,0 +1,28 @@
+id: '6149.6669'
+title: BITSadmin Execution
+description: 'BITSAdmin is a command line tool used to create and for managing background
+  intelligent transfer. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN) Threat
+  Actor Association: Andariel, APT31, APT41, BlackMatter, Darkside, FIN12, Flax Typhoon
+  Software Association: ALPHV/BlackCat, Astaroth, Clop, MINEBRIDGE, Nefilim, Sodinokibi/REvil,
+  Ransom Cartel Atomics T1105 Test#9 Atomics T1197 Test#1 Atomics T1197 Test#2 Atomics
+  T1197 Test#3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("bitsadmin" OR "BITS") | table _time, host, user,
+  signature_id, process, process_*, parent_* | bin span=1s | stats values(*) as *
+  by _time, host '
+techniques:
+- persistence:bits jobs
+- defense-evasion:bits jobs
+- lateral-movement:lateral tool transfer
+- command-and-control:ingress tool transfer
+- exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
+  non-c2 protocol
+technique_id:
+- T1048.003
+data_category:
+- Windows event logs
+references:
+- https://www.fireeye.com/blog/threat-research/2020/03/apt41-initiates-global-intrusion-campaign-using-multiple-exploits.html
+- https://www.trendmicro.com/en_us/research/18/c/tropic-trooper-new-strategy.html
+- https://www.fireeye.com/blog/threat-research/2018/03/suspected-chinese-espionage-group-targeting-maritime-and-engineering-industries.html

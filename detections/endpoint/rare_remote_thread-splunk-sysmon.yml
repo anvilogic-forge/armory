@@ -1,0 +1,26 @@
+id: '9036.12145'
+title: Rare Remote Thread
+description: 'Rare remote threads are anomalies within an organization and are normally
+  worth looking at. Although these kinds of detections can be false positive prone,
+  they can be utilized as supporting evidence or as a last resort to detect malicious
+  activity your other detection content may be missing. -- Threat Actor Association:
+  APT10/menuPass, APT35/Phosphorus/Magic Hound, APT43, FIN8 (Syssphinx), Lancefly,
+  Lazarus, TA413, Traveling Spider, UAC-0057 (GhostWriter), Vice Society, Wizard Spider
+  - Software Association: 3LOSH, ALPHV/BlackCat, AsyncRAT, Black Basta, Clop, Conti,
+  Havex, LimeRAT, LOWZERO, Nefilim, Rhysida, Ryuk'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (EventCode=8 OR "Event>ID>8<")
+  | table _time, host, user event_id, eventtype, parent_*, process, process_*, user,
+  user_id | bin span=1s | stats values(*) as * by _time, host | eventstats dc(host)
+  as dc_host dc(process_path) as dc_process by parent_process_path | eventstats dc(parent_process_path)
+  as dc_parent by process_path | where (dc_host < 3 AND dc_process < 3) OR dc_parent
+  < 3 '
+techniques:
+- defense-evasion:process injection
+- privilege-escalation:process injection
+technique_id: null
+data_category:
+- Process use of network
+- Windows Sysmon
+references:
+- https://materials.rangeforce.com/tutorial/2020/06/10/Sysmon-Process-Injection/

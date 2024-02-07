@@ -1,0 +1,25 @@
+id: '1139.15009'
+title: Tunneling Process Created
+description: 'Adversaries may tunnel network communications to and from a victim system
+  within a separate protocol to avoid detection/network filtering and/or enable access
+  to otherwise unreachable systems. Common tools include Iodine, DNSCat, and Plink
+  -- Threat Actor Association: Agrius, Alloy Taurus/Gallium, APT34, FIN6, Lazarus,
+  Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm), Magnat,
+  Memento Team, OilRig, TRACER KITTEN -- Software Association: BadHatch, Lockbit,
+  LV, Royal, Snatch'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and (regexp_like(process, ''.*([^a-z](--dns|server|host|com|org|net|info|listen)[^a-z]).*'',
+  ''i'') or (process ilike ''%@%'' and ((regexp_like(process, ''.*([^a-z](-D|-R|-L)[^a-z]).*'',
+  ''i'') )))) and regexp_like(process, ''.*((\\\-\\\-dns)?((\\\s+)|(\\\=))?((server\\\=)|(host\\\=))?((\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}\\\,port\\\=\\\d{1,5}.+)|(\\\w+\\\.((com)|(org)|(net)|(info)))$)|(\\\w+\\\.((com)|(org)|(net)|(info))\\\:\\\d{1,5})|(\\\w+\\\@(\\\d{1,3}\\\.){3}\\\d{1,3}.+\\\-(R|D|L).+(\\\d{1,3}\\\.){3}\\\d{1,3}\\\:\\\d{1,5})|(\\\-(R|D|L).+(\\\d{1,3}\\\.){3}\\\d{1,3}\\\:\\\d{1,5}.+\\\w+\\\@(\\\d{1,3}\\\.){3}\\\d{1,3})|(\\\d{1,5}\\\s+?(\\\d{1,3}\\\.){3}\\\d{1,3}\\\:\\\d{1,5})).*'',
+  ''i'') '
+techniques:
+- command-and-control:protocol tunneling
+- command-and-control:non-application layer protocol
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/yarrick/iodine
+- https://github.com/iagox86/dnscat2
+- https://github.com/kdsnice/Invoke-Plink

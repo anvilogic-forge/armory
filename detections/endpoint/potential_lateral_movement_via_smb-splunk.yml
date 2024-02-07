@@ -1,0 +1,21 @@
+id: '9118.15625'
+title: Potential Lateral Movement via SMB
+description: 'Adversaries, typically, start moving laterally once they get initial
+  foothold in the victim organization. Once they get initial access, they escalate
+  their privileges and move laterally with the escalated privileges either to propagate
+  their malware or to further reconnaissance & collect the targeted information. There
+  are many techniques by which threat actors move laterally, this use case focuses
+  solely on detecting potential anomalous SMB Traffic. - Threat Actor Association:
+  Earth Estries, FIN8 (Syssphinx), Lancefly, Lazarus - Software Association: ALPHV/BlackCat,
+  Ransom Cartel'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+technique_id:
+- T1021.002
+data_category:
+- Windows event logs
+references:
+- https://imphash.medium.com/detecting-lateral-movement-101-tracking-movement-smb-windows-admin-shares-through-windows-log-6005e3ba6980
+- https://www.ired.team/offensive-security/lateral-movement/lateral-movement-via-smb-relaying-by-abusing-lack-of-smb-signing

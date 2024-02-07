@@ -1,0 +1,13 @@
+id: '9019.15622'
+title: Network Connection with Suspicious Folder
+description: 'Detects potential downloads to suspicious file locations like temp,
+  appdata, and downloads. - Threat Actor Association: Alloy Taurus/Gallium, Lazarus,
+  NewsPenguin, OilRig, TA413 - Software Association: LOWZERO, Vidar Stealer'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- Windows event logs
+references: null

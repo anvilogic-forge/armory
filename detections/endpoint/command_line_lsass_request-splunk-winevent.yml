@@ -1,0 +1,18 @@
+id: '6088.6537'
+title: Command Line lsass request
+description: 'The memory of lsass.exe is often dumped for credential theft attacks.
+  This use case looks for instances of when lsass.exe has been called by powershell.exe
+  or cmd.exe -- Threat Actor Association: Alloy Taurus/Gallium, Cadet Blizzard, Flax
+  Typhoon, Redfly, Witchetty - Software Association: Blackcat/ALPHV, Clop, Quantum,
+  Vice Society -- Atomics T1003.002 Test #4'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` TERM(lsass) (TERM(cmd) OR
+  TERM(powershell)) | table _time, host, user parent_*, process, process_*, signature_id
+  | bin span=5s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://raw.githubusercontent.com/mattifestation/PowerSploit/master/Exfiltration/Out-Minidump.ps1

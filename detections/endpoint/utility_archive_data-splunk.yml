@@ -1,0 +1,23 @@
+id: '5526.15365'
+title: Utility Archive Data
+description: 'An adversary may compress or encrypt data that is collected prior to
+  exfiltration using 3rd party utilities. Many utilities exist that can archive data,
+  including 7-Zip, WinRAR, and WinZip. Most utilities include functionality to encrypt
+  and/or compress data. -- Threat Actor Association: APT10/Cicada, APT27/Emissary
+  Panda, APT29/Nobelium/Cozy Bear, APT31, DarkSide, BlackMatter, FIN6, FIN7, Harvester,
+  Karakurt, Lancyfly, Lazarus, Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE
+  PRESIDENT/TA416/RedDelta), RedEyes, UNC5221, UTA0178. Volt Typhoon - Software Association:
+  Akira, AvosLocker, Clop, Conti, GhostShell, Hafnium, LockBit, Play, Quantum, Ransom
+  Cartel -- #TrendingThreat #Russia #Ukraine -- Atomics T1560.001 Test#1 Atomics T1560.001
+  Test#2 Atomics T1560.001 Test#3 Atomics T1560.001 Test#4'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- collection:archive collected data:archive via utility
+technique_id:
+- T1560.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://askleo.com/why-spammers-love-zip-files-and-how-you-need-to-stay-safe/

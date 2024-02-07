@@ -1,0 +1,18 @@
+id: '1117.15331'
+title: MSIExec Install MSI File
+description: 'The Windows Installer technology uses Msiexec.exe for installing MSI
+  and MSP packages. This tool gives you full control over the installation process.
+  -- Threat Actor Association: APT-K-47/Mysterious Elephant, APT36, TA505 -- Software
+  Association: Clop, DirtyMoe, Hive, MirrorBlast, Qakbot/Qbot, Yellow Cockatoo/Jupiter
+  Infostealer, Zloader -- LOLBAS -- Atomics T1218.007 Test #1 Atomics T1218.007 Test
+  #2 Atomics T1218.007 Test #3 Atomics T1218.007 Test #4'
+logic_format: Splunk
+logic: '[insert rule logic here]| table _time, host, user * `hec_collect`'
+techniques:
+- defense-evasion:system binary proxy execution:msiexec
+technique_id:
+- T1218.007
+data_category:
+- Windows event logs
+references:
+- https://news.sophos.com/en-us/2020/05/21/ragnar-locker-ransomware-deploys-virtual-machine-to-dodge-security/
