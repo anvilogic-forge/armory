@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
   | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - command-and-control:remote access software
-technique_id: null
+technique_id: 
+- T1219
 data_category:
 - Process command-line parameters
 - Windows Sysmon
