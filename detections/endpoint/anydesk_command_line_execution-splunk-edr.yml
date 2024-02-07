@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(AnyDesk) (TERM(cmd) OR 
   host '
 techniques:
 - command-and-control:remote access software
-technique_id: null
+technique_id: 
+- T1219
 data_category:
 - Process command-line parameters
 - EDR Logs
