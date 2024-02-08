@@ -6,7 +6,8 @@ logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) a
   event_name = ''compute.images.insert'' '
 techniques:
 - persistence:implant internal image
-technique_id: null
+technique_id: 
+- T1525
 data_category:
 - GCP audit logs
 references: null
