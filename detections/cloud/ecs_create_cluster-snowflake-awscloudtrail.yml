@@ -14,7 +14,8 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
 techniques:
 - defense-evasion:deploy container
 - execution:deploy container
-technique_id: null
+technique_id: 
+- T1610
 data_category:
 - AWS CloudTrail logs
 references:
