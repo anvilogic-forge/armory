@@ -21,7 +21,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (EventCode=5156 OR "Eve
   "(?i)(powershell|cmd)\.exe") '
 techniques:
 - command-and-control:non-application layer protocol
-technique_id: null
+technique_id: 
+- T1095
 data_category:
 - Windows event logs
 references:
