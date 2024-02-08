@@ -10,7 +10,8 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
   = 'AuthorizeSecurityGroupIngress'
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category:
 - AWS CloudTrail logs
 references:
