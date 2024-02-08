@@ -11,6 +11,7 @@ techniques:
 - discovery:cloud service discovery
 technique_id:
 - T1069.003
+- T1526
 data_category:
 - AWS CloudTrail logs
 references:
