@@ -15,7 +15,8 @@ logic: '`get_web_data` `get_web_data_waf` dest_ip IN(10.0.0.0/8, 172.16.0.0/12, 
   | rename src_Country as src_country '
 techniques:
 - initial-access:exploit public-facing application
-technique_id: null
+technique_id: 
+- T1190
 data_category:
 - Web application firewall logs
 references:
