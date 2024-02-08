@@ -10,7 +10,9 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and t
 techniques:
 - credential-access:forced authentication
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1187
+- T1078
 data_category:
 - Authentication logs
 references: null
