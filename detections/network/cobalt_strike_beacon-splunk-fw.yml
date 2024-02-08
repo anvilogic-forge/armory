@@ -25,7 +25,8 @@ logic: '`get_network_data` `get_network_data_fw` NOT (dest_ip IN(10.0.0.0/8, 172
   | rename dest_Country as dest_country '
 techniques:
 - command-and-control:application layer protocol
-technique_id: null
+technique_id: 
+- T1095
 data_category:
 - Network device logs
 references:
