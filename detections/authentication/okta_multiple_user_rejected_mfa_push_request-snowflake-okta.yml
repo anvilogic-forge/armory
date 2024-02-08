@@ -10,7 +10,8 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and t
   and reason ilike ''INVALID_CREDENTIALS'' and debug_data ilike ''%OKTA_VERIFY_PUSH%'') '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Authentication logs
 references: null
