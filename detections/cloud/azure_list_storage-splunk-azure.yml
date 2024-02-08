@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_storage` operationName IN(ListBlobs, Li
   dc_storage_name > 0 OR dc_src_ip > 0 '
 techniques:
 - discovery:cloud infrastructure discovery
-technique_id: null
+technique_id: 
+- T1580
 data_category:
 - Azure activity logs
 references:
