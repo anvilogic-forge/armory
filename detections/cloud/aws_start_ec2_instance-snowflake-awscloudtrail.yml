@@ -7,7 +7,8 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
   and event_name = 'StartInstances' and cloud_service = 'ec2.amazonaws.com'
 techniques:
 - defense-evasion:modify cloud compute infrastructure
-technique_id: null
+technique_id: 
+- T1578
 data_category:
 - AWS CloudTrail logs
 references: null
