@@ -13,7 +13,9 @@ logic: '`get_network_data` `get_network_data_fw` action=allowed NOT (dest_ip IN 
 techniques:
 - exfiltration:automated exfiltration
 - exfiltration:data transfer size limits
-technique_id: null
+technique_id: 
+- T1020
+- T1030
 data_category:
 - Network device logs
 references: null
