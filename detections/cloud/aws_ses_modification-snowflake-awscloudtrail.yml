@@ -8,7 +8,9 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
 techniques:
 - discovery:permission groups discovery
 - discovery:account discovery
-technique_id: null
+technique_id: 
+- T1069
+- T1087
 data_category:
 - AWS CloudTrail logs
 references:
