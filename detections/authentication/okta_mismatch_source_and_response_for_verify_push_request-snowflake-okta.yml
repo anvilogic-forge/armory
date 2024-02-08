@@ -10,7 +10,8 @@ logic: select * from okta where event_time > dateadd(hour, -2, sysdate()) and to
   or event_type ilike 'system.push.send_factor_verify_push'
 techniques:
 - credential-access:multi-factor authentication request generation
-technique_id: null
+technique_id: 
+- T1621
 data_category:
 - Authentication logs
 references:
