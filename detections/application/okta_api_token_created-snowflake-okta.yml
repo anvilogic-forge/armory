@@ -9,7 +9,9 @@ techniques:
 - defense-evasion:use alternate authentication material:application access token
 - defense-evasion:use alternate authentication material
 technique_id:
+- T1606
 - T1550.001
+- T1550
 data_category:
 - Application logs
 references:
