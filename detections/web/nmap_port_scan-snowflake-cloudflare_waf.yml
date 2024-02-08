@@ -13,7 +13,8 @@ logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdat
   ''i'') '
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - Web application firewall logs
 references:
