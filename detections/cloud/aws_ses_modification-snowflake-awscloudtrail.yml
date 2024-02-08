@@ -1,0 +1,15 @@
+id: '15676.23288'
+title: AWS SES Modification
+description: Threat identifier for AWS API calls, GetAccount and ListIdentities to
+  identify potential SES enumeration.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and (event_name = 'VerifyEmailIdentity' or event_name = 'UpdateAccountSendingEnabled')
+techniques:
+- discovery:permission groups discovery
+- discovery:account discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

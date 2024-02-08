@@ -1,0 +1,18 @@
+id: '23802.43781'
+title: Python Script with URL Argument - *nix
+description: This use case detects when a URL is supplied to an argument to a Python
+  script in suspicious locations (/Users/, /tmp/, /var/tmp/, or /private/tmp/) via
+  the command line.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(python) ("tp://" OR "tps://")
+  ("/Users/" OR "/tmp/") | where match(process, "(?i)python.*tps?://") and match (process,
+  "(?i)/(Users|(/(var|private)/)?tmp)/") and match(process_name, "(?i)zsh|bash|sh|tcsh|csh|ksh")
+  | table _time, host, user | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:python
+- execution:command and scripting interpreter
+technique_id:
+- T1059.006
+data_category:
+- Linux audit logs
+references: null

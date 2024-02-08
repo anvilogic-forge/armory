@@ -1,0 +1,22 @@
+id: '12911.18539'
+title: IcedID Discovery Commands
+description: IcedID may automatically run several initial discovery commands that
+  provided environmental information about the host, network, and domain. This use
+  case looks for a combination of those commands commonly seen after IcedID is executed.
+  - Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process_path, ''.*((nltest|ipconfig|systeminfo|net1?)\\\.exe).*'',
+  ''i'') '
+techniques:
+- discovery:permission groups discovery:domain groups
+- discovery:network share discovery
+- discovery:account discovery
+- discovery:system information discovery
+- collection:automated collection
+technique_id:
+- T1069.002
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2022/04/25/quantum-ransomware/

@@ -1,0 +1,25 @@
+id: '18431.31377'
+title: WinLogon Registry Key Modified
+description: 'Malicious modifications to specific registry keys may cause Winlogon
+  to load and execute malicious DLLs and/or executables. Adversaries may take advantage
+  of these features to repeatedly execute malicious code and establish persistence.
+  This use case detects modifications to registry values affecting Winlogon behaviors
+  that can be abused to achieve persistence. -- Software Association: Akira -- Atomics
+  T1547.004 Test #1 Atomics T1547.004 Test #2 Atomics T1547.004 Test #3 Atomics T1547.004
+  Test #4 Atomics T1547.004 Test #5 Atomics T1547.001 Test #14 Atomics T1547.001 Test
+  #15'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") (TERM(Set-ItemProperty)
+  OR TERM(sp)) ("HKLM" OR "HKEY_LOCAL_MACHINE" OR "HKCU" OR "HKEY_CURRENT_USER") "WinLogon"
+  | table _time, host, user, parent_process*, process, process_*, signature_id, user_id
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:boot or logon autostart execution:winlogon helper dll
+- privilege-escalation:boot or logon autostart execution:winlogon helper dll
+technique_id:
+- T1547.004
+data_category:
+- PowerShell logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.004/T1547.004.md#atomic-test-1---winlogon-shell-key-persistence---powershell

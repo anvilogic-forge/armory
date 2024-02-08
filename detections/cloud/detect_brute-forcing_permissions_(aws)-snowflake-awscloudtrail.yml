@@ -1,0 +1,23 @@
+id: '5036.13631'
+title: Detect Brute-Forcing Permissions (AWS)
+description: Permissions let you specify access to AWS resources. Permissions are
+  granted to IAM entities (users, groups, and roles) and by default, these entities
+  start with no permissions. In other words, IAM entities can do nothing in AWS until
+  you grant them your desired permissions. To give entities permissions, you can attach
+  a policy that specifies the type of access, the actions that can be performed, and
+  the resources on which the actions can be performed. In addition, you can specify
+  any conditions that must be set for access to be allowed or denied. If an attacker
+  has your ID, various attack scenarios become feasible, including resource enumeration
+  (identifying existing roles, users, and permissions.) In order to find the permissions
+  for a certain user, there is a brute-forcing technique which consists in making
+  all the possible AWS API calls.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and identity_type = 'IAMUser' and event_type = 'AwsApiCall'
+techniques:
+- discovery:permission groups discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://hackingthe.cloud/aws/enumeration/brute_force_iam_permissions/

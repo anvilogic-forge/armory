@@ -1,0 +1,28 @@
+id: '27059.49379'
+title: DLL Called with Uncommon Function
+description: DLLs can invoke a variety of functions when executed. While these functions
+  are part of legitimate Windows operations, their execution from a DLL file, especially
+  in an unusual context, can be indicative of malicious behavior. Threat actors including
+  Qbot have been observed abusing this technique when calling DLLs with rundll32.exe.
+  This use case detects calls of uncommon functions from DLL files, accounting for
+  instances where rundll32.exe has been renamed. While these function calls may be
+  legitimate, unexpected executions should be investigated. Living Off the Land Binary
+  and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ".dll" ("RS32" OR "VirtualAllocEx" OR "NtUnmapViewOfSection"
+  OR "CreateRemoteThread" OR "RtlCreateUserThread" OR "DeviceIoControl" OR "WriteProcessMemory"
+  OR "CryptEncrypt" OR "CryptDecrypt" OR "RegSetValueEx" OR "SetWindowsHookEx" OR
+  "DLLRegisterServer") | rex field=process "\.dll,(?<called_function>[^\s]+)"| where
+  match(process, "(?i)\.dll\,(RS32|VirtualAllocEx|NtUnmapViewOfSection|CreateRemoteThread|RtlCreateUserThread|DeviceIoControl|WriteProcessMemory|CryptEncrypt|CryptDecrypt|RegSetValueEx|SetWindowsHookEx|DLLRegisterServer)")
+  | table _time, host, user, process, process_*, parent_process, parent_process_*,
+  called_function | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://redcanary.com/blog/lolbins-abuse/

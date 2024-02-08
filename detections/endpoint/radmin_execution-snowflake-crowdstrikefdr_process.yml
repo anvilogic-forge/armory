@@ -1,0 +1,18 @@
+id: '8155.14730'
+title: Radmin execution
+description: Adversaries may gain access to and use third-party software suites installed
+  within an enterprise network, such as administration, monitoring, and deployment
+  systems, to move laterally through the network. Radmin is a remote management software
+  that can be used to remotely control workstations. Silence Atomics T1072 Test#1
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and (process_path ilike ''%radmin.exe''
+  or regexp_like(process, ''.*[^a-z]\\\/connect:.*'', ''i'')) '
+techniques:
+- execution:software deployment tools
+- lateral-movement:software deployment tools
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.group-ib.com/resources/threat-research/silence_moving-into-the-darkside.pdf

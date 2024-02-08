@@ -1,0 +1,15 @@
+id: '10685.14365'
+title: VPCFlow Accepted Inbound SSH
+description: 'This use case monitors inbound ssh connections over vpc flows. -- Threat
+  Actor Association: Sandworm (UAC-0165)'
+logic_format: snowflake
+logic: 'select * from vpcflow where to_timestamp(date_part(epoch_second, start_time))
+  > $earliest$ and dest_port=22 and direction=''ingress'' and action=''ACCEPT'' and
+  log_status!=''NO DATA'' '
+techniques:
+- initial-access:external remote services
+- initial-access:exploit public-facing application
+technique_id: null
+data_category:
+- Netflow/Enclave netflow
+references: null

@@ -1,0 +1,19 @@
+id: '5976.6321'
+title: Attrib.exe Metasploit File Dropper
+description: 'Using attrib.exe, an adversary may display or change file attributes
+  in order to bypass UAC restrictions. Metasploits file_dropper.rb, which is include
+  in some payloads uses this to assist in removing artifacts. -- Software Association:
+  TargetCompany'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ("EventCode=4688" OR "<EventID>4688<")
+  TERM(attrib) AND TERM(dll) | regex process="attrib.+?\.dll" | table _time, host,
+  user parent_*, process, process_*, signature_id | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:hide artifacts
+technique_id: null
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://github.com/rapid7/metasploit-framework/blob/master/lib/msf/core/exploit/file_dropper.rb

@@ -1,0 +1,22 @@
+id: '5997.13818'
+title: Execution from Startup Folder
+description: 'Adversaries may achieve persistence by adding a program to a startup
+  folder. This use case looks for executions of processes that reside in those folders.
+  NOTE, this use case will not identify the creation or execution of shortcuts(lnks)
+  saved in the startup folder. -- Threat Actor Association: APT29/Nobelium, Kimsuky,
+  Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE PRESIDENT/TA416/RedDelta),
+  UNC2465 - Software Association: Play, SmokedHAM, YellowCockatoo --'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` TERM(Startup) | table _time,
+  host, user process, process_*, signature_id, parent_* | bin span=1s | stats values(*)
+  as * by _time, host | where match(parent_process_path, "(?i)\QMicrosoft\Windows\Start
+  Menu\Programs\StartUp\E") OR match(process_path, "(?i)\QMicrosoft\Windows\Start
+  Menu\Programs\StartUp\E") '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+technique_id:
+- T1547.001
+data_category:
+- EDR Logs
+references:
+- https://www.fireeye.com/blog/threat-research/2014/11/operation_doubletap.html

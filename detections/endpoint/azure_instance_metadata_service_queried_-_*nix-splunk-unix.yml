@@ -1,0 +1,22 @@
+id: '25104.46688'
+title: Azure Instance Metadata Service Queried - *nix
+description: The Azure Instance Metadata Service (IMDS) provides information about
+  currently running virtual machine instances and can be used to manage and configure
+  virtual machines. This information includes the SKU, storage, network configurations,
+  and upcoming maintenance events. Attackers can query the available data to gain
+  context on the environment and leverage the information to move laterally. This
+  use case detects queries to http://169.254.169.254/metadata/instance with the header
+  Metadata:true.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(curl) "Metadata:true" "http://169.254.169.254/metadata/instance"
+  | table _time, host, user process, process_* | bin span=1s | stats values(*) as
+  * by _time, host '
+techniques:
+- credential-access:unsecured credentials:cloud instance metadata api
+technique_id:
+- T1552.005
+data_category:
+- Linux audit logs
+references:
+- https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service?tabs=linux
+- https://www.microsoft.com/en-us/security/blog/2023/10/03/defending-new-vectors-threat-actors-attempt-sql-server-to-cloud-lateral-movement/

@@ -1,0 +1,17 @@
+id: '6387.13670'
+title: AWS CreateUser
+description: 'This use case looks for when a new IAM user for your AWS account. Adversaries
+  may leverage IAM resources in order to create users with higher access. -- Threat
+  Actor Association: GUI-vil, LUCR-3 -- Atomics T1136.003 Test#1'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_name = 'CreateUser'
+techniques:
+- persistence:create account:cloud account
+technique_id:
+- T1136.003
+data_category:
+- AWS CloudTrail logs
+references:
+- http://andresriancho.github.io/nimbostratus/pivoting-in-amazon-clouds.pdf
+- https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreateUser.html

@@ -1,0 +1,21 @@
+id: '5850.18101'
+title: Rundll32.exe as Parent Process
+description: 'Adversaries may abuse rundll32.exe to proxy execution of malicious code.
+  Using rundll32.exe, may avoid triggering security tools that may not monitor execution
+  of the rundll32.exe process because of allowlists or false positives from normal
+  operations. Rundll32.exe is commonly associated with executing DLL payloads. Threat
+  Actor Association: MuddyWater, TA505, Wizard Spider - Software Association: Bazar,
+  Clop, Conti, Quantum, Rhysida, Trickbot'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ("EventCode=1" OR "<EventID>1<")
+  TERM(rundll32) | regex parent_process_name="(?i)(rundll32)" | table _time, host,
+  user parent_*, process, process_*, signature_id | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- Windows Sysmon
+references:
+- https://redcanary.com/threat-detection-report/techniques/rundll32/

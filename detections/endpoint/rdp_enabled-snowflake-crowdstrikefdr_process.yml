@@ -1,0 +1,25 @@
+id: '1106.14551'
+title: RDP Enabled
+description: 'Detects if RDP service has been enabled on Windows host -- Threat Actor
+  Association: APT35/Phosphorus/Magic Hound, DarkSide, BlackMatter, FIN7, TA551, Wizard
+  Spider, Yanluowang -- Software Association: BianLian, Black Basta, Conti, Hive,
+  IcedID, Insekt, Lockbit, Nefilim, Ryuk Ransomware, Sodinokibi/REvil'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and ((process_path ilike '%reg.exe' and regexp_like(process,
+  '.*[^a-z]add[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]fDenyTSConnections[^a-z].*',
+  'i') and regexp_like(process, '.*[^a-z]REG_DWORD[^a-z].*', 'i') and regexp_like(process,
+  '.*[^a-z]/d[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]0.*', 'i') and regexp_like(process,
+  '.*[^a-z]Terminal[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]server[^a-z].*',
+  'i')) or (process_path ilike '%netsh.exe' and regexp_like(process, '.*[^a-z]remote[^a-z].*',
+  'i') and regexp_like(process, '.*[^a-z]desktop[^a-z].*', 'i') and regexp_like(process,
+  '.*[^a-z]enable=yes.*', 'i')))
+techniques:
+- defense-evasion:modify registry
+- lateral-movement:remote services:remote desktop protocol
+technique_id:
+- T1021.001
+data_category:
+- EDR Logs
+references:
+- https://pureinfotech.com/enable-remote-desktop-command-prompt-windows-10/

@@ -1,0 +1,22 @@
+id: '5986.18206'
+title: Access Common Package Config file
+description: 'Adversaries may establish persistence and/or elevate privileges using
+  system mechanisms that trigger execution based on specific events. An Adversary
+  with access could identify or modify configuration of packages in order to execute
+  code and evade defenses. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ("EventCode=1" OR "<EventID>1<")
+  (TERM(vi) OR TERM(vim) OR TERM(nano) OR TERM(visudo) OR TERM(edit) OR (TERM(copy)
+  TERM(con)) OR TERM(cat) OR TERM(more) OR TERM(gc) OR TERM(get-Content) OR ">>" OR
+  ">") ("requirements.txt" OR "pip.conf" OR "package.json" OR "gemspec" OR "gemrc")
+  | regex process="(?i)(vi|vim|nano|visudo|edit|copy\s+con|cat|more|gc|get-content|type|\>\>|\>)\s+.+(requirements\.txt|pip\.conf|package.json|\.gemspec|gemrc)"
+  | table _time, host, user, process, process_*, parent_*, signature_id | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- persistence:event triggered execution
+- privilege-escalation:event triggered execution
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610

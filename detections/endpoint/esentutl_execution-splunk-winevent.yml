@@ -1,0 +1,28 @@
+id: '6147.6666'
+title: Esentutl Execution
+description: 'Esentutl is a command-line tool that provides database utilities for
+  the Windows Extensible Storage Engine. This use case looks for esentutl execution
+  or from an executable running common process command line switches used by adversaries.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN) Threat Actor Association:
+  Wizard Spider Software Association: Bazar, Conti, Trickbot Atomics T1003.002 Test
+  #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ( "esentutl.exe" OR (".exe" "/y" "/d") OR "esentutl"
+  ) | regex process="(?i)(esentutl|\.exe)\"?\s.*\/y\s.*\/d\s" | table _time, host,
+  user, signature_id, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+- credential-access:os credential dumping:security account manager
+- credential-access:os credential dumping:ntds
+- lateral-movement:lateral tool transfer
+- defense-evasion:hide artifacts
+technique_id:
+- T1003.002
+- T1003.003
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://www.fireeye.com/blog/threat-research/2018/09/apt10-targeting-japanese-corporations-using-updated-ttps.html

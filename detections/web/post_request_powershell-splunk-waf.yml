@@ -1,0 +1,22 @@
+id: '15659.23259'
+title: POST request PowerShell
+description: 'Remote PowerShell logs similar to log entries for OWASSRF exploitation
+  (CVE-2022-41080 and CVE-2022-41082) to gain initial access, suggesting the attacker
+  leveraged Remote PowerShell. -- Threat Actor Association: Magic Hound (aka APT35,
+  Charming Kitten, Phosphorus, and Mint Sandstorm) -- Software Association: Cuba,
+  Play'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` ("POST" "powershell") | table _time, host,
+  user, bytes, bytes_in, bytes_out, action, status, site, http_method, http_user_agent,
+  http_referrer, uri, uri_path, uri_query, client_ip, src_ip, dest_ip, dest_port,
+  src_port | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- initial-access:external remote services
+- initial-access:exploit public-facing application
+technique_id:
+- T1059.001
+data_category:
+- Web application firewall logs
+references:
+- https://www.crowdstrike.com/blog/owassrf-exploit-analysis-and-recommendations/

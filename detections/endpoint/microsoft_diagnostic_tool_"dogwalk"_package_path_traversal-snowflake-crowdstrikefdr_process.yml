@@ -1,0 +1,20 @@
+id: '11280.15743'
+title: Microsoft Diagnostic Tool "DogWalk" Package Path Traversal
+description: The vulnerability lies in the Microsoft Diagnostic Tool's sdiageng.dll
+  library, which takes the attacker-supplied folder path from the package configuration
+  XML file inside the diagcab archive, and copies all files from that folder to a
+  local temporary folder. During this process, it enumerates files in attacker's folder,
+  gets the file name for each of them, then glues together the local temporary path
+  and that file name to generate the local path on the computer where the file is
+  to be created.
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and process_path ilike '%msdt.exe' and (process ilike
+  '%cab%' or process ilike '%diagcab%')
+techniques:
+- execution:user execution
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://blog.0patch.com/2022/06/microsoft-diagnostic-tools-dogwalk.html

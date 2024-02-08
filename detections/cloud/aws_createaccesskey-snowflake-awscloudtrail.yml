@@ -1,0 +1,15 @@
+id: '6390.13673'
+title: AWS CreateAccessKey
+description: 'This use case looks for when an access key has been created. Attackers
+  may create access keys in order to establish long term access. -- Threat Actor Association:
+  GUI-vil, LUCR-3'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_name = 'CreateAccessKey'
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- http://andresriancho.github.io/nimbostratus/pivoting-in-amazon-clouds.pdf

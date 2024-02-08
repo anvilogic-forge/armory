@@ -1,0 +1,19 @@
+id: '6142.6639'
+title: 1 or 2 Character Executable
+description: 'Adversaries have been known to occasionally use executable files named
+  with only 1 or 2 word characters. - Threat Actor Association: Lotus Blossom, OilRig,
+  Trigona, Volt Typhoon'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process OR TERM(ingress.event.procstart)) NOT "sc.exe"
+  | where match(parent_process_name, "(?i)^\w{1,2}\.exe") OR match(process_name, "(?i)^\w{1,2}\.exe")
+  | table _time, host, user, signature_id, process, process_*, parent_process_* |
+  bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- defense-evasion:masquerading
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://www.proofpoint.com/us/threat-insight/post/operation-rat-cook-chinese-apt-actors-use-fake-game-thrones-leaks-lures

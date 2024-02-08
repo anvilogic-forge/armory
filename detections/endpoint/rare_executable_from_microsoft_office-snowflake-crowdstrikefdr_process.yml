@@ -1,0 +1,17 @@
+id: '11211.15638'
+title: Rare executable from Microsoft Office
+description: 'This use case looks for suspicious behavior from Microsoft office products.
+  Filters for rarer executable files launched from a Microsoft Office product. - Threat
+  Actor Association: Evilnum - Software Association: GlowSand.'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(parent_process_name, ''.*((WINWORD\.EXE)|(EXCEL\.EXE)|(POWERPNT\.EXE)|(MSACCESS\.EXE)|(OUTLOOK\.EXE)|(VISIO\.EXE)|(WINPROJ\.EXE)|(wordpad\.exe)).*'',
+  ''i'') '
+techniques:
+- execution:user execution:malicious file
+technique_id:
+- T1204.002
+data_category:
+- EDR Logs
+references:
+- https://borncity.com/win/2022/06/02/searchnightmare-windows-10-search-ms-uri-handler-0-day-exploit-mit-office-2019/

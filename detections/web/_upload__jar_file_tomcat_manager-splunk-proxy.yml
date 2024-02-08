@@ -1,0 +1,20 @@
+id: '1080.1118'
+title: ' Upload  JAR File Tomcat Manager'
+description: 'A local file upload vulnerability is a vulnerability where an application
+  allows a user to upload a malicious file directly which is then executed. -- Threat
+  Actor Association: Volt Typhoon (Bronze Silhouette, Vanguard Panda)'
+logic_format: Splunk
+logic: '`get_web_data` (TERM(/manager/html/upload) AND status=200 AND TERM(*.war)
+  AND http_method=POST) | table _time, host, user uri_path, src_ip, user, status,
+  http_method | bin span=1s | stats values(*) as * by _time, host | lookup dnslookup
+  clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip
+  | rename src_Country as src_country '
+techniques:
+- command-and-control:ingress tool transfer
+- lateral-movement:lateral tool transfer
+technique_id: null
+data_category:
+- Web proxy
+references:
+- https://attack.mitre.org/techniques/T1105/
+- https://attack.mitre.org/techniques/T1570/

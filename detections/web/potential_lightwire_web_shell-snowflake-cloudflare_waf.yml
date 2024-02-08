@@ -1,0 +1,23 @@
+id: '27653.50280'
+title: Potential LIGHTWIRE Web Shell
+description: Adversaries may backdoor web servers with web shells to establish persistent
+  access to systems. A Web shell is a Web script that is placed on an openly accessible
+  Web server to allow an adversary to use the Web server as a gateway into a network.
+  A Web shell may provide a set of functions to execute or a command-line interface
+  on the system that hosts the Web server. LIGHTWIRE is a web shell written in Perl
+  CGI that is embedded into a legitimate Secure Connect file to enable arbitrary command
+  execution. It has been associated with threat actors exploiting Ivanti vulnerabilities.
+logic_format: snowflake
+logic: select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and status = '200'
+  and (http_method ilike 'POST' or http_method ilike 'PUT') and bytes_out > 500 and
+  (regexp_like(uri_path, '.*(\\\.pl|cgi|perl).*', 'i') and (uri_path ilike '%compcheckresult.cgi%'
+  and uri_query ilike '%comp=comp%' and uri_query ilike '%compid=%'))
+techniques:
+- persistence:server software component:web shell
+technique_id:
+- T1505.003
+data_category:
+- Web application firewall logs
+references:
+- https://us-cert.cisa.gov/ncas/alerts/TA15-314A

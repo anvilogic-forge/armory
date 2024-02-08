@@ -1,0 +1,20 @@
+id: '5029.24842'
+title: Csplit_Split Small Data Staged for Exfil
+description: 'Identify use of csplit or split, in order to chunk web server data into
+  smaller files for later exfiltration. Atomics T1030 Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(split) OR TERM(csplit))
+  OR (( TERM(cp) OR TERM(mv) OR TERM(gcp) OR TERM(rsync)) AND ((TERM(html) AND TERM(var)
+  AND TERM(www)) OR TERM(tomcat) OR TERM(nginx) OR TERM(htdocs))) | table _time, host,
+  user, process | bin span=300s | stats values(*) as * by _time, host | where (match(process,
+  "(?i)(split|csplit)\s") AND match(process, "(?i)(-b|cp|mv|gcp|rsync)\s.+(html|tomcat|nginx|htdocs)")) '
+techniques:
+- collection:data staged:local data staging
+- exfiltration:data transfer size limits
+technique_id:
+- T1074.001
+data_category:
+- EDR Logs
+references:
+- https://www.geeksforgeeks.org/csplit-command-in-linux-with-examples/
+- https://www.geeksforgeeks.org/split-command-in-linux-with-examples/

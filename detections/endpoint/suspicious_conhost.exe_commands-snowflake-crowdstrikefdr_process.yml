@@ -1,0 +1,21 @@
+id: '17711.29663'
+title: Suspicious Conhost.exe Commands
+description: 'Adversaries may abuse utilities that allow for command execution to
+  bypass security restrictions that limit the use of command-line interpreters. This
+  use case detects commands using conhost.exe to launch other executables, which may
+  be used by adversaries to evade detection and bypass restrictions. -- Software Association:
+  Qakbot -- Atomics T1202 Test #3'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*conhost\\\.exe.*?\\\.exe.*'',
+  ''i'') '
+techniques:
+- defense-evasion:indirect command execution
+- defense-evasion:exploitation for defense evasion
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- http://www.hexacorn.com/blog/2020/05/25/how-to-con-your-host/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1202/T1202.md#atomic-test-3---indirect-command-execution---conhostexe

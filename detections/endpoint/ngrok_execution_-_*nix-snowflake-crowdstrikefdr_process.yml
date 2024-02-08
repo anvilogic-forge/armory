@@ -1,0 +1,21 @@
+id: '20695.36855'
+title: ngrok Execution - *nix
+description: Ngrok is a legitimate reverse proxy tool that can create a secure tunnel
+  to servers located behind firewalls or on local machines that do not have a public
+  IP. Ngrok has been leveraged by threat actors in several campaigns including use
+  for lateral movement and data exfiltration.
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (event_platform
+  ilike '%Lin%' or event_platform ilike '%Mac%') and (process_path ilike '%ngrok%'
+  or regexp_like(process, '.*(tcp\\\s+(139|445|3389|5985|5986))|(authtoken\\\s|start\\\s+--all).*',
+  'i') or (process ilike '%start%' and process ilike '%--all%' and process ilike '%--config%'
+  and process ilike '%.yml%'))
+techniques:
+- command-and-control:proxy
+- command-and-control:protocol tunneling
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.006/T1059.006.md

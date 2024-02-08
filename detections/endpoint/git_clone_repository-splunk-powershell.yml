@@ -1,0 +1,19 @@
+id: '6100.6572'
+title: Git Clone Repository
+description: Git is a free and open source distributed version control system designed
+  to handle everything from small to very large projects with speed and efficiency.
+  Recent vulnerabilities identified would allow adversaries remote code execution
+  after cloning a repo. GIT-LFS CVE-2020-27955
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(<EventID>4104<)) (TERM(git) OR TERM(GH)) TERM(clone) | table _time, host, user,
+  signature_id, process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://exploitbox.io/vuln/Git-Git-LFS-RCE-Exploit-CVE-2020-27955.html

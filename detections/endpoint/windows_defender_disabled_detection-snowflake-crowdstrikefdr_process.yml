@@ -1,0 +1,27 @@
+id: '1044.14586'
+title: Windows Defender Disabled Detection
+description: 'An attacker could disable security tools to avoid possible detection
+  of their tools and activities. This can take the form of killing security software,
+  real-time monitoring or Windows Defender Service. -- Threat Actor Association: FIN6,
+  FIN11, Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm),
+  Vice Society, Wizard Spider -- Software Association: Bazarloader, BianLian, Blackbyte,
+  Black Basta, Clop, Conti, DirtyMoe, Lockbit, Sodinokibi/REvil, Vice Society, WhisperGates
+  -- #TrendingThreat #Russia #Ukraine - Atomics T1588.002 Test #1'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and (((regexp_like(process, '.*[^a-z]-DisableRealtimeMonitoring[^a-z].*',
+  'i') OR regexp_like(process, '.*[^a-z]-drtm[^a-z].*', 'i')) and regexp_like(process,
+  '.*[^a-z]true.*', 'i')) OR (process_path ilike '%reg.exe' and regexp_like(process,
+  '.*[^a-z]add[^a-z].*', 'i') and process ilike '%windows defender%' and regexp_like(process,
+  '.*[^a-z]DisableAntiSpyware.*', 'i') and process ilike '%/d 1%') OR ((process_path
+  ilike '%sc.exe' or process_path ilike '%net.exe' or process_path ilike '%net1.exe'
+  or regexp_like(process, '.*Stop-Service[^a-z].*', 'i') ) and regexp_like(process,
+  '.*[^a-z]windows[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]defender.*', 'i')))
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1562.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/swagkarna/Defeat-Defender

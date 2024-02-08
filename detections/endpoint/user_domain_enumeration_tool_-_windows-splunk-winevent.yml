@@ -1,0 +1,26 @@
+id: '17165.27785'
+title: User_Domain Enumeration Tool - Windows
+description: 'Adversaries may attempt to get a listing of domain accounts. This information
+  can help adversaries determine which domain accounts exist to aid in follow-on behavior.
+  This use case detects the execution of ADSISearcher or ADFind or parameters filtering
+  for user or domain enumeration. -- Threat Actor Association: Alloy Taurus/Gallium
+  -- Atomics T1087.002 Test #7 Atomics T1087.002 Test #12 Atomics T1087.002 Test #13
+  Atomics T1087.002 Test #14 Atomics T1087.002 Test #16'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(adsisearcher) OR "adsisearcher") OR (TERM(adfind)
+  OR "adfind") OR (TERM(kerbrute) OR "kerbrute") ("searchroot" OR "objectcategory="
+  OR "userenum") | regex process="(?i)searchroot|objectcategory=|userenum" | table
+  _time, host, user, user, process | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- discovery:account discovery:domain account
+- discovery:account discovery
+- persistence:create account:domain account
+technique_id:
+- T1087.002
+- T1136.002
+data_category:
+- Windows event logs
+references:
+- https://devblogs.microsoft.com/scripting/use-the-powershell-adsisearcher-type-accelerator-to-search-active-directory/

@@ -1,0 +1,21 @@
+id: '6358.14658'
+title: WinSCP Execution
+description: 'WinSCP is an open source free SFTP client, FTP client, WebDAV client,
+  S3 client and SCP client for Windows. Its main function is file transfer between
+  a local and a remote computer. Adversaries have been known to use winscp in order
+  to exfiltrate data. - Threat Actor Association: BlueNoroff, Lazarus, Stonefly, Wizard
+  Spider -- Software Association: Akira, Bazar, Conti, LockBit, Play, Rhysida'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and (process_path ilike '%winscp.exe' or regexp_like(process,
+  '.*[^a-z]\\\/(command|script)[^a-z].*', 'i'))
+techniques:
+- exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
+  non-c2 protocol
+technique_id:
+- T1048.003
+data_category:
+- EDR Logs
+references:
+- https://www.mcafee.com/blogs/other-blogs/mcafee-labs/darkside-ransomware-victims-sold-short/
+- https://winscp.net/eng/docs/introduction

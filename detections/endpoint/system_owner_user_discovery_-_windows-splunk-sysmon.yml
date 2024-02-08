@@ -1,0 +1,23 @@
+id: '13454.19255'
+title: System Owner_User Discovery - Windows
+description: 'Adversaries may attempt to identify the primary user, currently logged
+  in user, set of users that commonly uses a system, or whether a user is actively
+  using the system. Adversaries may use the information during automated discovery
+  to direct follow-on behaviors, including whether or not the adversary fully infects
+  the target and/or attempts specific actions. This use case detects when reconnaissance
+  commands specifically targeting discovery of system owners and users are executed
+  in a short period of time. -- Threat Actor Association: Alloy Taurus/Gallium, APT28/Fancy
+  Bear, FIN8 - Software Association: Play, Rhysida -- Atomics T1033 Test #1'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("whoami" OR "useraccount" OR "quser" OR "qwinsta.exe" ) | regex process="(?i)(whoami|useraccount|quser|qwinsta)"
+  | table _time, host, user process, process_*, parent_process, parent_process_*,
+  src_*, dest_* | bin span=60s | stats values(*) as * by _time, host, user | streamstats
+  dc(process_name) as dc_process_name by _time, host | where dc_process_name>2 '
+techniques:
+- discovery:system owner/user discovery
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1033/T1033.md#atomic-test-1---system-owneruser-discovery

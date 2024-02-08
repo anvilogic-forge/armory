@@ -1,0 +1,24 @@
+id: '24804.45866'
+title: SoftPerfect Network Scanner Execution
+description: 'SoftPerfect Network Scanner is a free port scanner that can be run without
+  installation. Due to its portability, it is an attractive tool for threat actors
+  during post-compromise discovery activities as reported by DFIR. This use case detects
+  executions of netscan.exe, netscan32.exe, or netscan64.exe. While the tool itself
+  is not considered malicious, unexpected use should be investigated as it may indicate
+  unauthorized discovery activity. -- Software Association: Akira'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "netscan" | where match(process_name, "(?i)\x5cnetscan(32|64)?\.exe")
+  or match(process_path, "(?i)\x5cnetscan_portable") | table _time, host, user, process,
+  process_*, parent_process, parent_process_*, user | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://www.softperfect.com/products/networkscanner/
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/
+- https://thedfirreport.com/2020/07/13/ransomware-again-but-we-changed-the-rdp-port/
+- https://thedfirreport.com/2023/08/28/html-smuggling-leads-to-domain-wide-ransomware/

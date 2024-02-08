@@ -1,0 +1,24 @@
+id: '20033.35683'
+title: Advanced IP Scanner Execution
+description: 'Advanced IP Scanner is a legitimate utility that can perform network
+  scanning. Several threat actors, including UNC2465, Conti, Pysa ransomware and FIN12,
+  have been reported to use Advanced IP Scanner during reconnaissance activities.
+  -- Threat Actor Association: FIN12, UNC2465 - Software Association: Akira, AvosLocker,
+  Conti, Pysa'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and process_path ilike ''%advanced_ip_scanner%''
+  or regexp_like(process, ''.*/portable.+/lng.*'', ''i'') '
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://www.huntandhackett.com/blog/advanced-ip-scanner-the-preferred-scanner-in-the-apt-toolbox
+- https://www.cybereason.com/blog/research/threat-analysis-report-inside-the-destructive-pysa-ransomware
+- https://thedfirreport.com/2021/10/04/bazarloader-and-the-conti-leaks/
+- https://thedfirreport.com/2021/03/08/bazar-drops-the-anchor/
+- https://www.mandiant.com/resources/blog/shining-a-light-on-darkside-ransomware-operations

@@ -1,0 +1,26 @@
+id: '25962.47993'
+title: SQL Server xp_cmdshell Enabled
+description: The xp_cmdshell Extended Stored Procedure in Microsoft SQL Server can
+  execute commands on the system with the same security context as SQL Server, allowing
+  attackers to escalate privileges and establish persistence as seen in attacks involving
+  BlueSky ransomware. This use case detects event 15457 (server configuration changes)
+  for MSSQLSERVER where xp_cmdshell has been enabled. While enabling xp_cmdshell does
+  not indicate malicious activity on its own, unexpected enabling of the feature should
+  be investigated due to its potential for abuse.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` EventCode="15457" "MSSQLSERVER"
+  "<Data>xp_cmdshell</Data><Data>0</Data><Data>1</Data>" | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- persistence:server software component:sql stored procedures
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1505.001
+- T1059.003
+data_category:
+- Application logs
+references:
+- https://thedfirreport.com/2023/12/04/sql-brute-force-leads-to-bluesky-ransomware/
+- https://www.microsoft.com/en-us/security/blog/2023/10/03/defending-new-vectors-threat-actors-attempt-sql-server-to-cloud-lateral-movement/
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://www.netspi.com/blog/technical/network-penetration-testing/sql-server-persistence-part-1-startup-stored-procedures/

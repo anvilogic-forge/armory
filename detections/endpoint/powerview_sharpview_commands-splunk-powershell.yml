@@ -1,0 +1,61 @@
+id: '13472.19308'
+title: PowerView_SharpView Commands
+description: 'Adversaries may attempt to identify the primary user, currently logged
+  in user, set of users that commonly uses a system, or whether a user is actively
+  using the system. PowerView and its C# implementation SharpView are a series of
+  functions that perform network and Windows domain enumeration and exploitation.
+  -- Software Association: ALPHV/BlackCat, Rhysida -- Atomics T1033 Test #3 Atomics
+  T1069.002 Test #4 Atomics T1069.002 Test #5 Atomics T1069.002 Test #6 Atomics T1069.002
+  Test #12 Atomics T1069.002 Test #13 Atomics T1087.002 Test #10 Atomics T1087.002
+  Test #11 Atomics T1135 Test #7 Atomics T1201 Test #8 Atomics T1615 Test #2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(<EventID>4104<) OR TERM(EventCode=4103) OR TERM(<EventID>4103<)) (TERM(Get-IPAddress)
+  OR TERM(Resolve-IPAddress) OR TERM(Convert-NameToSid) OR TERM(ConvertTo-SID) OR
+  TERM(Convert-SidToName) OR TERM(ConvertFrom-SID) OR TERM(Request-SPNTicket) OR TERM(Get-DomainSPNTicket)
+  OR TERM(Get-DNSZone) OR TERM(Get-DomainDNSZone) OR TERM(Get-DNSRecord) OR TERM(Get-DomainDNSRecord)
+  OR TERM(Get-NetDomain) OR TERM(Get-Domain) OR TERM(Get-NetDomainController) OR TERM(Get-DomainController)
+  OR TERM(Get-NetForest) OR TERM(Get-Forest) OR TERM(Get-NetForestDomain) OR TERM(Get-ForestDomain)
+  OR TERM(Get-NetForestCatalog) OR TERM(Get-ForestGlobalCatalog) OR TERM(Get-NetUser)
+  OR TERM(Get-DomainUser) OR TERM(Get-UserEvent) OR TERM(Get-DomainUserEvent) OR TERM(Get-NetComputer)
+  OR TERM(Get-DomainComputer) OR TERM(Get-ADObject) OR TERM(Get-DomainObject) OR TERM(Set-ADObject)
+  OR TERM(Set-DomainObject) OR TERM(Get-ObjectAcl) OR TERM(Get-DomainObjectAcl) OR
+  TERM(Add-ObjectAcl) OR TERM(Add-DomainObjectAcl) OR TERM(Invoke-ACLScanner) OR TERM(Find-InterestingDomainAcl)
+  OR TERM(Get-GUIDMap) OR TERM(Get-DomainGUIDMap) OR TERM(Get-NetOU) OR TERM(Get-DomainOU)
+  OR TERM(Get-NetSite) OR TERM(Get-DomainSite) OR TERM(Get-NetSubnet) OR TERM(Get-DomainSubnet)
+  OR TERM(Get-NetGroup) OR TERM(Get-DomainGroup) OR TERM(Find-ManagedSecurityGroups)
+  OR TERM(Get-DomainManagedSecurityGroup) OR TERM(Get-NetGroupMember) OR TERM(Get-DomainGroupMember)
+  OR TERM(Get-NetFileServer) OR TERM(Get-DomainFileServer) OR TERM(Get-DFSshare) OR
+  TERM(Get-DomainDFSShare) OR TERM(Get-NetGPO) OR TERM(Get-DomainGPO) OR TERM(Get-NetGPOGroup)
+  OR TERM(Get-DomainGPOLocalGroup) OR TERM(Find-GPOLocation) OR TERM(Get-DomainGPOUserLocalGroupMapping)
+  OR TERM(Find-GPOComputerAdmin) OR TERM(Get-DomainGPOComputerLocalGroupMapping) OR
+  TERM(Get-LoggedOnLocal) OR TERM(Get-RegLoggedOn) OR TERM(Invoke-CheckLocalAdminAccess)
+  OR TERM(Test-AdminAccess) OR TERM(Get-SiteName) OR TERM(Get-NetComputerSiteName)
+  OR TERM(Get-Proxy) OR TERM(Get-WMIRegProxy) OR TERM(Get-LastLoggedOn) OR TERM(Get-WMIRegLastLoggedOn)
+  OR TERM(Get-CachedRDPConnection) OR TERM(Get-WMIRegCachedRDPConnection) OR TERM(Get-RegistryMountedDrive)
+  OR TERM(Get-WMIRegMountedDrive) OR TERM(Get-NetProcess) OR TERM(Get-WMIProcess)
+  OR TERM(Invoke-ThreadedFunction) OR TERM(New-ThreadedFunction) OR TERM(Invoke-UserHunter)
+  OR TERM(Find-DomainUserLocation) OR TERM(Invoke-ProcessHunter) OR TERM(Find-DomainProcess)
+  OR TERM(Invoke-EventHunter) OR TERM(Find-DomainUserEvent) OR TERM(Invoke-ShareFinder)
+  OR TERM(Find-DomainShare) OR TERM(Invoke-FileFinder) OR TERM(Find-InterestingDomainShareFile)
+  OR TERM(Invoke-EnumerateLocalAdmin) OR TERM(Find-DomainLocalGroupMember) OR TERM(Get-NetDomainTrust)
+  OR TERM(Get-DomainTrust) OR TERM(Get-NetForestTrust) OR TERM(Get-ForestTrust) OR
+  TERM(Find-ForeignUser) OR TERM(Get-DomainForeignUser) OR TERM(Find-ForeignGroup)
+  OR TERM(Get-DomainForeignGroupMember) OR TERM(Invoke-MapDomainTrust) OR TERM(Get-DomainTrustMapping)
+  OR TERM(Get-DomainPolicy) OR TERM(Get-DomainPolicyData) OR TERM(Find-LocalAdminAccess))
+  | table _time, host, user process, process_*, signature_id, user | bin span=60s
+  | stats values(*) as * by _time, host '
+techniques:
+- discovery:permission groups discovery:domain groups
+- execution:command and scripting interpreter:powershell
+- discovery:system owner/user discovery
+- discovery:network share discovery
+- discovery:system network connections discovery
+technique_id:
+- T1059.001
+- T1069.002
+data_category:
+- PowerShell logs
+references:
+- https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1
+- https://powersploit.readthedocs.io/en/latest/Recon/

@@ -1,0 +1,15 @@
+id: '10788.16096'
+title: 'Okta: API Token Created_Deleted'
+description: This use-case will detect when API tokens are created or deleted in Okta
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and (event_type
+  ilike ''system.api_token.create'' or event_type ilike ''system.api_token.revoke'') '
+techniques:
+- defense-evasion:use alternate authentication material:application access token
+- lateral-movement:use alternate authentication material:application access token
+technique_id:
+- T1550.001
+data_category:
+- Application logs
+- Third-party application logs
+references: null

@@ -1,0 +1,24 @@
+id: '5455.5610'
+title: RDP Brute-force Detection
+description: 'Detects possible Brute force attempt over Windows Remote Desktop Protocol
+  (RDP) -- Software Association: BianLian, Conti, LockBit, SamSam, Snatch'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_winevent` AND ((TERM(EventCode=5156)
+  OR "<EventID>5156<") AND Destination_Port="3389" AND Direction="Inbound" AND Protocol="6")
+  OR ((TERM(EventCode=4625) OR "<EventID>4625<") AND (Failure_Reason="Unknown user
+  name or bad password." OR FailureReason="%%2313" AND Logon_Type="3")) | rex field=Message
+  (?<result>"(?i)An account failed to log on.")| rex field=Failure_Reason (?<result_reason>"(?i)Unknown
+  user name or bad password.")| eval note=mvappend(result, result_reason)| table _time,
+  host, user dest_port, note, process_name, process_path, signature_id, src_country,
+  src_dns, src_ip | bin span=20s | stats values(*) as * by _time, host | where match(signature_id,"5156")
+  AND match(signature_id,"4625")| where event_count > 3 | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename
+  src_Country as src_country '
+techniques:
+- credential-access:brute force:password guessing
+- initial-access:external remote services
+technique_id:
+- T1110.001
+data_category:
+- Windows event logs
+references: null

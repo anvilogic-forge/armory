@@ -1,0 +1,32 @@
+id: '1070.1105'
+title: SSH Pivoting
+description: 'This use case is searching for specific keywords that are generated
+  when SSH pivoting is made - Threat Actor Association: Daixin Team, Lightbasin /
+  UNC1945, TeamTNT'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (TERM(type=USER_START) OR TERM(type=USER_END))
+  "sshd" "addr" "success" | rename process as process_name, ses as session_id, addr
+  as src_ip, hostname as src_host| eval user=mvappend("",acct,user,auid,uid), user=mvfilter(NOT
+  match(user,"\?|\(unknown\)|^\d+$|unset|^\s$|^$")), user_id=mvappend("",auid,uid),
+  user_id=mvfilter(match(user_id,"^\d+$")), start_time=if(type="USER_START",floor(_time),start_time),
+  end_time=if(type="USER_END",ceiling(_time),end_time) | table _time, host, user src_ip,
+  src_host, end_time, process_*, session_id, start_time, user, user_id | stats values(*)
+  as *, earliest(_time) as _time, earliest(user) as initial_user by host, session_id,
+  src_ip | eventstats dc(src_ip) as dc_src_ip, dc(initial_user) as dc_user_by_host,
+  dc(session_id) as dc_session_by_host by host| eventstats dc(host) as dc_host, dc(initial_user)
+  as dc_user_by_ip, dc(session_id) as dc_session_by_ip by src_ip| lookup dnslookup
+  clientip as src_ip OUTPUT clienthost as src_dns| eval src_host=coalesce(src_dns,
+  src_host), end_time=if(isnull(end_time), 0, end_time)| eval session_duration=end_time-start_time|
+  where (session_duration>1 or session_duration<0) and dc_src_ip>0 and dc_user_by_host>0
+  and dc_host>0 and dc_user_by_ip>0 and dc_session_by_host>0 and dc_session_by_ip>0|
+  eval session_duration=if(session_duration<0, "potentially active", session_duration."
+  second") '
+techniques:
+- lateral-movement:remote services:ssh
+technique_id:
+- T1021.004
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://attack.mitre.org/techniques/T1021/004/

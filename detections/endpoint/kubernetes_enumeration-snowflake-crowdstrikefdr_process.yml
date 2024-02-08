@@ -1,0 +1,16 @@
+id: '6842.15018'
+title: Kubernetes Enumeration
+description: 'This use case looks for when the Kubectl get command has been executed.
+  -- Threat Actor Association: TeamTNT -- Atomics T1053.007 Test#1'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*kubectl[^a-z].*'', ''i'') and regexp_like(process, ''.*[^a-z]get[^a-z].*'',
+  ''i'') '
+techniques:
+- discovery:container and resource discovery
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://book.hacktricks.xyz/pentesting/pentesting-kubernetes/enumeration-from-a-pod

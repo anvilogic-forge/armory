@@ -1,0 +1,23 @@
+id: '21030.37459'
+title: Command Line Spawned by Archive Utility - Windows
+description: 'This use case detects command line utility executions with an archive
+  utility as a parent process. CVE-2023-38831 -- Threat Actor Association: APT28,
+  APT40, Sandworm Team, UAC-0057 (GhostWriter)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("winrar.exe" OR "rar.exe" OR "7z*.exe" OR "peazip.exe"
+  OR "powerarc.exe" OR "bandizip.exe" OR "zipware.exe" OR "winzip.exe" OR "powershell.exe"
+  OR "cmd.exe" OR "wscript.exe" OR "cscript.exe" OR "regsvr32.exe" OR "rundll32.exe"
+  OR "wmic.exe" OR "control.exe") | where match(parent_process_path, "(?i)(winrar|rar|7z.*|peazip|powerarc|bandizip|zipware|winzip*)\.exe")
+  and match(process_name, "(?i)(powershell(_ise?)|pwsh|cmd|wscript|cscript|regsvr32|rundll32|wmic|control)\.exe")
+  | table _time, host, user parent_*, process, process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- execution:user execution:malicious file
+technique_id:
+- T1204.002
+data_category:
+- Windows event logs
+references:
+- https://www.group-ib.com/blog/cve-2023-38831-winrar-zero-day/

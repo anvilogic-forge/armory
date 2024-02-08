@@ -1,0 +1,27 @@
+id: '5327.5411'
+title: Certutil File Download
+description: 'There are attack scenarios in which attackers download different tools
+  or scripts in order to take full control over certain machines. For example, an
+  attacker gets a reverse shell on the target but is a low privileged shell. In this
+  situation, the attacker can download different exploits on the target for privilege
+  escalation using tools such as wget. -- Threat Actor Association: APT41, DarkSide,
+  BlackMatter, APT31, Flax Typhoon, Wizard Spider - Software Association: ALPHV/BlackCat,
+  Babuk, Bazar, Conti -- Atomics T1027 Test #8'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` ((TERM(certutil) AND TERM(--urlcache))
+  OR TERM(--urlcache) ) AND (EventCode=4104 OR EventCode=4103) | rex field=process
+  mode=sed max_match=0 "s/(?mi)^(Path.+)|^(ScriptBlock ID.+)|^(Creating Scriptblock.+)//g"|
+  rex field=process mode=sed "s/([\n\r]+)|(\s\s+)//g"| rex field=process (?<ip>"(\d{1,3}\.){3}\d{1,3}\:\d{1,5})"|
+  rex field=process (?<website>"(?i)(http|sftp|ftp|https)\:\/{2}[A-Za-z0-9\.\/~\-\_]+")|
+  rex field=process (?<download_tool>"(?i)certutil") | table _time, host, user, ip,
+  download_tool, process, website, signature_id | bin span=1s | stats values(*) as
+  * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+- defense-evasion:obfuscated files or information
+technique_id: null
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.ired.team/offensive-security/defense-evasion/downloading-file-with-certutil

@@ -1,0 +1,18 @@
+id: '6091.15073'
+title: Go Run Execution
+description: Malicious actors are beginning to turn to Golang as a malware language
+  since it is not typically picked up by antivirus software. Although the language
+  is about 10 years old, and is used by many legitimate programmers, there has not
+  been as much activity with Golang malware. This use case looks for run executions
+  by go.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and (process_path ilike ''%go.exe'' or regexp_like(process,
+  ''.*go\\\s+.*'', ''i'')) and regexp_like(process, ''.*\\\srun\\\s.*'', ''i'') '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.f5.com/labs/articles/threat-intelligence/new-golang-malware-is-spreading-via-multiple-exploits-to-mine-mo

@@ -1,0 +1,21 @@
+id: '8323.10383'
+title: MSTSC Execution
+description: 'MSTSC creates connections to Remote Desktop Session Host servers or
+  other remote computers, edits an existing Remote Desktop Connection (.rdp) configuration
+  file, and migrates legacy connection files that were created with Client Connection
+  Manager to new .rdp connection files. - Threat Actor Association: Vice Society -
+  Software Association: Blackcat/ALPHV, Hive, Lockbit - Atomics T1021.001 Test #1
+  Atomics T1021.001 Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(mstsc) OR "mstsc.exe") | table _time, host,
+  user, signature_id, process, process_*, parent_process_* | bin span=1s | stats values(*)
+  as * by _time, host | where match(process, "(?i)mstsc") OR match(process_name, "(?i)mstsc") '
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+technique_id:
+- T1021.001
+data_category:
+- Windows event logs
+references:
+- https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc

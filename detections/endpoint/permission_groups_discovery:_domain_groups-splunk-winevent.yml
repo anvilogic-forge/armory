@@ -1,0 +1,30 @@
+id: '16633.25779'
+title: 'Permission Groups Discovery: Domain Groups'
+description: 'Adversaries may attempt to find domain-level groups and permission settings.
+  The knowledge of domain-level permission groups can help adversaries determine which
+  groups exist and which users belong to a particular group. Adversaries may use this
+  information to determine which users have elevated permissions, such as domain administrators.
+  -- Threat Actor Association: Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE
+  PRESIDENT/TA416/RedDelta) - Software Association: Akira, Rhysida -- Atomics T1069.001
+  Test #2 Atomics T1069.002 Test #1 Atomics T1069.002 Test #2 Atomics T1069.002 Test
+  #3 Atomics T1069.002 Test #9 Atomics T1069.002 Test #10'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) TERM(get-ADPrincipalGroupMembership) OR TERM(Get-ADGroup)
+  OR "objectcategory=group" OR "adsisearcher" OR "adfind" OR (TERM(net) AND (TERM(localgroup)
+  OR ("group" AND "doma"))) OR (TERM(localgroup) OR ("group" AND "doma")) | regex
+  process="(?i)\s+(localgroup|group(s?)\s+.*doma)|Get-AD(PrincipalGroupMembership|Group)|objectcategory=group"
+  | table _time, host, user, process, process_*, parent_process* | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- discovery:permission groups discovery:domain groups
+- discovery:permission groups discovery
+technique_id:
+- T1069.002
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1069.002/T1069.002.md#atomic-test-1---basic-permission-groups-discovery-windows-domain
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1069.002/T1069.002.md#atomic-test-2---permission-groups-discovery-powershell-domain
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1069.002/T1069.002.md#atomic-test-3---elevated-group-enumeration-using-net-group-domain

@@ -1,0 +1,29 @@
+id: '19068.32919'
+title: Shell Configuration Modified - *nix
+description: 'Adversaries can gain persistence by executing malicious commands via
+  a user’s shell, taking advantage of Unix Shell''s feature that runs configuration
+  scripts during different stages of a session. They insert malicious commands into
+  scripts that are automatically executed by shells such as /etc/profile and /etc/profile.d
+  (requiring root permissions), or /.bash_profile, /.bash_login, or /.profile (for
+  user level permissions), which are sourced when a user opens a command-line interface
+  or connects remotely. Additionally, malware can use the /.bash_logout file to trigger
+  execution at the end of a session, providing another avenue for persistence. This
+  use case detects attempts to modify shell configuration files. If echo is used to
+  make the modification, bash history logging is recommended for best detection. Atomics
+  T1546.004 Test #1 Atomics T1546.004 Test #2 Atomics T1546.004 Test #3 Atomics T1546.004
+  Test #4 Atomics T1546.004 Test #5 Atomics T1546.004 Test #6'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'') and regexp_like(process,
+  ''.*(echo|vi|visudo|vim|nano).*(\\\.(bashrc|bash_profile|profile|bash_logout)|bash_completion\\\.sh|/etc/profile).*'',
+  ''i'') '
+techniques:
+- persistence:event triggered execution:unix shell configuration modification
+- privilege-escalation:event triggered execution:unix shell configuration modification
+technique_id:
+- T1546.004
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1546.004/T1546.004.md

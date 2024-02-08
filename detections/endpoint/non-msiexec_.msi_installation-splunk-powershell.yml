@@ -1,0 +1,17 @@
+id: '18115.30466'
+title: Non-MSIExec .msi Installation
+description: 'This use case detects methods used to install .msi files without the
+  use of msiexec.exe. Atomics T1218.007 Test #5 Atomics T1218.007 Test #6 Atomics
+  T1218.007 Test #7 Atomics T1218.007 Test #8'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") (TERM(install) OR
+  TERM(/i)) ".msi" | regex process_name!="(?i)msiexec" | table _time, host, user parent_*,
+  process, process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- PowerShell logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.007/T1218.007.md

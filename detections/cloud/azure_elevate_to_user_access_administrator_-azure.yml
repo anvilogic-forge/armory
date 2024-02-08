@@ -1,0 +1,19 @@
+id: '5742.6019'
+title: 'Azure Elevate to User Access Administrator '
+description: In order to have full access, the attacker needs to elevate his privileges
+  to Azure User Access Administrator.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` `get_cloud_data_iam` "elevateAccess"
+  OR "User Access Administrator" | table _time, host, user, account, region, src_ip,
+  http_user_agent, access_key, user, user_id, identity_type, role, event_name, event_category,
+  cloud_service, request_parameters, response, mfa_enabled, permissions, identity,
+  action, resource_id, object_id. dest_* | bin span=1s | stats values(*) as * by _time,
+  user '
+techniques:
+- persistence:account manipulation
+- privilege-escalation:valid accounts
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://samilamppu.com/2021/02/09/monitor-elevate-access-activity-in-azure-with-azure-sentinel/

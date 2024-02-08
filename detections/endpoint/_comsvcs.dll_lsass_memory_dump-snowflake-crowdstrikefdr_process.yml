@@ -1,0 +1,23 @@
+id: '5463.14579'
+title: ' comsvcs.dll Lsass Memory Dump'
+description: 'Credential dumping within the lsass memory using Windows built-in comsvcs.dll
+  file. When System32 crashes this DLL contains a function called minidumpw which
+  dumps the lsass memory. This does not require additional tools like Mimikatz and
+  Procdump in order to perform the lsass dump. -- Threat Actor Association: APT27,
+  APT35/Phosphorus/Magic Hound, BlackCat, Lancefly, Lazarus, Volt Typhoon, Witchetty,
+  Wizard Spider - Software Association: Akira, Conti, HermeticWiper/Trojan.Killdisk,
+  Prestige, PYSA/Mespinoza, Vice Society - Atomics T1003 Test #3 Atomics T1003.001
+  Test #3'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and process ilike ''%rundll32%'' and process
+  ilike ''%comsvcs%'' and regexp_like(process, ''.*(dmp|minidump|dumpproc|lsass|#24).*'',
+  ''i'') '
+techniques:
+- credential-access:os credential dumping:lsass memory
+technique_id:
+- T1003.001
+data_category:
+- EDR Logs
+references:
+- https://en.hackndo.com/remote-lsass-dump-passwords/#manual-method--procdump

@@ -1,0 +1,22 @@
+id: '6591.22128'
+title: Potential ProxyShell
+description: 'ProxyShell is a set of three security flaws (CVE-2021-34473, CVE-2021-34523,
+  and CVE-2021-31207) which, when used together, could enable a threat actor to perform
+  unauthenticated, remote code execution (RCE) on unpatched Microsoft Exchange servers.
+  This use case looks for incoming web requests that contain indicators of proxyshell
+  compromise attempts. -- Threat Actor Association: FamousSparrow, Magic Hound (aka
+  APT35, Charming Kitten, Phosphorus, and Mint Sandstorm), Witchetty -- Software Association:
+  ALPHV/BlackCat, BianLian, Blackbyte, Conti, LV, Play, Squirrelwaffle'
+logic_format: snowflake
+logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (regexp_like(uri_path,
+  ''.*(autodiscover.json).*'', ''i'') or regexp_like(uri_path, ''.*(mapi/nspi|powershell|mapi/emsmdb|/EWS|X-Rps-CAT).*'',
+  ''i'')) '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: null
+data_category:
+- Web application firewall logs
+references:
+- https://isc.sans.edu/forums/diary/ProxyShell+how+many+Exchange+servers+are+affected+and+where+are+they/27732/
+- https://davinsi.com/threat-advisory-how-to-respond-to-proxyshell-the-latest-exploit-against-exchange/

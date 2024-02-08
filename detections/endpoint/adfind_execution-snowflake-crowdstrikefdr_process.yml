@@ -1,0 +1,29 @@
+id: '6143.14648'
+title: Adfind Execution
+description: 'AdFind is a free command-line query tool that can be used for gathering
+  information from Active Directory. This use case looks for process executions of
+  Adfind. -- Threat Actor Association: APT29/Nobelium/Cozy Bear, APT31, BlackMatter,
+  Conti, DarkSide, FIN6, FIN7, FIN12, Karakurt, Lazarus, Traveling Spider, Wizard
+  Spider, Yanluowang - Software Association: ALPHV/BlackCat, BazarLoader, Conti, Dridex,
+  Entropy, Lockbit, Nefilim, Quantum, Sodinokibi/REvil - Atomics T1016 Test #6 Atomics
+  T1018 Test#10 Atomics T1018 Test#11 Atomics T1069.002 Test #8 Atomics T1087.002
+  Test #5 Atomics T1087.002 Test #6 Atomics T1087.002 Test #7 Atomics T1087.002 Test
+  #8'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and process ilike ''%adfind%'' '
+techniques:
+- discovery:account discovery:domain account
+- discovery:permission groups discovery:domain groups
+- discovery:domain trust discovery
+- discovery:system network configuration discovery
+- discovery:remote system discovery
+technique_id:
+- T1087.002
+- T1069.002
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/blog/how-one-hospital-thwarted-a-ryuk-ransomware-outbreak/
+- https://thedfirreport.com/2020/10/08/ryuks-return/
+- https://www.fireeye.com/blog/threat-research/2019/04/pick-six-intercepting-a-fin6-intrusion.html

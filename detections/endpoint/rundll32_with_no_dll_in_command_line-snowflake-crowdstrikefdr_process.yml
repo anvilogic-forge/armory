@@ -1,0 +1,24 @@
+id: '26999.49293'
+title: rundll32 with No DLL in Command Line
+description: rundll32.exe is a legitimate Windows utility used to run functions stored
+  in Dynamic Link Libraries. Typical usage would involve specifying a DLL file and
+  a function to execute. Because rundll32 is a trusted system utility with the ability
+  to execute code, it is a high value target for abuse by threat actors. This use
+  case detects executions of rundll32.exe without a .dll referenced in the command
+  line. Benign false positives from Internet Explorer parent processes have been filtered
+  out. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe'' and not
+  regexp_like(process, ''.*((^\\\"C:\\\x5cWindows\\\x5csystem32\\\x5crundll32\\\.exe\\\"$)|(\\\.dll)).*'',
+  ''i'') and not (parent_process_name ilike ''%iexplore.exe'' and not regexp_like(process,
+  ''.*InetCpl\\\.cpl\\\,ClearMyTracksByProcess.*'', ''i'')) '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/threat-detection-report/techniques/rundll32/

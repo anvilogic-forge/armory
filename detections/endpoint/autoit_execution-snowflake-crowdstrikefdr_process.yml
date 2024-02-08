@@ -1,0 +1,21 @@
+id: '23090.41808'
+title: AutoIt Execution
+description: 'AutoIt is a freeware scripting utility that can automate Windows GUI
+  tasks such as mouse clicks, keystrokes, and window manipulations. While it is a
+  legitimate tool, threat actors have abused it to automate malicious activity. This
+  use case detects AutoIt, AutoIt2, or AutoIt3 executions, or commands loading .au3
+  files. -- Software Association: DarkGate'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and (regexp_like(process_path, ''.*autoit(2|3)?\\\.exe.*'',
+  ''i'') or regexp_like(process, ''.*\\\S+\\\.exe.+\\\.au3.*'', ''i'')) '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://isc.sans.edu/forums/diary/KPOT+Deployed+via+AutoIt+Script/25934/
+- https://blog.talosintelligence.com/magnat-campaigns-use-malvertising-to/
+- https://0xtoxin.github.io/threat%20breakdown/DarkGate-Camapign-Analysis/

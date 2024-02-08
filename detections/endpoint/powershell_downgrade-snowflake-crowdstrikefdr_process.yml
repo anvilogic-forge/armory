@@ -1,0 +1,26 @@
+id: '15846.23695'
+title: PowerShell Downgrade
+description: 'Adversaries may downgrade or use a version of system features that may
+  be outdated, vulnerable, and/or does not support updated security controls such
+  as logging. For example, PowerShell versions 5+ includes Script Block Logging (SBL)
+  which can record executed script content. However, adversaries may attempt to execute
+  a previous version of PowerShell that does not support SBL with the intent to impair
+  defenses while running malicious scripts that may have otherwise been detected.
+  This use case detects attempts to execute PowerShell commands using a version earlier
+  than 7. -- Threat Actor Association: Earth Estries -- Atomics T1059.001 Test #12'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*powershell\\\.exe\\\s+-version\\\s+[123456].*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1059.003
+data_category:
+- EDR Logs
+references:
+- https://kurtroggen.wordpress.com/2017/05/17/powershell-security-powershell-downgrade-attacks/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md#atomic-test-12---powershell-downgrade-attack

@@ -1,0 +1,20 @@
+id: '5971.19282'
+title: Indirect Command Execution
+description: 'An adversary may use default tools, usually not restricted, to gain
+  execution without using cmd. Threat Actor Association: Andariel, APT28 - Software
+  Association: IcedId - Atomics T1548.002 Test#3 Atomics T1202 Test #1 Atomics T1202
+  Test #2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(forfiles) OR TERM(fodhelper)
+  OR TERM(ftp) OR TERM(pcalua)) | regex parent_process_name="(?i)(forfiles|fodhelper|ftp|pcalua)\.exe"
+  | table _time, host, user parent_*, process, process_*, signature_id src_* dest_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:indirect command execution
+- privilege-escalation:abuse elevation control mechanism
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://pentestlab.blog/tag/pcalua-exe/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1202/T1202.md#atomic-test-1---indirect-command-execution---pcaluaexe

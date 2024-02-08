@@ -1,0 +1,27 @@
+id: '17798.29942'
+title: Suspicious Child Process for hh.exe
+description: 'Adversaries may abuse Compiled HTML files (.chm) to conceal malicious
+  code. CHM files are commonly distributed as part of the Microsoft HTML Help system.
+  A custom CHM file containing embedded payloads could be delivered to a victim then
+  triggered by User Execution. This use case detects hh.exe spawning suspicious child
+  processes, including shell utilities and other native Windows utilities. -- Threat
+  Actor Association: APT-K-47/Mysterious Elephant -- LOLBAS Atomics T1218.001 Test
+  #2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(hh) OR "hh.exe") (TERM(cmd) OR TERM(powershell)
+  OR TERM(pwsh) OR TERM(wscript) OR TERM(cscript) OR TERM(regsvr32) OR TERM(wmic)
+  OR TERM(rundll32) OR TERM(MSHTA) OR TERM(CertUtil) OR TERM(CertReq) OR TERM(MSbuild)
+  OR TERM(installutil) OR TERM(schtasks) OR TERM(msiexec)) | where match(parent_process_name,
+  "(?i)hh\.exe") and match(process_name, "(?i)cmd|powershell|pwsh|wscript|cscript|regsvr32|wmic|rundll32|MSHTA|CertUtil|CertReq|MSbuild|installutil|schtasks|msiexec")
+  | table _time, host, user process, process_*, parent_process_* | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:compiled html file
+technique_id:
+- T1218.001
+data_category:
+- Windows event logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.001/T1218.001.md#atomic-test-2---compiled-html-help-remote-payload
+- https://www.ptsecurity.com/ww-en/analytics/pt-esc-threat-intelligence/higaisa-or-winnti-apt-41-backdoors-old-and-new/

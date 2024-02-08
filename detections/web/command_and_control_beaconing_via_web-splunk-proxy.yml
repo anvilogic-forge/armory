@@ -1,0 +1,32 @@
+id: '5015.5045'
+title: Command and Control Beaconing via WEB
+description: 'Attackers tend to deploy command and control (C2) servers in order to
+  issue commands to hosts they have compromised within a network. These compromised
+  hosts tend to send a beacon out to the C2 server in a periodic basis to see if there
+  is any commands to be issued locally. Since this traffic tends to be fairly predictable,
+  you can detect a potentially compromised host by identifying this periodic outbound
+  traffic. -- Threat Actor Association: APT29/Nobelium/Cozy Bear, APT37, FIN7, FIN8,
+  Mustang Panda, Night Spider, TA551, Wizard Spider, WIRTE -- Software Association:
+  Alchimist, AvosLocker, Bazar, BadHatch, Conti, Hafnium, Hancitor, IcedID, QakBot,
+  Sodinokibi/REvil'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_proxy` NOT (dest_ip IN (10.0.0.0/8,172.16.0.0/12,192.168.0.0/16))
+  | regex site="((\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)|(([\w\d]*:+)+[\w\d]*))"|
+  fields _time, host, user, dest_ip, site, url bytes_in, bytes_out | sort src_ip,
+  site, url, _time| streamstats window=2 range(_time) as duration by client_ip, site,
+  url| eval duration =if(duration=0, null(), duration)| where isnotnull(duration)|
+  eventstats stdev(duration) as stdev_duration, stdev(bytes_in) as stdev_bytes_in,
+  stdev(bytes_out) as stdev_bytes_out, dc(src_ip) as dc_src_ip, count by src_ip, site,
+  url| where stdev_duration<10 and stdev_bytes_out<10 and dc_src_ip<5 and count>1|
+  iplocation prefix=dest_ dest_ip| fillnull value=-| table _time, host, user, dest_ip,
+  site, url`hec_collect`'
+techniques:
+- command-and-control:application layer protocol:web protocols
+- command-and-control:proxy:external proxy
+technique_id:
+- T1090.002
+- T1071.001
+data_category:
+- Web proxy
+references:
+- https://www.activecountermeasures.com/blog-beacon-analysis-the-key-to-cyber-threat-hunting/

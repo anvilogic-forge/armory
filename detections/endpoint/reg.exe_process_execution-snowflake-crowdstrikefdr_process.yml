@@ -1,0 +1,20 @@
+id: '6935.14674'
+title: Reg.exe Process Execution
+description: 'Reg is a Windows utility used to interact with the Windows Registry.
+  It can be used at the command-line interface to query, add, modify, and remove information.
+  -- Threat Actor Association: Kimsuky -- Software Association: BlackByte, Clop, Snatch,
+  Trickbot -- Atomics T1037.001 Test#1 Atomics T1137.004 Test#1 Atomics T1137.002
+  Test#1 Atomics T1137 Test#1 Atomics T1547.001 Test#1 Atomics T1547.001 Test#2 Atomics
+  T1546.002 Test#1 Atomics T1547.010 Test#1 Atomics T1546.010 Test#1 Atomics T1548.002
+  Test#1 Atomics T1548.002 Test#8 Atomics T1574.011 Test#2 Atomics T1562.004 Test#2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and process_path ilike ''%\\\reg.EXE'' '
+techniques:
+- defense-evasion:modify registry
+- discovery:query registry
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://unit42.paloaltonetworks.com/unit42-rancor-targeted-attacks-south-east-asia-using-plaintee-ddkong-malware-families/

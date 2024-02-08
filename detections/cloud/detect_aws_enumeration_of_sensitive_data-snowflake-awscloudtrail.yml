@@ -1,0 +1,16 @@
+id: '5049.13636'
+title: Detect AWS enumeration of sensitive data
+description: If one of the AWS is compromised, there are different AWS API calls that
+  are used to enumerate information about users, roles, customer-managed policies,
+  and groups.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and ( event_name = 'ListUsers' or event_name = 'ListRoles' or event_name = 'ListPolicies'
+  or event_name = 'ListGroups' )
+techniques:
+- collection:data from cloud storage
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.securityweek.com/researchers-find-tens-aws-apis-leaking-sensitive-data

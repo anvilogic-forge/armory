@@ -1,0 +1,19 @@
+id: '8106.10012'
+title: System Shutdown or Reboot
+description: 'Adversaries may shutdown/reboot systems to interrupt access to, or aid
+  in the destruction of, those systems. Operating systems may contain commands to
+  initiate a shutdown/reboot of a machine. -- Software Association: Blackbyte, Conti,
+  DirtyMoe'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=1074) OR
+  "<EventID>1074<") | rex field=Message "(?i)process\s+(?<process_name>.*?\.(exe|dll|\w{2,4}))"|
+  rex field=Message "user\s+(?<user>.*?\x5c\S+)" | eval shutdown_type=Shutdown_Type
+  | table _time, host, user process_name, shutdown_type, signature_id | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- impact:system shutdown/reboot
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://news.sophos.com/en-us/2020/09/17/maze-attackers-adopt-ragnar-locker-virtual-machine-technique/

@@ -1,0 +1,27 @@
+id: '5473.17082'
+title: Rubeus Commands
+description: 'Rubeus is a C# toolset for raw Kerberos interaction and abuses. -- Threat
+  Actor Association: Wizard Spider - Software Association: Conti, Diavol, Quakbot/Qbot
+  -- Atomics T1558.003 Test#2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` TERM(exe) ("EventCode=1" OR
+  "<EventID>1<") (TERM(harvest) OR TERM(ptt) OR TERM(s4u) OR TERM(asktgt) OR TERM(brute)
+  OR TERM(createnetonly) OR TERM(changepw) OR TERM(hash) OR TERM(tgssub) OR TERM(asktgs)
+  OR TERM(renew) OR TERM(describe) OR TERM(monitor) OR TERM(purge) OR TERM(klist)
+  OR TERM(triage) OR TERM(dump) OR TERM(tgtdeleg) OR TERM(kerberoast) OR TERM(asreproast)
+  OR TERM(currentluid)) |regex process="(?i)\.exe\"?\s+(((harvest|ptt|s4u|asktgt|brute|createnetonly|changepw|hash|tgssub|asktgs|renew|describe|monitor)(\s+)?\/\w+\:)|((purge|klist|triage|dump|tgtdeleg|kerberoast|asreproast|currentluid)((\s+)?\/\w+)?))"
+  | table _time, host, user, signature_id, process, process_id, process_name, parent_process_name
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:steal or forge kerberos tickets
+- credential-access:steal or forge kerberos tickets:golden ticket
+- credential-access:steal or forge kerberos tickets:silver ticket
+- credential-access:steal or forge kerberos tickets:kerberoasting
+technique_id:
+- T1558.003
+- T1558.002
+- T1558.001
+data_category:
+- Windows Sysmon
+references:
+- https://github.com/GhostPack/Rubeus

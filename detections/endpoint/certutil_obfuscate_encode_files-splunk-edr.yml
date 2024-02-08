@@ -1,0 +1,20 @@
+id: '6158.14342'
+title: Certutil Obfuscate_Encode Files
+description: 'Certutil can be used to encode files to evade defensive measures. --
+  Threat Actor Association: APT29/Nobelium/Cozy Bear, Arid Viper/APT C-23, BlackTech
+  - Software Association: Conti'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) ("certutil"
+  (TERM(-encode) OR TERM(-encodehex))) OR (TERM(-encode) OR TERM(-encodehex)) | table
+  _time, host, user, signature_id, process, process_*, parent_* | bin span=1s | stats
+  values(*) as * by _time, host | where match(process, "(?i)-encode") `hec_collect`'
+techniques:
+- command-and-control:data encoding
+- defense-evasion:obfuscated files or information
+technique_id: null
+data_category:
+- Process command-line parameters
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Certutil/

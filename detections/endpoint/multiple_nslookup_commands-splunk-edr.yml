@@ -1,0 +1,18 @@
+id: '12915.18548'
+title: Multiple nslookup commands
+description: 'Threat actors have been observed gathering host based network information
+  by running a batch script, which ran nslookup for each host in the environment.Living
+  Off the Land Binary and Scripts (LOLBAS) (LOLBIN) -- Software Association: Rhysida'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ("nslookup" OR "nslookup.exe")
+  | table _time, host, user signature_id, process, process_*, parent_* | bin span=60s
+  | stats values(*) as * by _time, host | where match(process_name, "(?i)nslookup.exe")
+  and event_count > 2 `hec_collect`'
+techniques:
+- discovery:system network configuration discovery
+- discovery:remote system discovery
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2022/04/25/quantum-ransomware/

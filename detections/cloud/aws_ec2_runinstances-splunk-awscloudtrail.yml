@@ -1,0 +1,22 @@
+id: '23576.43028'
+title: AWS EC2 RunInstances
+description: 'This use case looks for when an EC2 instance has been launched. Threat
+  actors can launch suspicious AMIs or running large instances to facilitate cryptojacking
+  -- Threat Actor Association: Scattered Spider (aka. Muddled Libra, Scatter Swine,
+  Starfraud, UNC3944)'
+logic_format: Splunk
+logic: '`get_cloud_data` eventName="RunInstances" "ec2.amazonaws.com" | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, dest_*
+  | bin span=1s | stats values(*) as * by _time, user | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip| rename
+  src_Country as src_country '
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_RunInstances.html
+- https://unit42.paloaltonetworks.com/malicious-operations-of-exposed-iam-keys-cryptojacking/

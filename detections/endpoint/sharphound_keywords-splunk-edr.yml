@@ -1,0 +1,41 @@
+id: '5528.33562'
+title: SharpHound Keywords
+description: 'Sharphound can be used to collect Active Directory information in order
+  to easily identify highly complex attack paths that would otherwise be impossible
+  to quickly identify. Once collected information can be utilized by BloodHound to
+  apply graph theory in order to reveal the hidden and often unintended relationships
+  within an Active Directory environment. -- Threat Actor Association: APT29/Nobelium/Cozy
+  Bear, BlackMatter, Carbanak, DarkSide, FIN12, Muddled Libra - Software Association:
+  ALPHV/BlackCat, Black Basta, LockBit, Play, Qakbot/Qbot, XingLocker -- #TrendingThreat
+  #Russia #Ukraine Atomics T1069.001 Test #4'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (((TERM(-c) OR TERM(collectionmethod))
+  (TERM(default) OR TERM(group) OR TERM(localadmin) OR TERM(rdp) OR TERM(dcom) OR
+  TERM(psremote) OR TERM(GPOLocalGroup) OR TERM(Session) OR TERM(ComputerOnly) OR
+  TERM(LoggedOn) OR TERM(Trusts) OR TERM(ACL) OR TERM(Container) OR TERM(DcOnly) OR
+  TERM(all))) OR ((TERM(-domaincontroller) OR TERM(-d)) OR TERM(ldapport) OR TERM(secureldap)
+  OR TERM(ldapusername) OR TERM(ldappassword) OR TERM(DisableKerberosSigning) OR TERM(Loop)
+  OR TERM(LoopDuration) OR TERM(LoopInterval) OR TERM(-Domain) OR TERM(-Stealth) OR
+  TERM(ExcludeDomainControllers) OR TERM(-ComputerFile) OR TERM(LdapFilter) OR TERM(OverrideUserName)
+  OR TERM(RealDNSName) OR TERM(CollectAllProperties) OR TERM(WindowsOnly))) |regex
+  process="(?i)(domaincontroller|collectionmethod|DisableKerberosSigning|ldappassword|ldapusername|secureldap|ldapport|loop|OverrideUserName|RealDNSName|CollectAllProperties|WindowsOnly|LdapFilter|ComputerFile|ExcludeDomainControllers|Stealth|Domain)\s"
+  | table _time, host, user, process, process_*, signature_id | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- discovery:account discovery:local account
+- discovery:account discovery:domain account
+- discovery:domain trust discovery
+- discovery:password policy discovery
+- discovery:permission groups discovery:domain groups
+- discovery:permission groups discovery:local groups
+- discovery:system information discovery
+technique_id:
+- T1087.001
+- T1087.002
+- T1069.002
+- T1069.001
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://github.com/BloodHoundAD/SharpHound3/tree/ee437a5e596bf738b91bfae0aa35d2aab3544a8f

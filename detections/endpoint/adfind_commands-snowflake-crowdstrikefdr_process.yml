@@ -1,0 +1,27 @@
+id: '6146.14649'
+title: Adfind Commands
+description: 'AdFind is a free command-line query tool that can be used for gathering
+  information from Active Directory. In some instances Adversaries have renamed adfind
+  in order to avoid detection. This use case looks for common commands of Adfind.
+  -- Threat Actor Association: APT29/Nobelium/Cozy Bear, BlackMatter, Conti, DarkSide,
+  FIN6, FIN7, FIN12, Karakurt, Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE
+  PRESIDENT/TA416/RedDelta), Traveling Spider, Wizard Spider, Yanluowang -- Software
+  Association: BazarLoader, Blackcat/ALPHV, Conti, DatopLoader, Dridex, Entropy, Lockbit,
+  Nefilim, Quantum, Sodinokibi/REvil, Trickbot, XingLocker'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process_path, ''.*(objectcategory|trustdmp|member\s(.*)?-list).*'',
+  ''i'') '
+techniques:
+- discovery:account discovery:domain account
+- discovery:permission groups discovery:domain groups
+- discovery:domain trust discovery
+- discovery:system network configuration discovery
+- discovery:remote system discovery
+technique_id:
+- T1087.002
+- T1069.002
+data_category:
+- EDR Logs
+references:
+- https://www.microsoft.com/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/

@@ -1,0 +1,20 @@
+id: '20002.35589'
+title: Named Pipe Created
+description: 'This use case detects Sysmon events 17 and 18 which are generated when
+  a named pipe is created or connected. - Threat Actor Association: Earth Estries
+  - Software Association: Conti, Rhysida'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=17) OR TERM(EventCode=18)
+  OR "<EventID>17<" OR "<EventID>18<") ("CreatePipe" OR "ConnectPipe") | table _time,
+  host, user, process, process_*, parent_process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:protocol tunneling
+- defense-evasion:process injection
+- privilege-escalation:process injection
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://redcanary.com/threat-detection-report/threats/cobalt-strike/
+- https://www.youtube.com/watch?v=borfuQGrB8g&t=1783s

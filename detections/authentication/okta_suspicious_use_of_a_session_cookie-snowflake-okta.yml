@@ -1,0 +1,17 @@
+id: '20545.36424'
+title: Okta suspicious use of a session cookie
+description: 'Detects when an adversary attempts to reuse a stolen web session cookie
+  in a different device that has a different IP and OS or Browser. -- Threat Actor
+  Association: LUCR-3, Scattered Spider (aka. 0ktapus, UNC3944)'
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
+  event_time)) < $latest$ and event_type ilike ''policy.evaluate_sign_on'' and (action
+  ilike ''allow%'' or action ilike ''challenge'') '
+techniques:
+- defense-evasion:use alternate authentication material:web session cookie
+- credential-access:steal web session cookie
+technique_id:
+- T1550.004
+data_category:
+- Authentication logs
+references: null

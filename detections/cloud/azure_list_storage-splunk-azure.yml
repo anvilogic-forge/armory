@@ -1,0 +1,23 @@
+id: '6260.6954'
+title: Azure List Storage
+description: 'This use case looks for ListBlobs, ListShares, ListFiles, or ListContainers
+  operations in order to identify potential storage enumeration. '
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_storage` operationName IN(ListBlobs, ListShares,
+  ListFiles, ListContainers) | eval storage_name=''properties.accountName'', storage_type=''properties.serviceType''|
+  rex field=src_ip mode=sed max_match=0 "s/\:\d{1,5}//g" | table _time, host, user,
+  account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id, storage_*, uri | bin span=60s
+  | stats values(*) as * by _time, src_ip | eventstats dc(src_ip) as dc_src_ip by
+  storage_name | eventstats dc(storage_name) as dc_storage_name by src_ip | where
+  dc_storage_name > 0 OR dc_src_ip > 0 '
+techniques:
+- discovery:cloud infrastructure discovery
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/rest/api/storageservices/list-blobs
+- https://docs.microsoft.com/en-us/rest/api/storageservices/list-shares
+- https://docs.microsoft.com/en-us/rest/api/storageservices/list-containers2

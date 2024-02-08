@@ -1,0 +1,15 @@
+id: '5396.18521'
+title: 'GCP: New Firewall Rule'
+description: New firewall rule created
+logic_format: snowflake
+logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
+  to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name ilike
+  ''%compute.firewalls.insert'' '
+techniques:
+- defense-evasion:impair defenses:disable or modify cloud firewall
+- defense-evasion:valid accounts
+technique_id:
+- T1562.007
+data_category:
+- GCP audit logs
+references: null

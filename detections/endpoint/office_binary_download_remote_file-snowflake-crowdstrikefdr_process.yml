@@ -1,0 +1,21 @@
+id: '6590.14669'
+title: Office Binary Download Remote File
+description: 'Unsanitized file validation leads to Malicious payload download via
+  Office binaries. Attackers may leverage these binaries in order to download payloads
+  and bypass defenses. -- Threat Actor Association: Evilnum, FIN11, NewsPenguin -
+  Software Association: Clop, Qakbot/Qbot -- Living Off the Land Binary and Scripts
+  (LOLBAS) (LOLBIN)'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and (process_path ilike ''%POWERPNT.EXE'' or process_path
+  ilike ''%WINWORD.EXE'' or process_path ilike ''%ONENOTE.EXE'' or process_path ilike
+  ''%EXCEL.EXE'' or process_path ilike ''%mspub.exe'' or process_path ilike ''%outlook.exe''
+  or process_path ilike ''%msaccess.exe'') '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://medium.com/@reegun/unsanitized-file-validation-leads-to-malicious-payload-download-via-office-binaries-202d02db7191

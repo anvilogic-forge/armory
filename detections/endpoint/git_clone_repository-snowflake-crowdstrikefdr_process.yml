@@ -1,0 +1,17 @@
+id: '6100.15072'
+title: Git Clone Repository
+description: Git is a free and open source distributed version control system designed
+  to handle everything from small to very large projects with speed and efficiency.
+  Recent vulnerabilities identified would allow adversaries remote code execution
+  after cloning a repo. GIT-LFS CVE-2020-27955
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(git|gh)\\\s.*'',
+  ''i'') and regexp_like(process, ''.*\\\sclone\\\s+.*'', ''i'') '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://exploitbox.io/vuln/Git-Git-LFS-RCE-Exploit-CVE-2020-27955.html

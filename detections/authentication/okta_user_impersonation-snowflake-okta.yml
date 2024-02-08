@@ -1,0 +1,17 @@
+id: '9872.16122'
+title: 'Okta: User impersonation'
+description: User.session.impersonation events are normally triggered when an Okta
+  Support person requests admin access.
+logic_format: snowflake
+logic: select * from okta where event_time > dateadd(hour, -2, sysdate()) and (event_type
+  ilike 'user.session.impersonation.initiate' or event_type ilike 'user.session.impersonation.grant'
+  or event_type ilike 'user.session.impersonation.extend' or event_type ilike 'user.session.impersonation.end'
+  or event_type ilike 'user.session.impersonation.revoke' )
+techniques:
+- lateral-movement:use alternate authentication material
+- defense-evasion:use alternate authentication material
+technique_id: null
+data_category:
+- Authentication logs
+references:
+- https://www.microsoft.com/security/blog/2022/03/22/dev-0537-criminal-actor-targeting-organizations-for-data-exfiltration-and-destruction/

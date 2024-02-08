@@ -1,0 +1,20 @@
+id: '5478.5648'
+title: Download exe|msi|bat  Proxy
+description: 'Adversaries may transfer tools or other files from an external system
+  into a compromised environment. Files may be copied from an external adversary controlled
+  system through the command and control channel to bring tools into the victim network.
+  -- Threat Group Association: APT31, APT36, APT41, Gorgon Group, TA551 -- Software
+  Association: Remcos, Yellow Cockatoo/Jupiter Infostealer, Zloader'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_proxy` (TERM(exe) OR TERM(msi) OR TERM(bat))
+  AND http_method=GET AND status=200| regex uri_path="(?i)\.(exe|bat|msi)[^\w]" |
+  table _time, host, user, uri_path, http_user_agent, src_ip, dest_ip | bin span=1s
+  | stats values(*) as * by _time, host | lookup dnslookup clientip as dest_ip OUTPUT
+  clienthost as dest_dns | iplocation prefix="dest_" dest_ip | rename dest_Country
+  as dest_country '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- Web proxy
+references: null

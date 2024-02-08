@@ -1,0 +1,17 @@
+id: '8399.10542'
+title: Modify File Attributes
+description: 'chattr changes the file attributes on a Linux file system. - Threat
+  Actor Association: TeamTNT - Atomics T1222.002 Test #9'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(chattr) | table _time, host,
+  user process | bin span=1s | stats values(*) as * by _time, host | where match(process,
+  "(?i)chattr") '
+techniques:
+- defense-evasion:file and directory permissions modification:linux and mac file and
+  directory permissions modification
+technique_id:
+- T1222.002
+data_category:
+- Linux audit logs
+references:
+- https://documents.trendmicro.com/assets/white_papers/wp-tracking-the-activities-of-teamTNT.pdf

@@ -1,0 +1,35 @@
+id: '5458.5617'
+title: ReverseShell Upgrade From WebShell
+description: Detect when parameters are passed in order to upgrade from a web shell
+  to reverse shell.
+logic_format: Splunk
+logic: ' `get_web_data` `get_web_data_waf` (TERM(powershell) AND (TERM(-nop) OR TERM(-noprofile)
+  OR (TERM(IEX)))) OR TERM(mshta) OR TERM(rundll32) OR TERM(regsvr32) OR (TERM(Certutil)
+  AND TERM(-urlcache) AND "-f") OR TERM(Msiexec) OR (TERM(wmic) AND TERM(os) AND TERM(get)
+  AND TERM(/FORMAT)) OR ("cmd.exe")| regex "(?i)mshta|rundll32|regsvr32|Certutil|Msiexec|cmd\.exe|(powershell.+(\-nop|\-noprofile|iex))|(wmic.+os.+get.+\/FORMAT)|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s(.+)?\d{1,5}\s(.+)?-e.+cmd\.exe)"
+  | table _time, host, user, action, bytes, bytes_in, bytes_out, dest_ip, dest_port,
+  dest_mac, http_content_type, http_user_agent, site, src_ip, src_port, src_mac, status,
+  uri_path, http_method, src_content, dest_content, form_data | bin span=1s | stats
+  values(*) as * by _time, host |where(match(src_content,"(?i)msiexec") AND match(src_content,"(?i)\.msi"))
+  OR(match(src_content,"(?i)certutil") AND match(src_content,"(?i)\-urlcache") AND
+  match(src_content,"(?i)\-f") AND match(src_content,"(?i)\.txt|\.exe|\.dll")) ORmatch(src_content,"(?i)regsvr32.+?\.dll")
+  ORmatch(src_content,"(?i)rundll32.+?\.dll") OR(match(dest_content,"(?i)powershell")
+  AND (match(dest_content,"(?i)\-nop|-noprofile") OR (match(dest_content,"(?i)iex"))))
+  OR(match(dest_content,"(?i)mshta")) ORmatch(dest_content,"(?i)cmd\.exe") OR (match(dest_content,"(?i)cmd(\.exe)?")
+  AND match(dest_content,"(?i)\/c")) OR(match(dest_content,"(?i)(wmic.+os.+get.+\/FORMAT)")
+  AND match(dest_content,"(?i)\.xsl")) ORmatch(dest_content,"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s(.+)?\d{1,5}\s(.+)?-e.+cmd\.exe")
+  OR(match(form_data,"(?i)msiexec") AND match(form_data,"(?i)\.msi")) OR(match(form_data,"(?i)certutil")
+  AND match(form_data,"(?i)\-urlcache") AND match(form_data,"(?i)\-f") AND match(form_data,"(?i)\.txt|\.exe|\.dll"))
+  ORmatch(form_data,"(?i)regsvr32.+?\.dll") ORmatch(form_data,"(?i)rundll32.+?\.dll")
+  OR(match(form_data,"(?i)powershell") AND (match(form_data,"(?i)\-nop|-noprofile")
+  OR (match(form_data,"(?i)iex")))) OR(match(form_data,"(?i)mshta")) ORmatch(form_data,"(?i)cmd\.exe")
+  OR (match(form_data,"(?i)cmd(\.exe)?") AND match(form_data,"(?i)\/c")) OR(match(form_data,"(?i)(wmic.+os.+get.+\/FORMAT)")
+  AND match(form_data,"(?i)\.xsl")) ORmatch(form_data,"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s(.+)?\d{1,5}\s(.+)?-e.+cmd\.exe")|
+  lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- Web application firewall logs
+references: null

@@ -1,0 +1,18 @@
+id: '12425.17541'
+title: Python module loaded
+description: 'This use case detects when a Python module and possible destination
+  port has been executed in the command line. Adversaries may abuse Python commands
+  and scripts for execution. Atomic Test T1048.003 Test #1'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*python\d?\s+(-m|--module)\\\s+\\\w*\\\s+[0-9]{3,5}.*'', ''i'') and (process_path
+  ilike ''%python%'') '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- Linux audit logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1048.003/T1048.003.md

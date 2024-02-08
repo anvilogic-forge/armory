@@ -1,0 +1,16 @@
+id: '15712.23353'
+title: AWS DisassociateAddress
+description: Threat identifier for AWS API call DisassociateAddress, threat actors
+  can initiate a Elastic IP Hijacking attack by querying for all IP addresses and
+  disassociate an existing Elastic IP assign it to a new host
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_name = 'DisassociateAddress'
+techniques:
+- persistence:account manipulation
+- defense-evasion:impair defenses
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.mitiga.io/blog/elastic-ip-hijacking-a-new-attack-vector-in-aws

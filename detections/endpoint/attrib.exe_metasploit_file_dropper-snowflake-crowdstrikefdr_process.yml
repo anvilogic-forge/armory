@@ -1,0 +1,17 @@
+id: '5976.15089'
+title: Attrib.exe Metasploit File Dropper
+description: 'Using attrib.exe, an adversary may display or change file attributes
+  in order to bypass UAC restrictions. Metasploits file_dropper.rb, which is include
+  in some payloads uses this to assist in removing artifacts. -- Software Association:
+  TargetCompany'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(attrib.+?\.dll).*'',
+  ''i'') '
+techniques:
+- defense-evasion:hide artifacts
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/rapid7/metasploit-framework/blob/master/lib/msf/core/exploit/file_dropper.rb

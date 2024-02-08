@@ -1,0 +1,21 @@
+id: '16272.24661'
+title: System Network Connections Discovery - Windows
+description: 'Adversaries may attempt to get a listing of network connections to or
+  from the compromised system they are currently accessing or from remote systems
+  by querying for information over the network. -- Threat Actor Association: Alloy
+  Taurus/Gallium, Volt Typhoon -- Atomics T1049 Test #1 Atomics T1049 Test #2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "netstat" OR ("net" ("use" or "sessions")) OR TERM(Get-NetTCPConnection) | regex
+  process="(?i)netstat(\.exe)?|net(\.exe)?\s+(use|sessions)|Get-TCPConnection" | table
+  _time, host, user process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- discovery:system network connections discovery
+technique_id: null
+data_category:
+- Windows Sysmon
+- Process command-line parameters
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1049/T1049.md#atomic-test-1---system-network-connections-discovery
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1049/T1049.md#atomic-test-2---system-network-connections-discovery-with-powershell

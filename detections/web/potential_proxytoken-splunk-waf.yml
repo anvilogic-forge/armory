@@ -1,0 +1,19 @@
+id: '6620.7686'
+title: Potential ProxyToken
+description: With this vulnerability, an unauthenticated attacker can perform configuration
+  actions on mailboxes belonging to arbitrary users. This use case looks for incoming
+  web requests that contain indicators of proxytoken compromise attempts. CVE-2021-33766
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` "SecurityToken" ("msexchecpcanary" OR "*ecp*")
+  TERM(post) | table _time, host, user, src_ip, http_method, uri, uri_query, http_referrer,
+  http_user_agent, host, http_content_type, site, uri_path, dest_ip | bin span=1s
+  | stats values(*) as * by _time, src_ip | iplocation prefix="src_" src_ip| rename
+  src_Country as src_country '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: null
+data_category:
+- Web application firewall logs
+references:
+- https://www.zerodayinitiative.com/blog/2021/8/30/proxytoken-an-authentication-bypass-in-microsoft-exchange-server
+- https://therecord.media/proxytoken-vulnerability-can-modify-exchange-server-configs/

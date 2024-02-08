@@ -1,0 +1,40 @@
+id: '22461.40120'
+title: Remote Thread Created by Uncommon Process
+description: Remote thread creation involves a process initiating a thread within
+  the address space of another process. While this activity can occur during normal
+  system operation, threat actors may abuse remote threads to attempt privilege escalation,
+  defense evasion, or code injection. This use case detects remote threads created
+  by LOLBINs that do not typically create remote threads. Some known benign combinations
+  of source and target images have been filtered out to reduce noise. Sysmon event
+  8 logging is required for detection. LOLBINS/LOLBAS
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=8) OR "<EventID>8<")
+  ("bash.exe" OR "cscript.exe" OR "cvtres.exe" OR "defrag.exe" OR "dnx.exe" OR "esentutl.exe"
+  OR "excel.exe" OR "expand.exe" OR "explorer.exe" OR "find.exe" OR "findstr.exe"
+  OR "forfiles.exe" OR "gpupdate.exe" OR "hh.exe" OR "iexplore.exe" OR "installutil.exe"
+  OR "lync.exe" OR "makecab.exe" OR "mDNSResponder.exe" OR "monitoringhost.exe" OR
+  "msbuild.exe" OR "mshta.exe" OR "msiexec.exe" OR "mspaint.exe" OR "outlook.exe"
+  OR "ping.exe" OR "powerpnt.exe" OR "provtool.exe" OR "python.exe" OR "regsvr32.exe"
+  OR "robocopy.exe" OR "runonce.exe" OR "sapcimc.exe" OR "schtasks.exe" OR "smartscreen.exe"
+  OR "spoolsv.exe" OR "tstheme.exe" OR "userinit.exe" OR "vssadmin.exe" OR "vssvc.exe"
+  OR "w3wp.exe" OR "winlogon.exe" OR "winscp.exe" OR "winword.exe" OR "wmic.exe" OR
+  "wscript.exe") | rex field=SourceImage "\x5c(?<source_image>[^\x5c]+)$"| rex field=TargetImage
+  "\x5c(?<target_image>[^\x5c]+)$"| regex source_image="(?i)(bash|cscript|cvtres|defrag|dnx|esentutl|excel|expand|explorer|find|findstr|forfiles|gpupdate|hh|iexplore|installutil|lync|makecab|mDNSResponder|monitoringhost|msbuild|mshta|msiexec|mspaint|outlook|ping|powerpnt|provtool|python|regsvr32|robocopy|runonce|sapcimc|schtasks|smartscreen|spoolsv|tstheme|userinit|vssadmin|vssvc|w3wp|winlogon|winscp|winword|wmic|wscript)\.exe"|
+  where NOT ((match(source_image, "(?i)\x5cwinlogon\.exe") AND match(target_image,
+  "(?i)\x5c(services|wininit|csrss)\.exe")) OR (match(source_image, "(?i)\x5cwinlogon\.exe")
+  AND TargetParentImage="System" AND TargetParentProcessId=4) OR (match(source_image,
+  "(?i)\x5cprovtool\.exe") AND TargetParentProcessId=0) OR (match(source_image, "(?i)\x5cVSSVC\.exe")
+  AND match(target_image, "System")) OR (match(source_image, "(?i)\x5cschtasks\.exe")
+  AND match(target_image, "(?i)\x5cconhost\.exe")) OR (match(source_image, "(?i)\x5cexplorer\.exe")
+  AND match(target_image, "(?i)\x5cNVIDIA\sGeForce\sExperience\.exe"))) | table _time,
+  host, user host, process, process_*, parent_process_*, source_image, target_image
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:process injection
+- privilege-escalation:process injection
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://github.com/SigmaHQ/sigma/blob/62d4fd26b05f4d81973e7c8e80d7c1a0c6a29d0e/rules/windows/create_remote_thread/create_remote_thread_win_uncommon_source_image.yml
+- https://lolbas-project.github.io

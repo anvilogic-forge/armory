@@ -1,0 +1,33 @@
+id: '5342.5440'
+title: New Docker Container
+description: 'Detect when a container has been created/started of used an alpine image,
+  associated with Doki Malware. The image is not malicious but rather it’s being abused
+  to carry out malicious activities. By using an image that contains the curl software,
+  curl commands are executed as soon as the container is up and running. The advantage
+  of using a publicly available image is the attacker doesn’t need to hide it on Docker
+  hub or other hosting solutions. Instead, the attackers can use an existing image
+  and run their own logic and malware on top of it. - Threat Actor Association: TeamTNT,
+  WatchDog'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` "Docker" AND ("create" OR "start" OR "alpine")
+  AND http_method="POST" AND (dest_port=2375 OR dest_port=2376) AND NOT src_ip IN(10.0.0.0/8,
+  172.16.0.0/12, 192.168.16.0/16, 127.0.0.1, ::1) | rex field=uri_path (?<command_type>"(?i)(start|create)")
+  | rex field=uri_query (?<image_type>"(?i)(alpine)")| rex field=uri_query "(?i)name\=(?<c_name>\w+")|
+  rex field=uri_path (?<container_id>"(?i)(\/.+?\/start)") | table _time, host, user
+  uri_path, uri_query, status, src_ip, http_user_agent, http_referrer, http_method,
+  dest_content, user, dest_ip, src_headers, command_type, image_type, c_name, container_id|
+  eval client_ip = dest_ip | bin span=5s | stats values(*) as * by _time, dest_ip
+  |eventstats dc(src_ip) as dc_src_ip dc(container_id) as dc_container_id by dest_ip,
+  _time | where (match(uri_path, "(?i)create") AND (match(uri_path, "(?i)start") OR
+  match(uri_query, "(?i)alpine")) AND match(http_method, "(?i)POST")) AND dc_src_ip>0
+  AND dc_container_id>0 | lookup dnslookup clientip as src_ip OUTPUT clienthost as
+  src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- defense-evasion:deploy container
+- persistence:implant internal image
+- execution:deploy container
+technique_id: null
+data_category:
+- Web application firewall logs
+references:
+- https://www.imperva.com/blog/hundreds-of-vulnerable-docker-hosts-exploited-by-cryptocurrency-miners/

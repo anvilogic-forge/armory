@@ -1,0 +1,22 @@
+id: '6561.7484'
+title: SAM, System, Security Files Accessed
+description: 'This use case looks for file access of C:\Windows\System32\config\(SAM|System|Security)
+  as seen with HiveNightmare/SeriousSam CVE-2021-33757. Vulnerability that allows
+  non-admins to access the Security Account Manager (SAM) database, which stores users’
+  passwords. - Threat Actor Association: Flax Typhoon, Lapsus$ -- Software Association:
+  Rhysida'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4663) OR
+  "<EventID>4663<") TERM("C:\\Windows\\System32\\config\\*") (TERM(SAM) OR TERM(SYSTEM)
+  OR TERM(security))| regex Object_Name="(?i)(sam|system|security)$" | eval file_path=Object_Name|
+  fields _time, host, user, signature_id, process, process_*, parent_*, signature,
+  file_path, parameters `group_events("host", 1)` '
+techniques:
+- credential-access:os credential dumping:security account manager
+technique_id:
+- T1003.002
+data_category:
+- Windows event logs
+- File monitoring
+references:
+- https://www.blumira.com/sam-database-vulnerability/

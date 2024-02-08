@@ -1,0 +1,21 @@
+id: '21595.38212'
+title: regsvr32 Referencing Unusual Paths
+description: Adversaries may abuse regsvr32.exe to proxy execution of malicious code.
+  regsvr32 is a command-line program used to register and unregister object linking
+  and embedding controls including .dlls. This use case detects executions of regsvr32
+  involving frequently abused file paths as observed with the DarkWatchMan remote
+  access trojan. Applications with normal use from AppData\Local should be whitelisted
+  using the full file path. LOLBAS/LOLBINS
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and process_path ilike ''%regsvr32.exe'' and regexp_like(process,
+  ''.*\\\x5c(Temp|Appdata\\\x5cLocal|Users\\\x5cPublic).*'', ''i'') '
+techniques:
+- defense-evasion:system binary proxy execution:regsvr32
+technique_id:
+- T1218.010
+data_category:
+- EDR Logs
+references:
+- https://www.virustotal.com/gui/file/d439a3ce7353ef96cf3556abba1e5da77eac21fdba09d6a4aad42d1fc88c1e3c/behavior

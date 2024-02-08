@@ -1,0 +1,18 @@
+id: '8601.13679'
+title: AWS Connections Discovery
+description: 'Adversaries may attempt to get a listing of network connections to or
+  from the compromised system they are currently accessing or from remote systems
+  by querying for information over the network. An adversary who gains access to a
+  system that is part of a cloud-based environment may map out Virtual Private Clouds
+  or Virtual Networks in order to determine what systems and services are connected
+  -- Threat Actor Association: GUI-vil'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and ( event_name = 'ListConnections' or event_name = 'DescribeConnections' )
+techniques:
+- discovery:system network connections discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_ListConnections.html

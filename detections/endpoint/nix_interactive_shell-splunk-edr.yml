@@ -1,0 +1,16 @@
+id: '23818.43810'
+title: NIX Interactive Shell
+description: 'This use case detects the creation of an interactive shell on a NIX
+  host -- Software Association: Kinsing'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "/bin/sh" TERM(-i) | table _time,
+  host, user src_ip, process_*, user, type, process | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:unix shell
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references:
+- https://blog.aquasec.com/loony-tunables-vulnerability-exploited-by-kinsing

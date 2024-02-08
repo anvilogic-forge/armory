@@ -1,0 +1,32 @@
+id: '6357.18232'
+title: Rclone Execution
+description: 'Rclone is a command line program to manage files on cloud storage. It
+  is a feature rich alternative to cloud vendors'' web storage interfaces. Adversaries
+  have been known to use rclone in order to exfiltrate data. -- Threat Actor Association:
+  ALPHV/BlackCat, BlackMatter, DarkSide, Daixin Team, FIN7, FIN8 (Syssphinx), Hello
+  Kitty / Five Hands, Karakurt, LockBit, Scattered Spider (aka. 0ktapus, UNC3944),
+  Turla (akaSecret Blizzard, KRYPTON, and UAC-0003), UNC2628, Wizard Spider - Software
+  Association: Akira, AvosLocker, BazarLoader, BianLian, Blackbyte, Blackcat/ALPHV,
+  Black Basta, Conti, Lockbit, Ransom Cartel, Royal, Vice Society'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("rclone.exe" OR "rclone32.exe" OR (TERM(serve) OR TERM(COPY) OR TERM(move) OR TERM(COPYto)
+  OR TERM(moveto))) | table _time, host, user process, process_*, signature_id, parent_*
+  | bin span=1s | stats values(*) as * by _time, host | where (match(process, "(?i)\s+(((copy|move|moveto|copyto)\s+.*\S+:\S+\s+.*\S+:\S+)|(serve\s+(dlna|http|docker|ftp|restic|sftp|webdav)))")
+  or match(process_name, "(?i)rclone")) and not match(process_name, "(?i)(cmd|powershell).exe")
+  `hec_collect`'
+techniques:
+- exfiltration:exfiltration over web service:exfiltration to cloud storage
+- exfiltration:data transfer size limits
+- exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
+  non-c2 protocol
+technique_id:
+- T1048.003
+- T1567.002
+data_category:
+- Windows Sysmon
+references:
+- https://rclone.org/
+- https://www.mcafee.com/blogs/other-blogs/mcafee-labs/darkside-ransomware-victims-sold-short/
+- https://www.fireeye.com/blog/threat-research/2021/05/shining-a-light-on-darkside-ransomware-operations.html
+- https://unit42.paloaltonetworks.com/royal-ransomware/

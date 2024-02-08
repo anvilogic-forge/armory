@@ -1,0 +1,25 @@
+id: '5042.13632'
+title: 'AWS Backdoor User Creation
+
+  '
+description: 'If one of the AWS accounts are compromised, multiple backdooring methods
+  can be used in order to maintain access to AWS. The most used techniques are: 1.
+  create temporary credentials regularly 2. create a new user account 3. create an
+  access key for every user 4. create a role and attach AdministratorAccess policy
+  to it 5. Create a new security group -- Threat Actor Association: LUCR-3'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and ( event_name = 'AttachRolePolicy' and regexp_like(identity, '.*[^a-z]AdministratorAccess[^a-z].*',
+  'i') ) or (( event_name = 'CreateUser' or event_name = 'CreateAccessKey' or event_name
+  = 'CreateSecurityGroup' or event_name = 'CreatePolicy' or event_name = 'CreateRole'
+  or event_name = 'PutRolePolicy' ) and event_source = 'iam.amazonaws.com') or ( event_name
+  = 'GetSessionToken' and event_source = 'sts.amazonaws.com' )
+techniques:
+- persistence:create account:cloud account
+- persistence:account manipulation:additional cloud credentials
+technique_id:
+- T1136.003
+- T1098.001
+data_category:
+- AWS CloudTrail logs
+references: null

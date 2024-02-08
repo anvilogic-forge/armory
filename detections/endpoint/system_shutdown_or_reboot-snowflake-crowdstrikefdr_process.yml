@@ -1,0 +1,17 @@
+id: '8106.14732'
+title: System Shutdown or Reboot
+description: 'Adversaries may shutdown/reboot systems to interrupt access to, or aid
+  in the destruction of, those systems. Operating systems may contain commands to
+  initiate a shutdown/reboot of a machine. -- Software Association: Blackbyte, Conti,
+  DirtyMoe'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*(shutdown|reboot|halt|poweroff).*'', ''i'') '
+techniques:
+- impact:system shutdown/reboot
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://news.sophos.com/en-us/2020/09/17/maze-attackers-adopt-ragnar-locker-virtual-machine-technique/

@@ -1,0 +1,32 @@
+id: '6143.6641'
+title: Adfind Execution
+description: 'AdFind is a free command-line query tool that can be used for gathering
+  information from Active Directory. This use case looks for process executions of
+  Adfind. -- Threat Actor Association: APT29/Nobelium/Cozy Bear, APT31, BlackMatter,
+  Conti, DarkSide, FIN6, FIN7, FIN12, Karakurt, Lazarus, Traveling Spider, Wizard
+  Spider, Yanluowang - Software Association: ALPHV/BlackCat, BazarLoader, Conti, Dridex,
+  Entropy, Lockbit, Nefilim, Quantum, Sodinokibi/REvil - Atomics T1016 Test #6 Atomics
+  T1018 Test#10 Atomics T1018 Test#11 Atomics T1069.002 Test #8 Atomics T1087.002
+  Test #5 Atomics T1087.002 Test #6 Atomics T1087.002 Test #7 Atomics T1087.002 Test
+  #8'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  TERM(EventCode=4104) OR TERM(<EventID>4103<) OR TERM(<EventID>4104<)) "adfind" |
+  table _time, host, user user, process, process_name | bin span=5s | stats values(*)
+  as * by _time, host | where event_count > 0 '
+techniques:
+- discovery:account discovery:domain account
+- discovery:permission groups discovery:domain groups
+- discovery:domain trust discovery
+- discovery:system network configuration discovery
+- discovery:remote system discovery
+technique_id:
+- T1087.002
+- T1069.002
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://redcanary.com/blog/how-one-hospital-thwarted-a-ryuk-ransomware-outbreak/
+- https://thedfirreport.com/2020/10/08/ryuks-return/
+- https://www.fireeye.com/blog/threat-research/2019/04/pick-six-intercepting-a-fin6-intrusion.html

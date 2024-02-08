@@ -1,0 +1,18 @@
+id: '19686.34357'
+title: Office Spawns Suspicious Child Process
+description: 'This use case attempts to identify suspicious child processes spawned
+  from a Microsoft Office application -- Threat Actor Association: RomCom (Storm-0978)
+  -- Vulnerability Association: CVE-2023-36884'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform = 'Win' and regexp_like(parent_process_name, '.*((WINWORD\\\.EXE)|(EXCEL\\\.EXE)|(POWERPNT\\\.EXE)|(ONENOTE\\\.EXE)|(MSACCESS\\\.EXE)|(OUTLOOK\\\.EXE)|(VISIO\\\.EXE)|(WINPROJ\\\.EXE)|(GRAPH\\\.exe)|(MSPub\\\.exe)|(wordpad\\\.exe)).*',
+  'i') and regexp_like(process_path, '.*((powershell|pwsh|cmd|mshta|wscript|cscript|regsvr32|rundll32|taskkill|csc|calc|control)\\\.exe).*',
+  'i')
+techniques:
+- execution:user execution:malicious file
+technique_id:
+- T1204.002
+data_category:
+- EDR Logs
+references:
+- https://fourcore.io/blogs/cve-2023-36884-ms-office-zero-day-vulnerability

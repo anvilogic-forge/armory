@@ -1,0 +1,28 @@
+id: '5489.5665'
+title: China Chopper Web Shell
+description: 'The China Chopper is a web shell used to create a backdoor into components
+  of Windows and Linux machines. It is a simple text-based payload that does not require
+  a file transfer due to its simplicity. The payload has a security scan feature with
+  C2 capabilities when combining the client and payload with file management, database
+  management, and virtual terminal features. -- Threat Actor Association: Alloy Taurus/Gallium,
+  APT15, APT27, APT41, Broken Cable, CL-STA-0043, Flax Typhoon, Fox Kitten, Mustang
+  Panda (aka. Stately Taurus//Earth Preta/BRONZE PRESIDENT/TA416/RedDelta), Threat
+  Group-3390'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` http_method=POST (TERM(aspx) OR TERM(ASP)
+  OR TERM(php)) (TERM(base64_decode) OR TERM(FromBase64String)) | regex "(UmVxdWVzdC5JdGVt)|(JF9QT1NU)|((?i)Request.Item)|(\$\_POST)"
+  | table _time, host, user, uri_path, http_user_agent, src_ip, form_data, dest_ip
+  | bin span=1s | stats values(*) as * by _time, host | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename
+  src_Country as src_country '
+techniques:
+- persistence:server software component:web shell
+- command-and-control:application layer protocol:web protocols
+technique_id:
+- T1505.003
+- T1071.001
+data_category:
+- Web application firewall logs
+references:
+- https://www.fireeye.com/blog/threat-research/2013/08/breaking-down-the-china-chopper-web-shell-part-i.html
+- https://informationonsecurity.blogspot.com/2012/11/china-chopper-webshell.html

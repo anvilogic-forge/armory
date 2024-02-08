@@ -1,0 +1,21 @@
+id: '27341.49803'
+title: DLL Execution from Uncommon Process
+description: During an attack using Ursnif malware, threat actors were observed executing
+  DLLs with a renamed rundll32 binary. This use case detects execution of the DLL
+  functions DllRegisterServer, DllMain, DllUnregisterServer, DllInstall, or DllCanUnloadNow
+  from processes other than rundll32.exe. Living Off the Land Binary and Scripts (LOLBAS)
+  (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ",DllRegisterServer" OR ",DllMain" OR ",DllUnregisterServer" OR ",DllInstall" OR
+  ",DllCanUnloadNow" | rex field=process ",(?<dll_function>\S+)"| where not match(process_name,
+  "(?i)rundll32\.exe") | table _time, host, user, process, process_*, parent_process*,
+  dll_function | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- Windows Sysmon
+references:
+- https://thedfirreport.com/2023/01/09/unwrapping-ursnifs-gifts/

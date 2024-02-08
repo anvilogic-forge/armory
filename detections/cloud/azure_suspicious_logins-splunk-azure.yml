@@ -1,0 +1,22 @@
+id: '6209.6834'
+title: Azure Suspicious Logins
+description: 'This use case looks for logins from multiple src_ip, states, or regions.
+  -- Threat Actor Association: LUCR-3'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` (TERM(SignInLogs) OR TERM(NonInteractiveUserSignInLogs))
+  TERM(success) | eval login_state=''properties.location.state'', login_region=''properties.location.countryOrRegion''
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, login_*
+  | bin span=1s | stats values(*) as * by _time, user | eventstats dc(login_state)
+  as dc_login_state by user| eventstats dc(login_region) as dc_login_region by user|
+  eventstats dc(src_ip) as dc_src_ip by user | where dc_login_state > 1 OR dc_login_region
+  > 1 OR dc_src_ip > 1 '
+techniques:
+- credential-access:brute force
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins

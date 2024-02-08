@@ -1,0 +1,17 @@
+id: '6839.15019'
+title: Kubernetes Administration Command
+description: Adversaries may abuse a container administration service to execute commands
+  within a container. A container administration service such as the Docker daemon,
+  the Kubernetes API server, or the kubelet may allow remote management of containers
+  within an environment.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*kubectl\\\s+.*(exec|attach).*'', ''i'') '
+techniques:
+- execution:container administration command
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.cyberark.com/resources/threat-research-blog/using-kubelet-client-to-attack-the-kubernetes-cluster

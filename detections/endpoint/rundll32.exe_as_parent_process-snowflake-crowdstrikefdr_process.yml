@@ -1,0 +1,19 @@
+id: '5850.15112'
+title: Rundll32.exe as Parent Process
+description: 'Adversaries may abuse rundll32.exe to proxy execution of malicious code.
+  Using rundll32.exe, may avoid triggering security tools that may not monitor execution
+  of the rundll32.exe process because of allowlists or false positives from normal
+  operations. Rundll32.exe is commonly associated with executing DLL payloads. Threat
+  Actor Association: MuddyWater, TA505, Wizard Spider - Software Association: Bazar,
+  Clop, Conti, Quantum, Rhysida, Trickbot'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and parent_process_name ilike ''%rundll32.exe'' '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/threat-detection-report/techniques/rundll32/

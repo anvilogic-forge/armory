@@ -1,0 +1,19 @@
+id: '25757.47718'
+title: Advanced Port Scanner Execution
+description: Advanced Port Scanner is a free network scanner that allows users to
+  quickly find open ports on network computers and retrieve versions of programs running
+  on the ports it detects. Threat actors using Rhysida ransomware have been reported
+  to use Advanced Port Scanner during reconnaissance activities.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<"
+  ) "advanced_port_scanner.exe" | where match(process_name, "(?i)advanced_port_scanner\.exe")
+  | table _time, host, user, process, process_*, parent_process_* | bin span=1s |
+  stats values(*) as * by _time, host '
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://www.fortinet.com/content/dam/fortinet/assets/threat-reports/rhysida-ransomware-intrusion.pdf?utm_source=blog&utm_medium=blog&utm_campaign=rhysida-ransomware
+- https://www.advanced-port-scanner.com/

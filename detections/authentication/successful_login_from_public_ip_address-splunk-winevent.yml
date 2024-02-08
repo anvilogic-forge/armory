@@ -1,0 +1,27 @@
+id: '8413.10581'
+title: Successful Login From Public IP Address
+description: 'Detect successful logins from public internet addresses -- Threat Actor
+  Association: LUCR-3, Scattered Spider (aka. 0ktapus, UNC3944), Volt Typhoon - Software
+  Association: Zeppelin'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4624) OR
+  "EventID>4624<") Logon_Type=10 | iplocation src_ip prefix=geo | where geoCountry!=""|
+  eval user = mvindex(Security_ID,mvcount(Security_ID)-1)| table _time, host, user
+  user, note, process_name, process_path, signature_id, src_country, src_dns, src_ip,
+  geo_* | bin span=20s | stats values(*) as * by _time, host | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename
+  src_Country as src_country '
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+- initial-access:valid accounts:default accounts
+- initial-access:external remote services
+- initial-access:valid accounts:domain accounts
+- initial-access:valid accounts
+technique_id:
+- T1021.001
+- T1078.002
+- T1078.001
+data_category:
+- Authentication logs
+- Windows event logs
+references: null

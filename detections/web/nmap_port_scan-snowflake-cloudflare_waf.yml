@@ -1,0 +1,21 @@
+id: '1063.22044'
+title: NMAP Port Scan
+description: 'Port Scanning is the name for the technique used to identify open ports
+  and services available on a network host. It is sometimes utilized by security technicians
+  to audit computers for vulnerabilities, however, it is also used by hackers to target
+  victims. It can be used to send requests to connect to the targeted computers, and
+  then keep track of the ports which appear to be opened, or those that respond to
+  the request. -- Threat Actor Association: Alloy Taurus/Gallium'
+logic_format: snowflake
+logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (http_method
+  ilike ''get'' or http_method ilike ''options'') and regexp_like(uri_path, ''.*((Trinity.txt.bak)|(\\\/\\\\s+RTSP\\\/1.0)).*'',
+  ''i'') '
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Web application firewall logs
+references:
+- https://dl.packetstormsecurity.net/docs/infosec/enemy2.html
+- https://github.com/Fincer/linux-server-setup/blob/master/exercises/h5.md

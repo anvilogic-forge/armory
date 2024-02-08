@@ -1,0 +1,15 @@
+id: '6842.9864'
+title: Kubernetes Enumeration
+description: 'This use case looks for when the Kubectl get command has been executed.
+  -- Threat Actor Association: TeamTNT -- Atomics T1053.007 Test#1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(kubectl) TERM(get) | table
+  _time, host, user process | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:container and resource discovery
+technique_id: null
+data_category:
+- Linux audit logs
+- Process command-line parameters
+references:
+- https://book.hacktricks.xyz/pentesting/pentesting-kubernetes/enumeration-from-a-pod

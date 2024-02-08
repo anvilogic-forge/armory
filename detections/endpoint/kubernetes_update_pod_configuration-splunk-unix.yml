@@ -1,0 +1,17 @@
+id: '8076.9791'
+title: Kubernetes Update Pod Configuration
+description: This use case looks for when a pod configuration has been modified with
+  kubectl-edit, scale, autoscale, or replace.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (TERM(kubectl) (TERM(edit) OR
+  TERM(scale) OR TERM(autoscale) OR TERM(replace))) | table _time, host, user process,
+  process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:deploy container
+- execution:deploy container
+technique_id: null
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/

@@ -1,0 +1,21 @@
+id: '16743.26616'
+title: 'Permission Groups Discovery: Local Groups'
+description: 'Adversaries may attempt to find local system groups and permission settings.
+  The knowledge of local system permission groups can help adversaries determine which
+  groups exist and which users belong to a particular group. Adversaries may use this
+  information to determine which users have elevated permissions, such as the users
+  found within the local administrators group. Atomics T1069.001 Test #3 Atomics T1069.001
+  Test #5 Atomics T1069.001 Test #6'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  TERM(Get-LocalGroup) OR TERM(Get-LocalGroupMember) OR (("wmic" OR TERM(Get-WMIObject)
+  AND TERM(group))) | table _time, host, user, process, process_*, parent_process
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:permission groups discovery
+technique_id: null
+data_category:
+- Windows Sysmon
+- Process command-line parameters
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1069.001/T1069.001.md#atomic-test-3---permission-groups-discovery-powershell-local

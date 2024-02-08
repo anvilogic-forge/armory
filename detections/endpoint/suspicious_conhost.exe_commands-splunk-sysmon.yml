@@ -1,0 +1,22 @@
+id: '17711.29614'
+title: Suspicious Conhost.exe Commands
+description: 'Adversaries may abuse utilities that allow for command execution to
+  bypass security restrictions that limit the use of command-line interpreters. This
+  use case detects commands using conhost.exe to launch other executables, which may
+  be used by adversaries to evade detection and bypass restrictions. -- Software Association:
+  Qakbot -- Atomics T1202 Test #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  TERM(conhost) | regex process="(?i)conhost\.exe.*?\.exe"| rex field=process "(?i)conhost\.exe\s+\"(?<spawned_process>[^\"]+)\.exe"
+  | table _time, host, user parent_*, process, process_*, signature_id, spawned_process|
+  bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:indirect command execution
+- defense-evasion:exploitation for defense evasion
+technique_id: null
+data_category:
+- Windows Sysmon
+- Process command-line parameters
+references:
+- http://www.hexacorn.com/blog/2020/05/25/how-to-con-your-host/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1202/T1202.md#atomic-test-3---indirect-command-execution---conhostexe

@@ -1,0 +1,19 @@
+id: '5723.5996'
+title: O365 Auto Forward
+description: 'An email forwarding rule in Office 365 could be a "forever data breach".
+  -- Threat Actor Association: SEABORGIUM'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365`"Set-Mailbox" ("ForwardingSmtpAddress"
+  OR "DeliverToMailboxAndForward") | regex _raw!="(?i)(ForwardingSmtpAddress|DeliverToMailboxAndForward).*?value\"\:\s\"\""|
+  table _time, host, user,account, region, src_ip, http_user_agent, access_key, user,
+  user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- collection:email collection:email forwarding rule
+technique_id:
+- T1114.003
+data_category:
+- Office 365 audit logs
+references:
+- https://www.fireeye.com/blog/threat-research/2020/07/insights-into-office-365-attacks-and-how-managed-defense-investigates.html

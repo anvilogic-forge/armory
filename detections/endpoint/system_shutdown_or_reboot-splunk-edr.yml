@@ -1,0 +1,19 @@
+id: '8106.24812'
+title: System Shutdown or Reboot
+description: 'Adversaries may shutdown/reboot systems to interrupt access to, or aid
+  in the destruction of, those systems. Operating systems may contain commands to
+  initiate a shutdown/reboot of a machine. -- Software Association: Blackbyte, Conti,
+  DirtyMoe'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("shutdown" OR "reboot" OR "halt"
+  OR "poweroff") OR type IN("resp_halt", "system_shutdown") | table _time, host, user
+  process, process_*, type | bin span=1s | stats values(*) as * by _time, host | where
+  (match(process, "(?i)(^(shutdown|reboot|poweroff|halt))|((sudo|sh|su|\|).*?(shutdown|reboot|poweroff|halt))")
+  OR match(type,"(?i)resp_halt|system_shutdown")) AND NOT match(process, "(?i)((shutdown|reboot|poweroff|halt)\.|\_)|(^(awk|ls|e?grep|id))") '
+techniques:
+- impact:system shutdown/reboot
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://news.sophos.com/en-us/2020/09/17/maze-attackers-adopt-ragnar-locker-virtual-machine-technique/

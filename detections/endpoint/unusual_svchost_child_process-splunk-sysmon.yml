@@ -1,0 +1,30 @@
+id: '16041.40545'
+title: Unusual svchost Child Process
+description: 'Adversaries may inject code into processes in order to evade process-based
+  defenses as well as possibly elevate privileges. Process injection is a method of
+  executing arbitrary code in the address space of a separate live process. Running
+  code in the context of another process may allow access to the process''s memory,
+  system/network resources, and possibly elevated privileges. Execution via process
+  injection may also evade detection from security products since the execution is
+  masked under a legitimate process. Expected Service Host (svchost.exe) activity
+  does not normally include certain child processes. Svchost spawning these child
+  processes may be an indication of process injection. -- Threat Actor Association:
+  Lazarus'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "svchost" ("WdiSystemHost" OR "LicenseManager" OR "StorSvc" OR "CDPSvc" OR "cdbhsvc"
+  OR "BthAvctpSvc" OR "SstpSvc" OR "WdiServiceHost" OR "imgsvc" OR "TrkWks" OR "WpnService"
+  OR "IKEEXT" OR "PolicyAgent" OR "CryptSvc" OR "netprofm" OR "ProfSvc" OR "StateRepository"
+  OR "camsvc" OR "LanmanWorkstation" OR "NlaSvc" OR "EventLog" OR "hidserv" OR "DisplayEnhancementService"
+  OR "ShellHWDetection" OR "AppHostSvc" OR "fhsvc" OR "CscService" OR "PushToInstall")
+  | regex process="(?i)WdiSystemHost|LicenseManager|StorSvc|CDPSvc|cdbhsvc|BthAvctpSvc|SstpSvc|WdiServiceHost|imgsvc|TrkWks|WpnService|IKEEXT|PolicyAgent|CryptSvc|netprofm|ProfSvc|StateRepository|camsvc|LanmanWorkstation|NlaSvc|EventLog|hidserv|DisplayEnhancementService|ShellHWDetection|AppHostSvc|fhsvc|CscService|PushToInstall"|
+  where match(parent_process_name, "(?i)svchost")| where not match(process_name, "(?i)werfault(secure)?|wermgr\.exe")
+  | table _time, host, user process, process_*, parent_process_*, signature_id | bin
+  span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:process injection
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://redcanary.com/threat-detection-report/techniques/process-injection/

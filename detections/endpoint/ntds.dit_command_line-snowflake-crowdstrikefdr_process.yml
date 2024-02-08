@@ -1,0 +1,20 @@
+id: '20543.36411'
+title: ntds.dit Command Line
+description: 'Adversaries may attempt to access or create a copy of the Active Directory
+  domain database in order to steal credential information, as well as obtain other
+  information about domain members such as devices, users, and access rights. This
+  use case specifically looks for command line argument executions with ntds.dit.
+  -- Threat Actor Association: Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE
+  PRESIDENT/TA416/RedDelta), Volt Typhoon - Software Association: Akira -- Atomics
+  T1003.003 Test #2 Atomics T1003.003 Test #3 Atomics T1003.003 Test #6'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process ilike ''%ntds.dit%'' '
+techniques:
+- credential-access:os credential dumping:ntds
+technique_id:
+- T1003.003
+data_category:
+- EDR Logs
+references:
+- https://www.ired.team/offensive-security/credential-access-and-credential-dumping/ntds.dit-enumeration

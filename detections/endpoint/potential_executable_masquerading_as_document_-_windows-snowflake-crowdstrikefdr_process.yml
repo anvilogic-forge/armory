@@ -1,0 +1,22 @@
+id: '21579.38120'
+title: Potential Executable Masquerading as Document - Windows
+description: 'Adversaries may abuse double extensions to attempt to conceal dangerous
+  file types of payloads. This use case detects executions of files that appear to
+  be document or image files but execute as script or executable files, or executable/script
+  files with 3 or more spaces or underscores preceding the extension in an effort
+  to obscure the file''s actual extension. CVE-2023-38831 -- Threat Actor Association:
+  APT28, APT40, Sandworm Team, UAC-0057 (GhostWriter)'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and regexp_like(process, ''.*((\\\s{3,}|_{3,})|(\\\.(pdf|jpg|jpeg|gif|ico|doc|xls|docx|xlsx|png|xml|csv|ppt|pptx|rtf|txt)(\\\s+)?))\\\.(cmd|bat|ps1|vbs|js|py|exe|msi|vbe|lnk|scr).*'',
+  ''i'') '
+techniques:
+- defense-evasion:masquerading:double file extension
+technique_id:
+- T1036.007
+data_category:
+- EDR Logs
+references:
+- https://www.group-ib.com/blog/cve-2023-38831-winrar-zero-day/
+- https://www.microsoft.com/en-us/security/blog/2024/01/17/new-ttps-observed-in-mint-sandstorm-campaign-targeting-high-profile-individuals-at-universities-and-research-orgs/

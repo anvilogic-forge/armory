@@ -1,0 +1,19 @@
+id: '16272.24659'
+title: System Network Connections Discovery - Windows
+description: 'Adversaries may attempt to get a listing of network connections to or
+  from the compromised system they are currently accessing or from remote systems
+  by querying for information over the network. -- Threat Actor Association: Alloy
+  Taurus/Gallium, Volt Typhoon -- Atomics T1049 Test #1 Atomics T1049 Test #2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*(netstat(\\\.exe)?|net(\\\.exe)?\\\s+(use|sessions)|Get-TCPConnection).*'',
+  ''i'') '
+techniques:
+- discovery:system network connections discovery
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1049/T1049.md#atomic-test-1---system-network-connections-discovery
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1049/T1049.md#atomic-test-2---system-network-connections-discovery-with-powershell

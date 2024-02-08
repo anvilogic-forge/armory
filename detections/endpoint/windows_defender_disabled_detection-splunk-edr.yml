@@ -1,0 +1,26 @@
+id: '1044.15082'
+title: Windows Defender Disabled Detection
+description: 'An attacker could disable security tools to avoid possible detection
+  of their tools and activities. This can take the form of killing security software,
+  real-time monitoring or Windows Defender Service. -- Threat Actor Association: FIN6,
+  FIN11, Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm),
+  Vice Society, Wizard Spider -- Software Association: Bazarloader, BianLian, Blackbyte,
+  Black Basta, Clop, Conti, DirtyMoe, Lockbit, Sodinokibi/REvil, Vice Society, WhisperGates
+  -- #TrendingThreat #Russia #Ukraine - Atomics T1588.002 Test #1'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) AND ((TERM(-DisableRealtimeMonitoring)
+  OR TERM(-drtm)) AND TERM(true)) OR ((TERM(REG) OR "reg.exe") TERM(ADD) "windows
+  defender" TERM(DisableAntiSpyware) "/d 1") OR ((TERM(sc) OR TERM(net) OR TERM(net1)
+  OR "sc.exe" OR "net.exe" OR TERM(Stop-Service)) TERM(windows) TERM(defender)) |
+  table _time, host, user process, process_*, singature_id, parent_* | bin span=1s
+  | stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1562.001
+data_category:
+- Process command-line parameters
+- EDR Logs
+references:
+- https://github.com/swagkarna/Defeat-Defender

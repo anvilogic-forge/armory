@@ -1,0 +1,18 @@
+id: '8979.16099'
+title: Okta Impossible Travel Sign-In
+description: 'This use case looks for user signins from multiple locations by time
+  and distance. - Threat Actor Association: LUCR-3, Scattered Spider (aka. 0ktapus,
+  UNC3944), Scatter Swine'
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and (signature
+  ilike ''User login to Okta'' or signature ilike ''User single sign on to app'' or
+  signature ilike ''Authentication of user via MFA'') and city is not null '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+references: null

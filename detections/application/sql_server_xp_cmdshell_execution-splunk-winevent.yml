@@ -1,0 +1,24 @@
+id: '25968.47999'
+title: SQL Server xp_cmdshell Execution
+description: 'The xp_cmdshell Extended Stored Procedure in Microsoft SQL Server can
+  execute commands on the system with the same security context as SQL Server, allowing
+  attackers to escalate privileges and establish persistence as seen in attacks involving
+  BlueSky ransomware. This use case detects when the xp_cmdshell stored procedure
+  is executed. Note: MSSQL audit policy monitoring for xp_cmdshell is required for
+  detection.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` EventCode="33205" "xp_cmdshell"
+  "EXEC" | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:server software component:sql stored procedures
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1505.001
+- T1059.003
+data_category:
+- Application logs
+references:
+- https://thedfirreport.com/2023/12/04/sql-brute-force-leads-to-bluesky-ransomware/
+- https://www.microsoft.com/en-us/security/blog/2023/10/03/defending-new-vectors-threat-actors-attempt-sql-server-to-cloud-lateral-movement/
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://dba.stackexchange.com/questions/103183/is-there-any-way-to-monitor-execution-of-xp-cmdshell-in-sql-server-2012

@@ -1,0 +1,20 @@
+id: '17782.30000'
+title: File_Folder Hidden - Windows
+description: 'This use case detects commands setting the hidden attribute to files
+  or folders on Windows systems. This technique is used by threat actors to evade
+  detection and conceal malicious files from regular view. Atomics T1222.001 Test
+  #4'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and process_path ilike ''%attrib%'' and regexp_like(process,
+  ''.*\\\s+\\\+h\\\s+.*'', ''i'') '
+techniques:
+- defense-evasion:file and directory permissions modification:windows file and directory
+  permissions modification
+technique_id:
+- T1222.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1222.001/T1222.001.md#atomic-test-4---attrib---hide-file

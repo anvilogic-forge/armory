@@ -1,0 +1,23 @@
+id: '5987.6352'
+title: Package installation
+description: 'Some programming languages, like Python, come with an easy, more or
+  less official method of installing dependencies for your projects. These installers
+  are usually tied to public code repositories where anyone can freely upload code
+  packages for others to use. The intent of this use case is to identify installation
+  of packages, with common repositories using pip, gem and npm. Use case will be used
+  to with additional threat identifiers to potentially identify Dependency confusion
+  style attacks. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (TERM(pip) OR TERM(npm) OR TERM(gem))
+  TERM(install) | regex process="(?i)install\s" | rex field=process "(?<reqs>(?i)requirements\.txt")
+  | rex field=process "(?<extra>(?i)(\-{2}extra)?\-index\-url(\s+\S+)") | rex field=process
+  "(?<source1>(?i)\-{2}source(\s+\S+)") | eval keywords=mvappend(reqs, extra, source1)
+  | table _time, host, user, process, process_*, type, keywords | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- Linux audit logs
+references:
+- https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610

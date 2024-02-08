@@ -1,0 +1,21 @@
+id: '1106.1173'
+title: RDP Enabled
+description: 'Detects if RDP service has been enabled on Windows host -- Threat Actor
+  Association: APT35/Phosphorus/Magic Hound, DarkSide, BlackMatter, FIN7, TA551, Wizard
+  Spider, Yanluowang -- Software Association: BianLian, Black Basta, Conti, Hive,
+  IcedID, Insekt, Lockbit, Nefilim, Ryuk Ransomware, Sodinokibi/REvil'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` EventCode=1 ( ("reg.exe" AND
+  TERM(add) AND TERM(fDenyTSConnections) AND TERM(REG_DWORD) AND TERM(/d) AND TERM(0)
+  AND TERM(Terminal) AND TERM(Server) ) OR ("netsh.exe" AND TERM(remote) AND TERM(desktop)
+  AND TERM(enable=yes)) ) | table _time, host, user process, process_*, parent_process,
+  parent_process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:modify registry
+- lateral-movement:remote services:remote desktop protocol
+technique_id:
+- T1021.001
+data_category:
+- Windows Sysmon
+references:
+- https://pureinfotech.com/enable-remote-desktop-command-prompt-windows-10/

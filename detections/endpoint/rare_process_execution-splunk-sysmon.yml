@@ -1,0 +1,28 @@
+id: '5026.5675'
+title: Rare Process Execution
+description: 'Rare process executions are anomalies within an organization and are
+  normally worth looking at. Although these kinds of detections can be false positive
+  prone, they can be utilized as supporting evidence or as a last resort to detect
+  malicious activity your other detection content may be missing. -- Threat Actor
+  Association: Traveling Spider, Volt Typhoon, Wizard Spider - Software Association:
+  Conti, Nefilim, Ryuk'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` EventCode=1 NOT (process_path
+  IN ("C:\\Program Files*","C:\\Windows\\SoftwareDistribution\\Download\\Install\\*","C:\\ProgramData\\Microsoft\\Windows
+  Defender\\platform*") OR parent_process_path IN ("C:\\Program Files*","C:\\Windows\\SoftwareDistribution\\Download\\Install\\*"))|
+  rex field=process_path "^(?<process_path_ext>.+)\x5c[^\x5c]+$"| fields _time, host,
+  user, process, process_*, parent_*`group_events("host, process_name", 10)` | eventstats
+  dc(host) as dc_host by process_name| eventstats c(process_path_ext) as c_process_path_ext
+  by process_path_ext| eventstats c(process) as c_process by process| where process_path!=parent_process_path
+  and (dc_host=1 and c_process_path_ext<3 and c_process<3)`hec_collect`'
+techniques:
+- execution:command and scripting interpreter:windows command shell
+- execution:user execution:malicious file
+technique_id:
+- T1204.002
+- T1059.003
+data_category:
+- Windows Sysmon
+references:
+- https://www.splunk.com/en_us/blog/security/detecting-early-signs-of-compromise-using-windows-sysinternal.html
+- https://d1zq5d3dtjfcoj.cloudfront.net/F-Secure-APT29-9985.png

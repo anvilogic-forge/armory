@@ -1,0 +1,16 @@
+id: '8399.14690'
+title: Modify File Attributes
+description: 'chattr changes the file attributes on a Linux file system. - Threat
+  Actor Association: TeamTNT - Atomics T1222.002 Test #9'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and (event_platform = 'Lin' or event_platform = 'Mac') and process_path ilike '%chattr'
+techniques:
+- defense-evasion:file and directory permissions modification:linux and mac file and
+  directory permissions modification
+technique_id:
+- T1222.002
+data_category:
+- EDR Logs
+references:
+- https://documents.trendmicro.com/assets/white_papers/wp-tracking-the-activities-of-teamTNT.pdf

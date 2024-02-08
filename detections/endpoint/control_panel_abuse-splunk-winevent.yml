@@ -1,0 +1,25 @@
+id: '5992.6362'
+title: Control Panel Abuse
+description: 'Adversaries may abuse control.exe to proxy execution of malicious payloads.
+  The Windows Control Panel process binary (control.exe) handles execution of Control
+  Panel items, which are utilities that allow users to view and adjust computer settings.
+  Adversaries may also rename malicious DLL files (.dll) with Control Panel file extensions
+  (.cpl), Control Panel items, specifically CPL files, may also bypass application
+  and/or file extension allow lists. - Threat Actor Association: Alloy Taurus/Gallium,
+  Lazarus, UNC2589 - Atomics T1218.002 Test#1 - #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "control.exe" ("cpl" OR "dll" OR "inf" OR "\.\.\/")
+  | regex process="(?i)(control\.exe.+?\.(dll|cpl|\.\/|inf))" | table _time, host,
+  user parent_*, process, process_*, signature_id | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:control panel
+technique_id:
+- T1218.002
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Control/
+- https://www.welivesecurity.com/wp-content/uploads/2020/06/ESET_InvisiMole.pdf
