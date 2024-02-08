@@ -11,7 +11,8 @@ logic: select * from okta where event_time > dateadd(hour, -2, sysdate()) and to
   or event_type ilike 'user.authentication.auth_via_mfa')
 techniques:
 - credential-access:brute force
-technique_id: null
+technique_id: 
+- T1110
 data_category:
 - Authentication logs
 references:
