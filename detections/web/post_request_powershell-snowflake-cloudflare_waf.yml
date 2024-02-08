@@ -15,6 +15,8 @@ techniques:
 - initial-access:exploit public-facing application
 technique_id:
 - T1059.001
+- T1133
+- T1190
 data_category:
 - Web application firewall logs
 references:
