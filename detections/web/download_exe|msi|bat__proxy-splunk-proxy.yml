@@ -14,7 +14,8 @@ logic: '`get_web_data` `get_web_data_proxy` (TERM(exe) OR TERM(msi) OR TERM(bat)
   as dest_country '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - Web proxy
 references: null
