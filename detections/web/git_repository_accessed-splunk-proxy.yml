@@ -12,7 +12,8 @@ logic: '`get_web_data` `get_web_data_proxy` ("/.git/" AND status="200" AND http_
   dest_ip, uri_path, status, http_method `hec_collect`'
 techniques:
 - discovery:file and directory discovery
-technique_id: null
+technique_id: 
+- T1083
 data_category:
 - Web proxy
 references:
