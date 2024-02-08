@@ -8,7 +8,8 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
   = 'ListOrganizationalUnitsForParent'
 techniques:
 - discovery:system information discovery
-technique_id: null
+technique_id: 
+- T1082
 data_category:
 - AWS CloudTrail logs
 references:
