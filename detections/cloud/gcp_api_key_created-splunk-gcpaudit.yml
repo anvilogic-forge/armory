@@ -8,7 +8,8 @@ logic: '`get_cloud_data` `get_cloud_data_gcp` "google.api.apikeys.v1.ApiKeys.Cre
   1)``hec_collect`'
 techniques:
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1530
 data_category:
 - GCP audit logs
 references: null
