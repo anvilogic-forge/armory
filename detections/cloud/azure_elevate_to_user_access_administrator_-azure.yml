@@ -12,7 +12,9 @@ logic: '`get_cloud_data` `get_cloud_data_azure` `get_cloud_data_iam` "elevateAcc
 techniques:
 - persistence:account manipulation
 - privilege-escalation:valid accounts
-technique_id: null
+technique_id: 
+- T1098
+- T1078
 data_category:
 - Azure activity logs
 references:
