@@ -15,6 +15,7 @@ techniques:
 - defense-evasion:modify cloud compute infrastructure
 - defense-evasion:impair defenses:disable cloud logs
 technique_id:
+- T1578
 - T1562.008
 data_category:
 - Azure activity logs
