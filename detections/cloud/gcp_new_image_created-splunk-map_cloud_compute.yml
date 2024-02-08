@@ -8,7 +8,8 @@ logic: '`get_cloud_data` `get_cloud_data_gcp` TERM(compute.images.insert) | tabl
   1)``hec_collect`'
 techniques:
 - persistence:implant internal image
-technique_id: null
+technique_id: 
+- T1525
 data_category:
 - GCP audit logs
 references: null
