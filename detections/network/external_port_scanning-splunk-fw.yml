@@ -15,7 +15,8 @@ logic: '`get_network_data` `get_network_data_fw` dest_ip IN(10.0.0.0/8, 172.16.0
   `hec_collect`'
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - Network device logs
 references: null
