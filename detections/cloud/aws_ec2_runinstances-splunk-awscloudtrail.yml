@@ -14,7 +14,8 @@ logic: '`get_cloud_data` eventName="RunInstances" "ec2.amazonaws.com" | table _t
   src_Country as src_country '
 techniques:
 - defense-evasion:modify cloud compute infrastructure
-technique_id: null
+technique_id: 
+- T1578
 data_category:
 - AWS CloudTrail logs
 references:
