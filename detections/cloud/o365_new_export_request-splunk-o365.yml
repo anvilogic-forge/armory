@@ -11,7 +11,8 @@ logic: '`get_cloud_data` `get_cloud_data_o365` TERM(New-MailboxExportRequest) | 
   span=1s | stats values(*) as * by _time, user '
 techniques:
 - collection:email collection
-technique_id: null
+technique_id: 
+- T1114
 data_category:
 - Office 365 audit logs
 references: null
