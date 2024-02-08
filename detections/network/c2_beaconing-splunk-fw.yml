@@ -19,7 +19,8 @@ logic: '`get_network_data` `get_network_data_fw` NOT (dest_ip IN (10.0.0.0/8,172
   prefix=dest_ dest_ip| fillnull value=-| table _time, host, user, dest_ip, src_ip`hec_collect`'
 techniques:
 - command-and-control:non-application layer protocol
-technique_id: null
+technique_id: 
+- T1095
 data_category:
 - Network device logs
 references:
