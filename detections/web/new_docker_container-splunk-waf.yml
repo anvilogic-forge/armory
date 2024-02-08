@@ -26,7 +26,9 @@ techniques:
 - defense-evasion:deploy container
 - persistence:implant internal image
 - execution:deploy container
-technique_id: null
+technique_id: 
+- T1610
+- T1525
 data_category:
 - Web application firewall logs
 references:
