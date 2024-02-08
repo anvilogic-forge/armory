@@ -10,7 +10,8 @@ logic: '`get_cloud_data` `get_cloud_data_iam` "User registered security info" | 
   object_id. dest_* | bin span=1s | stats values(*) as * by _time, user '
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category:
 - Azure activity logs
 references:
