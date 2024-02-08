@@ -10,6 +10,7 @@ techniques:
 - defense-evasion:valid accounts
 technique_id:
 - T1562.007
+- T1078
 data_category:
 - GCP audit logs
 references: null
