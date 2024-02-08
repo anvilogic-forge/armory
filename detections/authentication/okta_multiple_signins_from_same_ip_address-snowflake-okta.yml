@@ -11,7 +11,8 @@ techniques:
 - privilege-escalation:valid accounts
 - defense-evasion:valid accounts
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Authentication logs
 references: null
