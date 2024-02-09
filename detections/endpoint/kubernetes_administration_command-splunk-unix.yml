@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(kubectl) (TERM(exec) O
   as * by _time, host '
 techniques:
 - execution:container administration command
-technique_id: null
+technique_id: 
+- T1609
 data_category:
 - Linux audit logs
 - Process command-line parameters
