@@ -14,7 +14,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(ssh) OR "ssh.exe" | whe
 techniques:
 - defense-evasion:indirect command execution
 - command-and-control:protocol tunneling
-technique_id: null
+technique_id: 
+- T1202
+- T1572
 data_category:
 - EDR Logs
 references:
