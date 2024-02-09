@@ -15,6 +15,7 @@ techniques:
 - defense-evasion:masquerading
 - defense-evasion:obfuscated files or information:software packing
 technique_id:
+- T1036
 - T1027.002
 data_category:
 - EDR Logs
