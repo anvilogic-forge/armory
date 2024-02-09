@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=316) OR
   stats values(*) as * by _time, host | where c_driver > 2 '
 techniques:
 - persistence:boot or logon autostart execution
-technique_id: null
+technique_id: 
+- T1547
 data_category:
 - Windows event logs
 references:
