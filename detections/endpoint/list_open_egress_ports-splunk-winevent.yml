@@ -15,7 +15,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5156) O
 techniques:
 - discovery:system network connections discovery
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1049
+- T1046
 data_category:
 - Windows event logs
 references:
