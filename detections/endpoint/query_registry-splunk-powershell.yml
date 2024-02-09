@@ -17,7 +17,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103)
   c_process < 20 '
 techniques:
 - discovery:query registry
-technique_id: null
+technique_id: 
+- T1012
 data_category:
 - PowerShell logs
 - Process command-line parameters
