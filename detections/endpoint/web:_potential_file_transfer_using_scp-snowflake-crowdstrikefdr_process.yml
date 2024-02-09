@@ -12,6 +12,8 @@ techniques:
 - exfiltration:exfiltration over alternative protocol:exfiltration over symmetric
   encrypted non-c2 protocol
 technique_id:
+- T1570
+- T1105
 - T1048.001
 data_category:
 - EDR Logs
