@@ -16,7 +16,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4657) O
   | fields - Operation_*, New_*, Old_* `hec_collect`'
 techniques:
 - defense-evasion:modify registry
-technique_id: null
+technique_id: 
+- T1112
 data_category:
 - File monitoring
 - Windows event logs
