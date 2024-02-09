@@ -12,6 +12,7 @@ techniques:
 - exfiltration:data transfer size limits
 technique_id:
 - T1074.001
+- T1030
 data_category:
 - EDR Logs
 references:
