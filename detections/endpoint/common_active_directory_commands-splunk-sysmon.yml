@@ -22,6 +22,7 @@ techniques:
 - discovery:system service discovery
 technique_id:
 - T1087.002
+- T1007
 data_category:
 - Windows Sysmon
 references:
