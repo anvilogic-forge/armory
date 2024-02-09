@@ -9,7 +9,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   event_platform ilike ''%Win%'' and process_path ilike ''%pscp.exe'' '
 techniques:
 - exfiltration:exfiltration over alternative protocol
-technique_id: null
+technique_id: 
+- T1048
 data_category:
 - EDR Logs
 references:
