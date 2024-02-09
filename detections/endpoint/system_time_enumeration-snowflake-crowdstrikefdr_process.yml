@@ -13,7 +13,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   ''i'') '
 techniques:
 - discovery:system time discovery
-technique_id: null
+technique_id: 
+- T1124
 data_category:
 - EDR Logs
 references:
