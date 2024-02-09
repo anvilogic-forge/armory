@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   as * by _time, host | where match(process, "(?i)-decode") '
 techniques:
 - defense-evasion:deobfuscate/decode files or information
-technique_id: null
+technique_id: 
+- T1140
 data_category:
 - Process command-line parameters
 - Windows event logs
