@@ -26,6 +26,7 @@ techniques:
 - impact:service stop
 technique_id:
 - T1562.001
+- T1489
 data_category:
 - Windows event logs
 - Process command-line parameters
