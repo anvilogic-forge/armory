@@ -16,7 +16,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc
   `hec_collect`'
 techniques:
 - defense-evasion:xsl script processing
-technique_id: null
+technique_id: 
+- T1220
 data_category:
 - EDR Logs
 - Process command-line parameters
