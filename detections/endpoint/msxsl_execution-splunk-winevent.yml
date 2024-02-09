@@ -15,7 +15,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   match(process, "(?i)\S+\.x[ms]l\s+.*\.xsl") '
 techniques:
 - defense-evasion:xsl script processing
-technique_id: null
+technique_id: 
+- T1220
 data_category:
 - Windows event logs
 references:
