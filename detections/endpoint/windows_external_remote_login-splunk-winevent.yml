@@ -15,6 +15,7 @@ techniques:
 - lateral-movement:remote services
 technique_id:
 - T1021.001
+- T1021
 data_category:
 - Windows event logs
 references:
