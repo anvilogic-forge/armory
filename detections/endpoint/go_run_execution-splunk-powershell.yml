@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104)
   stats values(*) as * by _time, host '
 techniques:
 - execution:command and scripting interpreter
-technique_id: null
+technique_id: 
+- T1059
 data_category:
 - PowerShell logs
 - Process command-line parameters
