@@ -13,6 +13,7 @@ techniques:
 - exfiltration:exfiltration over alternative protocol
 technique_id:
 - T1071.002
+- T1048
 data_category:
 - EDR Logs
 references:
