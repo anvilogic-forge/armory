@@ -13,6 +13,7 @@ techniques:
 - command-and-control:ingress tool transfer
 - defense-evasion:system binary proxy execution:mshta
 technique_id:
+- T1105
 - T1218.005
 data_category:
 - Process command-line parameters
