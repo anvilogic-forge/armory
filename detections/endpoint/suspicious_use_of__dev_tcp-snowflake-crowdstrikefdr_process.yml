@@ -8,7 +8,9 @@ logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
 techniques:
 - execution:command and scripting interpreter
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1059
+- T1046
 data_category:
 - EDR Logs
 references:
