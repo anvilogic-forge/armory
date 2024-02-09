@@ -14,7 +14,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - defense-evasion:modify registry
 - discovery:query registry
-technique_id: null
+technique_id: 
+- T1112
+- T1012
 data_category:
 - Windows event logs
 references:
