@@ -21,6 +21,7 @@ techniques:
 - discovery:permission groups discovery
 technique_id:
 - T1069.002
+- T1069
 data_category:
 - PowerShell logs
 references:
