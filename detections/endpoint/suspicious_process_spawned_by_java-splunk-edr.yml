@@ -20,7 +20,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc
   `hec_collect`'
 techniques:
 - execution:exploitation for client execution
-technique_id: null
+technique_id: 
+- T1203
 data_category:
 - EDR Logs
 - Process command-line parameters
