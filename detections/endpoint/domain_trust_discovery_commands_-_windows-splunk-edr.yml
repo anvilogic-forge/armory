@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` "/domain_trusts" OR "/truste
   as * by _time, host '
 techniques:
 - discovery:domain trust discovery
-technique_id: null
+technique_id: 
+- T1482
 data_category:
 - EDR Logs
 references:
