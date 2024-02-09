@@ -12,7 +12,9 @@ logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdat
 techniques:
 - command-and-control:ingress tool transfer
 - lateral-movement:lateral tool transfer
-technique_id: null
+technique_id: 
+- T1570
+- T1105
 data_category:
 - Web proxy
 references:
