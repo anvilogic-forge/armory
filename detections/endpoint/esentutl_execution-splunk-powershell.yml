@@ -18,8 +18,11 @@ techniques:
 - lateral-movement:lateral tool transfer
 - defense-evasion:hide artifacts
 technique_id:
+- T1105
 - T1003.002
 - T1003.003
+- T1570
+- T1564
 data_category:
 - PowerShell logs
 - Process command-line parameters
