@@ -21,6 +21,7 @@ techniques:
 - defense-evasion:masquerading
 - defense-evasion:masquerading:rename system utilities
 technique_id:
+- T1036
 - T1036.003
 data_category:
 - PowerShell logs
