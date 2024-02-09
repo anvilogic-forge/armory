@@ -14,7 +14,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` EventCode=1 | regex proce
 techniques:
 - command-and-control:protocol tunneling
 - command-and-control:non-application layer protocol
-technique_id: null
+technique_id: 
+- T1572
+- T1095
 data_category:
 - Windows Sysmon
 references:
