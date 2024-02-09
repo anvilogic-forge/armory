@@ -17,7 +17,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(mv) TERM(bin) | regex p
 techniques:
 - defense-evasion:system binary proxy execution
 - defense-evasion:masquerading
-technique_id: null
+technique_id: 
+- T1218
+- T1036
 data_category:
 - EDR Logs
 references:
