@@ -23,6 +23,7 @@ techniques:
 - defense-evasion:bits jobs
 technique_id:
 - T1071.002
+- T1197
 data_category:
 - PowerShell logs
 - Process command-line parameters
