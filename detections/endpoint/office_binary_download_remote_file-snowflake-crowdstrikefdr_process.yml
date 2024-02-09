@@ -14,7 +14,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   or process_path ilike ''%msaccess.exe'') '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - EDR Logs
 references:
