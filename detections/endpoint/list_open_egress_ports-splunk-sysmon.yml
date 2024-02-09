@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=3) OR "Ev
 techniques:
 - discovery:system network connections discovery
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1049
 data_category:
 - Windows Sysmon
 - Process use of network
