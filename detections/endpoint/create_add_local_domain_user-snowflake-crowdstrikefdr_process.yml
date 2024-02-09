@@ -20,6 +20,7 @@ techniques:
 - persistence:create account:local account
 - persistence:create account:domain account
 technique_id:
+- T1098
 - T1136.002
 - T1136.001
 data_category:
