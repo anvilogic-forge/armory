@@ -18,6 +18,7 @@ techniques:
 - execution:system services:service execution
 - lateral-movement:remote services:windows remote management
 technique_id:
+- T1059
 - T1569.002
 - T1021.006
 data_category:
