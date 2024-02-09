@@ -15,6 +15,7 @@ techniques:
 - defense-evasion:process injection
 technique_id:
 - T1036.004
+- T1055
 data_category:
 - Windows Sysmon
 references:
