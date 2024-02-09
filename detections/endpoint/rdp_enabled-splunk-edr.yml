@@ -15,6 +15,7 @@ techniques:
 - defense-evasion:modify registry
 - lateral-movement:remote services:remote desktop protocol
 technique_id:
+- T1112
 - T1021.001
 data_category:
 - EDR Logs
