@@ -11,7 +11,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
 techniques:
 - defense-evasion:indicator removal:network share connection removal
 technique_id:
-- T1070.005
+- T1021.002
+- T1039
 data_category:
 - EDR Logs
 references:
