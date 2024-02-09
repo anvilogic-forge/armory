@@ -17,6 +17,7 @@ techniques:
 - persistence:create account:domain account
 technique_id:
 - T1087.002
+- T1087
 - T1136.002
 data_category:
 - EDR Logs
