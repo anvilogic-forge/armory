@@ -15,7 +15,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc
   host | where match(process, "(?i)cab|diagcab") `hec_collect`'
 techniques:
 - execution:user execution
-technique_id: null
+technique_id: 
+- T1204
 data_category:
 - EDR Logs
 - Process command-line parameters
