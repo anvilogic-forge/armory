@@ -18,6 +18,7 @@ techniques:
 - persistence:create or modify system process
 technique_id:
 - T1569.002
+- T1543
 data_category:
 - PowerShell logs
 - Process command-line parameters
