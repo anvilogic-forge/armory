@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (EventCode=5156 OR "Eve
   dest_* | bin span=1s | stats values(*) as * by _time, host, process_path '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - Windows event logs
 references: null
