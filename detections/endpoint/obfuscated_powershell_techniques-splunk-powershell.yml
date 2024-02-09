@@ -16,7 +16,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` EventCode=4103 (Invok
 techniques:
 - defense-evasion:obfuscated files or information
 - command-and-control:data obfuscation
-technique_id: null
+technique_id: 
+- T1027
+- T1001
 data_category:
 - Windows event logs
 - PowerShell logs
