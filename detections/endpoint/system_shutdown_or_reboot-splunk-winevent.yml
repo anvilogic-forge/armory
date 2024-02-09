@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=1074) O
   | stats values(*) as * by _time, host '
 techniques:
 - impact:system shutdown/reboot
-technique_id: null
+technique_id: 
+- T1529
 data_category:
 - Windows event logs
 references:
