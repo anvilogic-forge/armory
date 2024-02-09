@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104)
   host '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - PowerShell logs
 - Process command-line parameters
