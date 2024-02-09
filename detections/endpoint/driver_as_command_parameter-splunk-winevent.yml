@@ -13,7 +13,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - defense-evasion:system binary proxy execution
 - privilege-escalation:exploitation for privilege escalation
-technique_id: null
+technique_id: 
+- T1218
+- T1068
 data_category:
 - Windows event logs
 - Process command-line parameters
