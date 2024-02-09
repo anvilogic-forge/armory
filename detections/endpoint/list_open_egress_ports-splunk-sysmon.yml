@@ -16,6 +16,7 @@ techniques:
 - discovery:network service discovery
 technique_id: 
 - T1049
+- T1046
 data_category:
 - Windows Sysmon
 - Process use of network
