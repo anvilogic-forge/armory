@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   values(*) as * by _time, host '
 techniques:
 - discovery:query registry
-technique_id: null
+technique_id: 
+- T1012
 data_category:
 - Windows event logs
 - Process command-line parameters
