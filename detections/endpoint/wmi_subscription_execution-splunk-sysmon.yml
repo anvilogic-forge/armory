@@ -20,6 +20,7 @@ techniques:
   event subscription
 technique_id:
 - T1546.003
+- T1047
 data_category:
 - Windows Sysmon
 references:
