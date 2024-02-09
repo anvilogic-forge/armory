@@ -17,8 +17,9 @@ techniques:
 - credential-access:input capture:credential api hooking
 - privilege-escalation:process injection:dynamic-link library injection
 technique_id:
-- T1056.004
 - T1055.001
+- T1056.004
+- T1218
 data_category:
 - Windows event logs
 references:
