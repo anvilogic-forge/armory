@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` ping | table _time, host, us
   as dc_proc by host, _time| where dc_proc = 255 and match(process, "(?i)ping") '
 techniques:
 - discovery:remote system discovery
-technique_id: null
+technique_id: 
+- T1018
 data_category:
 - EDR Logs
 references:
