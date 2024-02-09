@@ -18,7 +18,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (EventCode=8 OR "Event>ID
 techniques:
 - defense-evasion:process injection
 - privilege-escalation:process injection
-technique_id: null
+technique_id: 
+- T1055
 data_category:
 - Process use of network
 - Windows Sysmon
