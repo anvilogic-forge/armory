@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ((TERM(EventCode=1) OR "<
   _time, host '
 techniques:
 - execution:windows management instrumentation
-technique_id: null
+technique_id: 
+- T1047
 data_category:
 - Windows Sysmon
 - Process command-line parameters
