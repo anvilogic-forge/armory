@@ -15,7 +15,8 @@ logic: '`get_web_data` `get_web_data_waf` "*autodiscover.json*" ("*mapi/nspi*" O
   prefix="src_" src_ip| rename src_Country as src_country '
 techniques:
 - initial-access:exploit public-facing application
-technique_id: null
+technique_id: 
+- T1190
 data_category:
 - Web application firewall logs
 references:
