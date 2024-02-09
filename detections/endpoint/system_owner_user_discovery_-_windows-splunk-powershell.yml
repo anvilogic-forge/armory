@@ -15,7 +15,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_powershell` ("<EventID>4104<" OR
   as * by _time, host | where match(process, "(?i)((GetCurrent)|(\[System\.Environment\]::UserName))") '
 techniques:
 - discovery:system owner/user discovery
-technique_id: null
+technique_id: 
+- T1033
 data_category:
 - PowerShell logs
 - Process command-line parameters
