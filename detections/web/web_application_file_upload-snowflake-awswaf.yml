@@ -16,6 +16,7 @@ techniques:
 - initial-access:exploit public-facing application
 - persistence:server software component:web shell
 technique_id:
+- T1190
 - T1505.003
 data_category:
 - Web application firewall logs
