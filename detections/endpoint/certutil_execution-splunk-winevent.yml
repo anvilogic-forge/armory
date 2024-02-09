@@ -16,7 +16,11 @@ techniques:
 - command-and-control:ingress tool transfer
 - defense-evasion:deobfuscate/decode files or information
 - defense-evasion:obfuscated files or information
-technique_id: null
+technique_id: 
+- T1132
+- T1105
+- T1140
+- T1027
 data_category:
 - Windows event logs
 references:
