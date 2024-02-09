@@ -9,7 +9,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(netstat) OR TERM(w) OR
   host, user process, process_* | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - discovery:system network connections discovery
-technique_id: null
+technique_id: 
+- T1049
 data_category:
 - Linux audit logs
 references:
