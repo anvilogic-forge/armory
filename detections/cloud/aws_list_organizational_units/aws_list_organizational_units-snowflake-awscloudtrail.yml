@@ -1,0 +1,16 @@
+id: '20699.36873'
+title: AWS List Organizational Units
+description: Adversaries may lists the organizational units (OUs) in a parent organizational
+  unit or root during discovery activities in AWS environments.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
+  = 'ListOrganizationalUnitsForParent'
+techniques:
+- discovery:system information discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/organizations/latest/APIReference/API_ListOrganizationalUnitsForParent.html
+- https://unit42.paloaltonetworks.com/sugarcrm-cloud-incident-black-hat/

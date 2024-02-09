@@ -1,0 +1,22 @@
+id: '6190.6791'
+title: Azure Brute Force Signin
+description: 'This use case looks for potential brute force attacks on users. Look
+  for a specific number of login failures followed by success. -- Threat Actor Association:
+  LUCR-3'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` TERM(SignInLogs) OR TERM(NonInteractiveUserSignInLogs)
+  | eval login=if(match(action, "success|0"), "success", "failure"), failure_reason=resultDescription
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, bucket_name,
+  bytes_in, bytes_out, file_path, requester_account, duration, login, failure_reason
+  `group_events("user, src_ip",10min)` | eval c_logins=mvcount(mvfilter(match(login,
+  "success"))), c_failures=mvcount(mvfilter(match(login, "failure"))), dc_login_id=mvcount(mvdedup(login))|
+  where c_logins > 0 AND c_failures > 1 AND dc_login_id = 2 '
+techniques:
+- credential-access:brute force
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://www.hebergementwebs.com/news/how-azure-ad-could-be-vulnerable-to-brute-force-and-back-attack

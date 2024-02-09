@@ -1,0 +1,18 @@
+id: '9047.16102'
+title: 'Okta: Security Threat Detected'
+description: If Okta ThreatInsight actions are enabled, requests from malicious IP
+  addresses will appear in the admin System Log. Use Case is utilized to combine all
+  built in Okta ThreatInsight alerts into one generating search.
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and event_type
+  ilike ''security.threat.detected'' '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://okta.github.io/okta-help/en/prod/Content/Topics/Security/threat-insight/configure-threatinsight-system-log.htm

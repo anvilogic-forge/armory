@@ -1,0 +1,16 @@
+id: '5352.12172'
+title: 'Okta: Profile Updated'
+description: Okta user profile updated
+logic_format: Splunk
+logic: '`get_application_data` eventType="user.account.update_profile" | eval dest_user=''target{}.alternateId''
+  | table _time, host, user, action, dest_host, src_ip, src_user, signature, dest_user,
+  City, Region, Country | bin span=1s | stats values(*) as * by _time, src_ip | eventstats
+  dc(dest_user) as dc_dest by src_ip, _time '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references: null

@@ -1,0 +1,25 @@
+id: '5423.5557'
+title: S3 Bucket Enumeration AWS
+description: 'Identify enumeration of multiple buckets an account has access to. --
+  Threat Actor Association: GUI-vil'
+logic_format: Splunk
+logic: ' `get_cloud_data` `get_cloud_data_storage` eventType="AwsApiCall" eventName
+  IN("ListObjects", "ListObjectsV2") | eval request_id=requestID | table _time, host,
+  user, account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id, file_name, bucket_name, bytes_*,
+  file_path, requester_account, duration, total_bytes_out, request_id | bin span=60s
+  | stats values(*) as * by _time, src_ip | eventstats dc(bucket_name) as dc_bucket_name
+  dc(request_id) as dc_request_id sum(bytes_out) as total_bytes_out by _time, user,
+  src_ip | where dc_bucket_name>1 AND dc_request_id>1 AND total_bytes_out>1000 | lookup
+  dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country '
+techniques:
+- discovery:permission groups discovery:cloud groups
+- discovery:cloud service discovery
+technique_id:
+- T1069.003
+data_category:
+- AWS CloudTrail logs
+references:
+- https://github.com/RhinoSecurityLabs/pacu/blob/master/modules/s3__download_bucket/main.py

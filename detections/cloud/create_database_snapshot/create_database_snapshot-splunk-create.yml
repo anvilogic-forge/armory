@@ -1,0 +1,20 @@
+id: '5450.5605'
+title: Create database snapshot
+description: An adversary may create a snapshot or data backup within a cloud account
+  to evade defenses.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` eventName="CreateDBSnapshot" | table
+  _time, host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- defense-evasion:modify cloud compute infrastructure:create snapshot
+technique_id:
+- T1578.001
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBSnapshot.html

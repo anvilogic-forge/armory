@@ -1,0 +1,24 @@
+id: '5693.5955'
+title: Common Exchange Recon cmdlets
+description: 'Detect Common Exchange cmdlet reconnaissance commands used by attackers
+  in order to collect information and/or to spread malware within the network after
+  gaining access to a machine. - Threat Actor Association: APT29/Nobelium/Cozy Bear,
+  CL-STA-0043 - Software Association: DatopLoader'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(EventCode=4103)) (TERM(Get-AcceptedDomain) OR TERM(Get-CASMailbox) TERM(Get-Mailbox)
+  OR TERM(Get-ManagementRoleAssignment) OR TERM(Get-OrganizationConfig) OR TERM(Get-MailboxExportRequest)
+  OR TERM(Get-OwaVirtualDirectory) OR TERM(Get-WebServicesVirtualDirectory) OR TERM(Get-MailboxRegionalConfiguration)
+  OR TERM(Get-ExchangeServer) OR TERM(Get-InboxRule) OR TERM(Get-MailboxPermission))
+  | table _time, host, user signature_id, process, process_* `group_events("host",1s)` '
+techniques:
+- execution:command and scripting interpreter:powershell
+- discovery:account discovery:email account
+technique_id:
+- T1087.003
+- T1059.001
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.volexity.com/blog/2020/12/14/dark-halo-leverages-solarwinds-compromise-to-breach-organizations/

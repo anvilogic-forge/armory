@@ -1,0 +1,18 @@
+id: '12380.17457'
+title: GSUITE Successful login from Suspicious Country
+description: 'Looks for suspicious authentication in google workspace based on Country.
+  Note: This use case will require allow listing for specific countries per organization
+  in order to function correctly.'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gsuite` "login_success" | table _time, host,
+  user event_* account resource_id action user_type src_ip http_user_agent msg region
+  vendor_product `group_events("src_ip", 1)` | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Application logs
+- GCP audit logs
+references: null

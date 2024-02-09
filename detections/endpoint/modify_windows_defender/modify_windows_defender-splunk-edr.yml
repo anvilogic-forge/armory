@@ -1,0 +1,24 @@
+id: '5996.12246'
+title: Modify Windows Defender
+description: 'Adversaries may modify security tools to avoid possible detection of
+  their tools and activities. This use case looks for abnormalities commonly associated
+  with a large number of modifications to windows defender in a short period of time.
+  -- Threat Actor Association: BlackByte, Lazarus, Magic Hound (aka APT35, Charming
+  Kitten, Phosphorus, and Mint Sandstorm), Memento Team, Muddled Libra, REvil, Vice
+  Society - Software Association: Akira, BianLian, Black Basta, Lockbit, Snake, Vice
+  Society, XingLocker, Zloader'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) (TERM(Set-MpPreference)
+  OR TERM(Add-MpPreference)) | table _time, host, user process, process_*, singature_id,
+  parent_* | bin span=60s | stats values(*) as * by _time, host | eventstats dc(process)
+  as dc_process by host, _time | where dc_process >= 1 | fields - dc_* `hec_collect`'
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1562.001
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://unit42.paloaltonetworks.com/unit42-gorgon-group-slithering-nation-state-cybercrime/

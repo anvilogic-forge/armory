@@ -1,0 +1,20 @@
+id: '12930.18577'
+title: Swift Script Execution - MacOS
+description: Adversaries may abuse command and script interpreters to execute commands,
+  scripts, or binaries. These interfaces and languages provide ways of interacting
+  with computer systems and are a common feature across many different platforms.
+  Adversaries may abuse these technologies in various ways as a means of executing
+  arbitrary commands. This use case detects Swift scripts executed from the command
+  line.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Mac'') and regexp_like(process, ''.*swift.*'',
+  ''i'') and regexp_like(parent_process_name, ''.*zsh|bash|sh|tcsh|csh|ksh.*'', ''i'')
+  and regexp_like(process_path, ''.*swift.*'', ''i'') '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/slyd0g/SwiftSpy

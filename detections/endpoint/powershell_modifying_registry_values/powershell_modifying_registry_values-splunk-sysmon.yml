@@ -1,0 +1,23 @@
+id: '15967.23907'
+title: PowerShell Modifying Registry Values
+description: 'Adversaries may interact with the Windows Registry to hide configuration
+  information within Registry keys, remove information as part of cleaning up, or
+  as part of other techniques to aid in persistence and execution. This use case detects
+  PowerShell commands accessing or modifying the Current User or Local Machine registry
+  hives. -- Threat Actor Association: CL-STA-0043 -- Atomics T1059.001 Test #11 Atomics
+  T1546.008 Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(Invoke-Expression) OR "IEX") ("HKLM" OR "HKEY_LOCAL_MACHINE" OR "HKCU" OR
+  "HKEY_CURRENT_USER") | table _time, host, user process, process_*, signature_id
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:modify registry
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+data_category:
+- Windows Sysmon
+- Process command-line parameters
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md#atomic-test-11---powershell-fileless-script-execution

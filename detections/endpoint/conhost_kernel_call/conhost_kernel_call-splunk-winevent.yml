@@ -1,0 +1,22 @@
+id: '5541.5782'
+title: Conhost.exe Kernel call
+description: 'conhost. exe ForceV1 asks for information directly from the kernel space,
+  conhost connects to the console application. Usecase Identifies potentially suspicious
+  Conhost execution paired with additional processes. - Software Association: Trojan.Killdisk/HermeticWiper,
+  Snatch'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) NOT (TERM(usoclient.exe) OR TERM(devicecensus.exe)
+  OR TERM(ProgramData) OR "Program Files" OR "wmiprvse.exe") | regex process="^\S+\s"
+  | table _time, host, user, process, process_*, parent_*, signature_id | bin span=1s
+  | stats values(*) as * by _time, host | regex process="conhost.exe 0xffffffff -ForceV1"|
+  where mvcount(process)>1 '
+techniques:
+- defense-evasion:indirect command execution
+- execution:command and scripting interpreter
+- defense-evasion:exploitation for defense evasion
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://medium.com/@clermont1050/covid-19-cyber-infection-c615ead7c29

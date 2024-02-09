@@ -1,0 +1,20 @@
+id: '6511.7298'
+title: O365 Add User to app Role Assignment
+description: Application Permissions, also known as AppRoles and AppRoleAssignments,
+  enable an application to perform API operations that access or manipulate data without
+  a signed-in user. Application Permissions allows the application to interact with
+  an API as itself, without a session that is acting on behalf of a specific user.
+  This use case should function for O365 and Azure AAD logging.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` "Add app role assignment grant to user"
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- Office 365 audit logs
+references:
+- https://www.fireeye.com/content/dam/fireeye-www/blog/pdfs/wp-m-unc2452-2021-000343-01.pdf

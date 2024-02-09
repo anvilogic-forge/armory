@@ -1,0 +1,21 @@
+id: '12931.18578'
+title: Rare Schedule Task Created
+description: 'Schedule tasks are often a form of persistence utilized by threat actors.
+  This use case looks for rare occurrences for when a task is created. -- Threat Actor
+  Association: APT-K-47/Mysterious Elephant, CL-STA-0043, Redfly, Turla (akaSecret
+  Blizzard, KRYPTON, and UAC-0003) -- Software Association: BianLian, Play'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4698) OR
+  "<EventID>4698<") | eval task_name=coalesce(Task_Name, TaskName)| table _time, host,
+  user process, process_*, signature_id, parent_*, task_name | bin span=1s | stats
+  values(*) as * by _time, host | eventstats count by task_name| where count < 5 '
+techniques:
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+- privilege-escalation:scheduled task/job:scheduled task
+technique_id:
+- T1053.005
+data_category:
+- Windows event logs
+references:
+- https://thedfirreport.com/2022/04/25/quantum-ransomware/

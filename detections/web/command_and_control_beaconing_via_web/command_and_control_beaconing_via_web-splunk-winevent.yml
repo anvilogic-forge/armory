@@ -1,0 +1,33 @@
+id: '5015.12144'
+title: Command and Control Beaconing via WEB
+description: 'Attackers tend to deploy command and control (C2) servers in order to
+  issue commands to hosts they have compromised within a network. These compromised
+  hosts tend to send a beacon out to the C2 server in a periodic basis to see if there
+  is any commands to be issued locally. Since this traffic tends to be fairly predictable,
+  you can detect a potentially compromised host by identifying this periodic outbound
+  traffic. -- Threat Actor Association: APT29/Nobelium/Cozy Bear, APT37, FIN7, FIN8,
+  Mustang Panda, Night Spider, TA551, Wizard Spider, WIRTE -- Software Association:
+  Alchimist, AvosLocker, Bazar, BadHatch, Conti, Hafnium, Hancitor, IcedID, QakBot,
+  Sodinokibi/REvil'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (EventCode=5156 OR "Event>ID>5156<")
+  (TERM(http) OR TERM(https) OR TERM(80) OR TERM(443) OR TERM(8080) OR TERM(8443))
+  | search dest_port IN(443, 80, 8080, 8443) src_ip IN(10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16,
+  172.16.0.0/12, 192.168.0.0/16, 224.0.0.0/4, 255.255.255.255, "::1", "FE80::/10",
+  "FF00::/8") NOT dest_ip IN(10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12,
+  192.168.0.0/16, 224.0.0.0/4, 255.255.255.255, "::1", "FE80::/10", "FF00::/8") |eval
+  process=Image| table _time, host, user dest, direction, event_id, eventtype, parent_*,
+  process, process_*, user, user_id, src_*, dest_* | bin span=1s | stats values(*)
+  as * by _time, host | eventstats dc(host) as dc_host by process | eventstats dc(src_ip)
+  as dc_src by dest_ip| eventstats dc(dest_ip) as dc_dest by src_ip| where (dc_host
+  < 5 AND (dc_src < 5 OR dc_dest < 5)) OR match(process, "(?i)(powershell|cmd)\.exe") '
+techniques:
+- command-and-control:application layer protocol:web protocols
+- command-and-control:proxy:external proxy
+technique_id:
+- T1090.002
+- T1071.001
+data_category:
+- Windows event logs
+references:
+- https://www.activecountermeasures.com/blog-beacon-analysis-the-key-to-cyber-threat-hunting/

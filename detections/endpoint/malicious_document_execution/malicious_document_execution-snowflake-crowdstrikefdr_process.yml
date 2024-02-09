@@ -1,0 +1,29 @@
+id: '1050.14526'
+title: Malicious Document Execution
+description: 'This rule is attempting to detect anytime a Microsoft Office OR Adobe
+  program (ex. Word, Excel, Adobe) spawns a process that could be indicative of those
+  Office programs used to deliver malicious code. -- Threat Actor Association: Actinium/Gamaredon/Primitive
+  Bear, APT10/menuPass, APT29, APT34/OilRig, APT37, Arid Viper/APT C-23, Blind Eagle/APT-C-36,
+  Carbanak, Evilnum, FIN6, FIN7, Gamaredon Group/Shuckworm, Kimsuky, Lazarus, ModifiedElephant,
+  MuddyWater, NewsPenguin, RedEyes, RomCom, SideWinder, TA428, TA505, TA551, Turla
+  (akaSecret Blizzard, KRYPTON, and UAC-0003), Winter Vivern, WIRTE, Wizard Spider
+  -- Software Association: Bazarloder, Black Basta, Clop, Conti, Dridex, Emotet, GlowSand,
+  Hancitor, IcedID, Lockbit, MINEBRIDGE, MirrorBlast, PowerShortShell, QakBot, RATDispenser,
+  Sodinokibi/REvil, SquirrelWaffle, Trickbot, Zumkong -- #TrendingThreat #Russia #Ukraine'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(parent_process_name, ''.*((WINWORD\\\.EXE)|(EXCEL\\\.EXE)|(POWERPNT\\\.EXE)|(ONENOTE\\\.EXE)|(MSACCESS\\\.EXE)|(OUTLOOK\\\.EXE)|(VISIO\\\.EXE)|(WINPROJ\\\.EXE)|(AcroRd32\\\.exe)|(Acrobat\\\.exe)|(FoxitPhantomPDF\\\.exe)|(FoxitReader\\\.exe)|(wordpad\\\.exe)).*'',
+  ''i'') and regexp_like(process_path, ''.*((powershell|cmd|wscript|cscript|regsvr32|rundll32|wmic|control)\\\.exe).*'',
+  ''i'') '
+techniques:
+- initial-access:phishing:spearphishing attachment
+- execution:user execution:malicious link
+- execution:user execution:malicious file
+technique_id:
+- T1566.001
+- T1204.001
+- T1204.002
+data_category:
+- EDR Logs
+references:
+- https://success.trendmicro.com/solution/000279049

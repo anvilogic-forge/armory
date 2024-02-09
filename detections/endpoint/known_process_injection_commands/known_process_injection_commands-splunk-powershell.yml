@@ -1,0 +1,25 @@
+id: '15997.23933'
+title: Known Process Injection Commands
+description: Adversaries may inject code into processes in order to evade process-based
+  defenses as well as possibly elevate privileges. Process injection is a method of
+  executing arbitrary code in the address space of a separate live process. Running
+  code in the context of another process may allow access to the process's memory,
+  system/network resources, and possibly elevated privileges. Execution via process
+  injection may also evade detection from security products since the execution is
+  masked under a legitimate process. This use case detects PowerShell commands associated
+  with process injection.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") ("VirtualAlloc" OR
+  "VirtualAllocEx" OR "VirtualProtect" OR "LdrLoadDll" OR "LoadLibrary" OR "LoadLibraryA"
+  OR "LoadLibraryEx" OR "GetProcAddress" OR "OpenProcess" OR "OpenProcessToken" OR
+  "AdjustTokenPrivileges" OR "WriteProcessMemory" OR "CreateRemoteThread" OR "NtCreateThreadEx"
+  OR "CreateThread" OR "QueueUserAPC" OR "SuspendThread" OR "ResumeThread" OR "GetDelegateForFunctionPointer")
+  | table _time, host, user process, process_*, signature_id | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- privilege-escalation:process injection
+technique_id: null
+data_category:
+- PowerShell logs
+references: null

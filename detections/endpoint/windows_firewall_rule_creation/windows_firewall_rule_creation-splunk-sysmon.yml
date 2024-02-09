@@ -1,0 +1,23 @@
+id: '8328.18237'
+title: Windows Firewall Rule Creation
+description: 'Windows has several utility used to interact with networking components
+  on local or remote systems. This use case looks for firewall rules added with netsh
+  or New-NetFirewallRule. -- Threat Actor Association: APT29/Nobelium/Cozy Bear, APT35/Phosphorus/Magic
+  Hound, BlackCat, Magnat, TA428, Volt Typhoon -- Software Association: BianLian,
+  BlackByte, Black Basta, Insekt, Lockbit, Trigona -- Atomics T1021.001 Test #3 Atomics
+  T1021.001 Test #4 Atomics T1562.004 Test#4'
+logic_format: Splunk
+logic: '"`get_endpoint_data` `get_endpoint_data_sysmon` ("EventCode=1" OR "<EventID>1<")
+  ((TERM(netsh) OR "netsh.exe") TERM(add) TERM(rule)) OR "New-NetFirewallRule" | table
+  _time, host, user, signature_id, process, process_*, parent_process_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:impair defenses:disable or modify system firewall
+technique_id:
+- T1562.004
+data_category:
+- Windows Sysmon
+references:
+- https://www.group-ib.com/resources/threat-research/Anunak_APT_against_financial_institutions.pdf
+- https://docs.microsoft.com/en-us/previous-versions/tn-archive/bb490939(v=technet.10)?redirectedfrom=MSDN
+- https://docs.microsoft.com/en-us/powershell/module/netsecurity/new-netfirewallrule?view=windowsserver2019-ps

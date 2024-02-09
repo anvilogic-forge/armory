@@ -1,0 +1,19 @@
+id: '15890.23924'
+title: PowerShell XML Retrieval
+description: 'This use case detects PowerShell commands attempting to retrieve data
+  from XML files via http or https. Atomics T1059.001 Test #7 Atomics T1059.001 Test
+  #8'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*(xml|MsXml2\\\.ServerXmlHttp|ComObject).*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter
+technique_id:
+- T1059.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md#atomic-test-7---powershell-msxml-com-object---with-prompt

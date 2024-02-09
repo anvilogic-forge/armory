@@ -1,0 +1,19 @@
+id: '7826.9433'
+title: SyncAppvPublishingServer Execution
+description: 'Microsoft binary used by App-v to get App-v server lists. This tool
+  can be used to execute powershell commands without invoking powershell. Living Off
+  the Land Binary and Scripts (LOLBAS) (LOLBIN) -- Threat Actor Association: APT28
+  (Fancy Bear, Tsar Team), TA576'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("SyncAppvPublishingServer.exe" OR "SyncAppvPublishingServer.vbs")
+  | table _time, host, user process, process_*, signature_id, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Syncappvpublishingserver/
+- https://www.ired.team/offensive-security/code-execution/powershell-without-powershell

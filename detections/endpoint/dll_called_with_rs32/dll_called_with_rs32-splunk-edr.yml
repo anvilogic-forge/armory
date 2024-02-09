@@ -1,0 +1,20 @@
+id: '27060.49390'
+title: DLL Called with RS32
+description: Threat actors including Qbot have been observed using rundll32.exe to
+  invoke the RS32 function during post-compromise activity. This use case detects
+  DLL files invoking RS32 , accounting for instances where rundll32.exe has been renamed.
+  While these exexcutions may be legitimate, unexpected executions should be investigated.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ".dll" "RS32" | where match(process,
+  "(?i)\.dll\,RS32") | table _time, host, user, process, process_*, parent_process,
+  parent_process_*, called_function | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/blog/lolbins-abuse/

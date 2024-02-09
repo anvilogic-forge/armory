@@ -1,0 +1,25 @@
+id: '5869.6200'
+title: Obfuscated Powershell Techniques
+description: 'Attackers and commodity malware have started using extremely basic obfuscation
+  techniques to hide the majority of the command from the command line arguments of
+  powershell.exe. This use case relies on URL Toolbox to function. -- Software Association:
+  AsyncRAT, Midas --'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` EventCode=4103 (Invoke-Expression
+  OR Invoke-Command OR Invoke-WebRequest)| rex field=Message "(?i)\"Command\"\;\svalue=\"?(?<obfuscated_cmd>.+.\)?\")"
+  | rex field=Message "(?i)script\s+name\s+?\=(?<script_name>.+\.ps1)" | regex obfuscated_cmd!="(?i)(\.ps1|powershell)"|
+  regex obfuscated_cmd=".{25,}" |`ut_shannon(obfuscated_cmd)` | table _time, host,
+  user process, process_*, signature_id, user, obfuscated_cmd, ut_shannon, script_name
+  | bin span=1s | stats values(*) as * by _time, host | where ut_shannon > 4 OR match(obfuscated_cmd,
+  "\s{30}") OR match(obfuscated_cmd, "\W{30}") OR (match(obfuscated_cmd, "(\s?\d{1,8}(\s+|\,)(\s+|\,)?){15}"))
+  OR match(obfuscated_cmd, "(?i)bxor") '
+techniques:
+- defense-evasion:obfuscated files or information
+- command-and-control:data obfuscation
+technique_id: null
+data_category:
+- Windows event logs
+- PowerShell logs
+references:
+- https://github.com/danielbohannon/Invoke-Obfuscation
+- https://github.com/oddcod3/Phantom-Evasion

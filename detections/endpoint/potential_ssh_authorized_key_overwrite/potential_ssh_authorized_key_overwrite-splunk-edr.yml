@@ -1,0 +1,18 @@
+id: '11426.24816'
+title: Potential SSH Authorized Key Overwrite
+description: 'Potential overwrites of authorized_keys file for ssh. -- Threat Actor
+  Association: TeamTNT'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((TERM(vi) OR TERM(vim) OR TERM(nano)
+  OR ((TERM(echo) OR TERM(cat)) AND TERM(>)) OR TERM(visudo) OR TERM(CP) OR TERM(MV))
+  (".ssh/authorized_keys" OR "authorized_keys")) OR (TERM(cd) ".ssh") | regex process="(?i)(vi|visudo|vim|nano|(echo|cat)\s+.*?>>?|cp|mv|cd)\s.*?(authorized_keys|\.ssh)"
+  | table _time, host, user, process, process_* | bin span=1s | stats values(*) as
+  * by _time, host `hec_collect`'
+techniques:
+- persistence:account manipulation:ssh authorized keys
+technique_id:
+- T1098.004
+data_category:
+- EDR Logs
+references:
+- https://www.ssh.com/academy/ssh/authorized-keys-file

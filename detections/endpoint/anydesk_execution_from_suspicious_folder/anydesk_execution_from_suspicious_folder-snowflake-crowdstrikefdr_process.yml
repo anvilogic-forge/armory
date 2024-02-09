@@ -1,0 +1,25 @@
+id: '13702.20069'
+title: AnyDesk Execution from Suspicious Folder
+description: 'Adversaries may use legitimate desktop support and remote access software
+  to establish an interactive command and control channel to target systems within
+  networks. These services are commonly used as legitimate technical support software,
+  and may be allowed by application control within a target environment. This use
+  case detects when remote access software AnyDesk is executed outside of standard
+  install locations. -- Threat Actor Association: Alloy Taurus/Gallium, Gamaredon
+  (aka. Armageddon, UAC-0010), Muddled Libra, Scattered Spider (aka. 0ktapus, UNC3944),
+  Scatter Swine, UNC2659 - Software Association: Akira, ALPHV/BlackCat, AvosLocker,
+  BianLian, BlackByte, BumbleBee, Clop, Conti, Diavol, Rhysida, Royal -- Atomics T1219
+  Test #2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*anydesk.*'', ''i'') and not
+  (regexp_like(process_path, ''.*(AppData)|(Program\\\sFiles\\\x5cAnyDesk|(Program\\\sFiles\\\s(x86))).*'',
+  ''i'')) '
+techniques:
+- command-and-control:remote access software
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1219/T1219.md#atomic-test-2---anydesk-files-detected-test-on-windows

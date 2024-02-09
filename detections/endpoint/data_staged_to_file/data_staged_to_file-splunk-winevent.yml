@@ -1,0 +1,23 @@
+id: '5691.5953'
+title: Data Staged to File
+description: 'Adversaries may stage collected data in a central location or directory
+  on the local system prior to Exfiltration. Data may be kept in separate files or
+  combined into one file through techniques such as Archive Collected Data. This use
+  case looks for common output commands followed by a potential file extension. --
+  Threat Actor Association: Actinium/Gamaredon/Primitive Bear, APT29/Nobelium, APT37,
+  Arid Viper/APT C-23, Gorgon Group, Kimsuky, Memento Team, Wizard Spider, WIRTE --
+  Software Association: Bazar, Conti, Remcos - #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<")| regex Process_Command_Line="(?i)\s(\>(\>)?|Out\-File)\s.{1,}\.\w{2,5}"
+  | table _time, host, user signature_id, process, process_*, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- collection:data staged:local data staging
+technique_id:
+- T1074.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.volexity.com/blog/2020/12/14/dark-halo-leverages-solarwinds-compromise-to-breach-organizations/

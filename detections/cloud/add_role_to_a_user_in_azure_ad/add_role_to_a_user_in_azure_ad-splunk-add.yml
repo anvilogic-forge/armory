@@ -1,0 +1,16 @@
+id: '5745.6022'
+title: Add role to a user in Azure AD
+description: Adding a role to a user in Azure AD is one the techniques used for privilege
+  escalation.
+logic_format: Splunk
+logic: '`get_cloud_data` "Add-AzureADDirectoryRoleMember" OR "AssignPermanentEligibleRole"
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, identity '
+techniques:
+- privilege-escalation:valid accounts
+technique_id: null
+data_category:
+- Azure activity logs
+references: null

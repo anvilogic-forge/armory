@@ -1,0 +1,19 @@
+id: '6839.8039'
+title: Kubernetes Administration Command
+description: Adversaries may abuse a container administration service to execute commands
+  within a container. A container administration service such as the Docker daemon,
+  the Kubernetes API server, or the kubelet may allow remote management of containers
+  within an environment.
+logic_format: Splunk
+logic: '`get_application_data` `get_application_data_api` TERM(exec) OR TERM(attach)
+  |regex uri="(?i)exec|attach" | table _time, host, user action, reason, uri, uri_path,
+  status, src_ip, user_group, user_id, user, user_agent, event_type, object_*, request_*,
+  response_*, image, container_arguements | bin span=1s | stats values(*) as * by
+  _time, host '
+techniques:
+- execution:container administration command
+technique_id: null
+data_category:
+- API monitoring
+references:
+- https://www.cyberark.com/resources/threat-research-blog/using-kubelet-client-to-attack-the-kubernetes-cluster

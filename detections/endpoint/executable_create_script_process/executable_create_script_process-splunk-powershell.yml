@@ -1,0 +1,33 @@
+id: '1116.1228'
+title: Executable Create Script Process
+description: 'A BAT file is a DOS batch file used to execute commands with the Windows
+  Command Prompt (cmd.exe), this usecase will detect common scripting type like bat,
+  sh, and ps1 with an executable parent. -- Threat Actor Association: APT28 (aka.Fancy
+  Bear, Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM), APT29/Nobelium/Cozy
+  Bear, APT31, APT35/Phosphorus/Magic Hound, APT41, APT43, Blind Eagle/APT-C-36, FIN8,
+  Gamaredon Group/Shuckworm, GoldenJackal, Karakurt, Mustang Panda (aka. Stately Taurus//Earth
+  Preta/BRONZE PRESIDENT/TA416/RedDelta), Redfly, TA413, UAC-0057 (GhostWriter), Vice
+  Society, Volt Typhoon, Winter Vivern, Witchetty, Wizard Spider -- Software Association:
+  ALPHV/BlackCat, AvosLocker, Bazarloader, BianLian, Black Basta, Blackbyte, Clop,
+  Conti, Dharma, Emotet, Hive, LV, Prestige, PYSA/Mespinoza, Quantum, Rhysida, Royal,
+  Snatch, Vice Society, TargetCompany, Trigona, XingLocker, Zloader - Atomics T1547.001
+  Test#6 - #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_powershell` ( signature_id=4104 AND
+  (".bat" OR ".ps1" OR ".sh") ) | rex field=process mode=sed max_match=0 "s/(?mi)^(Path.+)|^(ScriptBlock
+  ID.+)|^(Creating Scriptblock.+)//g"| rex field=process mode=sed "s/([\n\r]+)|(\s\s+)//g"|
+  regex process="(?i)\w+\.(bat|ps1|sh)" | table _time, host, user, signature_id, process,
+  process_name, parent_process_name | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:command and scripting interpreter
+- exfiltration:automated exfiltration
+- execution:command and scripting interpreter:windows command shell
+- collection:automated collection
+technique_id:
+- T1059.003
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.fireeye.com/blog/threat-research/2016/05/targeted_attacksaga.html

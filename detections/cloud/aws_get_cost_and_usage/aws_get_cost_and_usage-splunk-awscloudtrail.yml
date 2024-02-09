@@ -1,0 +1,22 @@
+id: '20701.36882'
+title: AWS Get Cost and Usage
+description: Adversaries may request cost and usage metrics for an account in order
+  to determine accounts that are active with high costs. They can use this information
+  to target active resources in an attempt to evade detection as the expenses might
+  not be immediately noticeable.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(GetCostAndUsage) | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- discovery:system information discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/sugarcrm-cloud-incident-black-hat/
+- https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_GetCostAndUsage.html

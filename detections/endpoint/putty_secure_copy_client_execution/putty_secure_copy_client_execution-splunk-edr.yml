@@ -1,0 +1,17 @@
+id: '24501.45207'
+title: PuTTY Secure Copy Client Execution
+description: pscp.exe is a tool in the PuTTY suite used for secure copy and has been
+  used by threat actors including BlackCat and Agrius to exfiltrate data. This use
+  case detects executions of pscp.exe.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "pscp.exe" | table _time, host,
+  user process, process_*, signature_id, parent_* | bin span=60s | stats values(*)
+  as * by _time, host '
+techniques:
+- exfiltration:exfiltration over alternative protocol
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://unit42.paloaltonetworks.com/agonizing-serpens-targets-israeli-tech-higher-ed-sectors/
+- https://www.trendmicro.com/en_us/research/23/f/malvertising-used-as-entry-vector-for-blackcat-actors-also-lever.html

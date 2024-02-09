@@ -1,0 +1,19 @@
+id: '5040.5114'
+title: Large Data Transfer (Network)
+description: 'This use case is looking for potential data exfiltration attempts over
+  the network -- Threat Actor Association: FIN8 (Syssphinx)'
+logic_format: Splunk
+logic: '`get_network_data` `get_network_data_fw` action=allowed NOT (dest_ip IN (10.0.0.0/8,172.16.0.0/12,192.168.0.0/16))
+  | eval mb_out = bytes_out / 1024 / 1024 | where (mb_out > 20)| fields _time, host,
+  user, action, bytes, bytes_in, bytes_out, mb_out, app, category, dest_host, dest_ip,
+  dest_port| bin _time span=1h| stats count sum(mb_out) as mb_out, values(*) as *
+  by dest_ip, client_ip, _time | eval gb_out = mb_out / 1024 | where gb_out > 5| eval
+  gb_out = round(gb_out, 2) | table _time, host, user, action, bytes, bytes_in, bytes_out,
+  count, category, dest_host, dest_ip, dest_port, src_ip `hec_collect`'
+techniques:
+- exfiltration:automated exfiltration
+- exfiltration:data transfer size limits
+technique_id: null
+data_category:
+- Network device logs
+references: null

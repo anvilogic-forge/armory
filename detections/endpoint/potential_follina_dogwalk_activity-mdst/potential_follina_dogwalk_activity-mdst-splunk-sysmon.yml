@@ -1,0 +1,19 @@
+id: '22480.40157'
+title: Potential Follina_DogWalk Activity - mdst.exe
+description: CVE-2022-30190 (commonly referred to as Follina) and DogWalk involve
+  a vulnerability in Microsoft Support Diagnostic Tool (msdt.exe). During exploitation,
+  msdt.exe is observed loading the library file sdiageng.dll which can be abused by
+  threat actors to download arbitrary code. This use case detects module loads of
+  sdiageng.dll by msdt.exe. Sysmon event 7 is required for detection. LOLBINS\LOLBAS
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=7) OR "<EventID>7<")
+  Image="*\\msdt.exe" ImageLoaded="*\\sdiageng.dll" | table _time, host, user host,
+  process, process_*, parent_process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:exploitation for client execution
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://www.securonix.com/blog/detecting-microsoft-msdt-dogwalk/

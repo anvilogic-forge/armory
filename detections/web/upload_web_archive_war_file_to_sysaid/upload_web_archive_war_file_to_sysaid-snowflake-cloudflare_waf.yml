@@ -1,0 +1,20 @@
+id: '23959.44280'
+title: Upload Web Archive (WAR) File to SysAid
+description: 'Threat actors may abuse a path traversal vulnerability, CVE-2023-47246
+  in SysAid software to upload a malicious web archive file (WAR) containing malicious
+  payloads -- Threat Actor Association: FIN11 (TA505), Volt Typhoon (Bronze Silhouette,
+  Vanguard Panda) - Software Association: Clop'
+logic_format: snowflake
+logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (http_method
+  ilike ''POST'' and status = ''200'') and regexp_like(uri_path, ''.*(/|\\\)tomcat(/|\\\)webapps(/|\\\)usersfiles.*'',
+  ''i'') and regexp_like(uri_path, ''.*(\\\.(war)$).*'', ''i'') '
+techniques:
+- command-and-control:ingress tool transfer
+- lateral-movement:lateral tool transfer
+technique_id: null
+data_category:
+- Web proxy
+references:
+- https://attack.mitre.org/techniques/T1105/
+- https://attack.mitre.org/techniques/T1570/

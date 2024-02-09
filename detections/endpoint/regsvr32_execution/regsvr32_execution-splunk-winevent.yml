@@ -1,0 +1,24 @@
+id: '5977.6322'
+title: regsvr32 Execution
+description: 'Using regsvr32.exe, an adversary may load malicious .dll files. -- Living
+  Off the Land Binary and Scripts (LOLBAS) (LOLBIN) -- Threat Actor Association: Kimsuky,
+  TA551, Traveling Spider, Wizard Spider -- Software Association: Astaroth, Bazar,
+  Black Basta, Conti, HermeticWizard, IcedID, Nefilim, Qakbot/Qbot, Rhysida, XingLocker,
+  Zloader Atomics T1218.010 Test#1 Atomics T1218.010 Test#2 Atomics T1218.010 Test#3
+  Atomics T1218.010 Test#4 Atomics T1218.010 Test#5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` TERM(EventCode=4688) OR "<EventID>4688<"
+  OR Type=Process TERM(regsvr32) | regex process="(?i)(regsvr32)"| table _time, host,
+  user parent_*, process, process_*, signature_id | bin span=1s | stats values(*)
+  as * by _time, host | eventstats dc(process) as dc_process by host | where dc_process
+  < 10 '
+techniques:
+- defense-evasion:system binary proxy execution:regsvr32
+technique_id:
+- T1218.010
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/
+- https://www.carbonblack.com/blog/threat-advisory-squiblydoo-continues-trend-of-attackers-using-native-os-tools-to-live-off-the-land/

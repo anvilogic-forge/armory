@@ -1,0 +1,24 @@
+id: '12495.17760'
+title: 'GCP: Firewall Rule Modified'
+description: Adversaries may disable or modify a firewall within a cloud environment
+  to bypass controls that limit access to cloud resources. Cloud environments typically
+  utilize restrictive security groups and firewall rules that only allow network activity
+  from trusted IP addresses via expected ports and protocols. An adversary may introduce
+  new firewall rules or policies to allow access into a victim cloud environment.
+  For example, an adversary may use a script or utility that creates new ingress rules
+  in existing security groups to allow any TCP/IP connectivity. Modifying or disabling
+  a cloud firewall may enable adversary C2 communications, lateral movement, and/or
+  data exfiltration that would otherwise not be allowed.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gcp` TERM(compute.firewalls.patch) OR TERM(compute.firewalls.update)
+  | table _time, host, user event_name account resource_id action acl_permission user_type
+  src_ip http_user_agent bucket_name msg region vendor_product `group_events("src_ip",
+  1)` '
+techniques:
+- defense-evasion:impair defenses:disable or modify cloud firewall
+technique_id:
+- T1562.007
+data_category:
+- GCP audit logs
+references:
+- https://cloud.google.com/vpc/docs/firewalls

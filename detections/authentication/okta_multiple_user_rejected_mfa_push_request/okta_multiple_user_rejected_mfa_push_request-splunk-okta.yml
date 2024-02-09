@@ -1,0 +1,16 @@
+id: '20539.36399'
+title: Okta Multiple User Rejected MFA Push Request
+description: 'Okta user rejected multiple MFA push requests in a 10 min period. -
+  Threat Actor Association: LUCR-3, Scattered Spider (aka. 0ktapus, UNC3944), Scatter
+  Swine'
+logic_format: Splunk
+logic: '`get_authentication_data` eventType="user.mfa.okta_verify.deny_push" or (eventType="user.authentication.auth_via_mfa"
+  "failure" "INVALID_CREDENTIALS" "OKTA_VERIFY_PUSH") | table _time, host, user, action,
+  dest_host, src_ip, src_user, signature, reason, activity | bin span=600s | stats
+  values(*) as * by _time, user | where event_count > 1 '
+techniques:
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+references: null

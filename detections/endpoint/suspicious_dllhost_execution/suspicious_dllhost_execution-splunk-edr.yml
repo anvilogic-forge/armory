@@ -1,0 +1,24 @@
+id: '6176.14510'
+title: Suspicious DLLhost Execution
+description: 'Used by Windows to DLL Surrogate COM Objects, “dllhost.exe” process
+  has been used by malware in the past (especially trickbot) and can be used to load
+  a registered or hijacked COM Server payload. -- Living Off the Land Binary and Scripts
+  (LOLBAS) (LOLBIN) -- Threat Actor Association: APT29, Wizard Spider - Software Association:
+  Avaddon, Bazarloader, Blackcat/ALPHV, Conti, Quantum'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) (TERM(dllhost)
+  OR "dllhost.exe") | table _time, host, user, signature_id, process, process_*, parent_process_*
+  | bin span=1s | stats values(*) as * by _time, host | eventstats c(process) as c_process
+  by process | where c_process < 6 AND match(process_name,"(?i)dllhost") `hec_collect`'
+techniques:
+- privilege-escalation:event triggered execution:component object model hijacking
+- persistence:event triggered execution:component object model hijacking
+technique_id:
+- T1546.015
+data_category:
+- Process command-line parameters
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Dllhost/
+- https://nasbench.medium.com/what-is-the-dllhost-exe-process-actually-running-ef9fe4c19c08

@@ -1,0 +1,25 @@
+id: '1084.1126'
+title: Impacket SMB File Transfer
+description: 'Impacket is an open source collection of modules written in Python for
+  programmatically constructing and manipulating network protocols. Impacket contains
+  several tools for remote service execution, Kerberos manipulation, Windows credential
+  dumping, packet sniffing, and relay attacks. -- Software Association: LockBit'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_unix` (("python" ":" "@") OR (TERM("smbclient.py")))
+  | rex field=process mode=sed "s/''//g" | rex field=_raw max_match=0 "(?i)proctitle=(?<process2>.+")
+  | rex field=_raw max_match=0 "(?i)python\s+(?<process_name>[^\s\=]+\.py") | rex
+  field=process_name mode=sed "s/^(\.\/)//g" | rex field=process2 max_match=0 "(?i)@(?<target>.+")
+  | rex field=process2 mode=sed "s/\s+$//g" | eval process=if(isnull(process2),process,process2)
+  | eval dest_ip=if(match(target,"\d+\.\d+\.\d+\.\d+"),target,null()) | table _time,
+  host, user _time, host, process, dest_ip, process_name, target | bin span=300s |
+  stats values(*) as * by _time, host | where isnotnull(process) or isnotnull(process_name)
+  | lookup dnslookup clientip as dest_ip OUTPUT clienthost as dest_dns | table _time,
+  host, user process, dest_ip, process_name `hec_collect`'
+techniques:
+- lateral-movement:lateral tool transfer
+technique_id: null
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://attack.mitre.org/techniques/T1570/

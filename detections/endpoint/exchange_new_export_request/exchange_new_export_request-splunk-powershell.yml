@@ -1,0 +1,21 @@
+id: '5694.5956'
+title: Exchange New Export Request
+description: 'This use case looks for exchange cmdlet to output email into a pst file.
+  Adversaries may use these commands in order to exfiltrate sensitive information.
+  - Threat Group Association: APT, 29, APT31, CL-STA-0043 - Software Association:
+  ALPHV/BlackCat, Conti, Hafnium, Qakbot/Qbot, SEABORGIUM'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(EventCode=4103)) TERM(New-MailboxExportRequest) | regex process="(?i)-FilePath.{1,}\.pst"
+  | table _time, host, user signature_id, process, process_* `group_events("host",1s)` '
+techniques:
+- collection:email collection:local email collection
+- collection:email collection:remote email collection
+technique_id:
+- T1114.002
+- T1114.001
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.volexity.com/blog/2020/12/14/dark-halo-leverages-solarwinds-compromise-to-breach-organizations/

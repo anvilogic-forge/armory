@@ -1,0 +1,19 @@
+id: '5383.5493'
+title: Pass-the-Hash
+description: Detect when pass-the-hash techniques are utilized with computer or user
+  accounts as in the most notable ZeroLogon exploit scenario after a computer account
+  password has been reset.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ((TERM(EventCode=4624) OR
+  "<EventID>4624<") Logon_Type=3 Authentication_Package=NTLM) | regex user="\$$" |
+  rex field=_raw "Account Name:\s+(?<user>\S+\$)" | table _time, host, user signature_id,
+  src_ip, Authentication_Package | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:use alternate authentication material:pass the hash
+technique_id:
+- T1550.002
+data_category:
+- Windows event logs
+references:
+- https://www.cyberark.com/resources/threat-research-blog/detecting-pass-the-hash-with-windows-event-viewer
+- https://www.binarydefense.com/reliably-detecting-pass-the-hash/

@@ -1,0 +1,38 @@
+id: '6557.7398'
+title: O365 Impossible Travels Sign-in
+description: 'This use case looks for user signins from multiple locations by time
+  and distance. '
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` Operation=UserLoggedIn | sort 0 user,
+  _time| streamstats window=1 current=f values(_time) as last_time values(src_ip)
+  as last_src_ip by user| iplocation last_src_ip | eval last_location = if(isnotnull(City)
+  AND City!="", City . ", ", "") . if(isnotnull(Country) AND Country!="", Country
+  . ", ", "") . if(isnotnull(Region) AND Region!="", Region, "") | rename lat as last_lat
+  lon as last_lon Country as last_Country | iplocation src_ip | eval location = if(isnotnull(City)
+  AND City!="", City . ", ", "") . if(isnotnull(Country) AND Country!="", Country
+  . ", ", "") . if(isnotnull(Region) AND Region!="", Region, "") | foreach *location
+  [ | eval <<FIELD>> = replace(replace(<<FIELD>>, "^\s*,\s*", ""), "\s*,\s*$$$$",
+  "")] | eval rlat1 = pi()*last_lat/180, rlat2=pi()*lat/180, rlat = pi()*(lat-last_lat)/180,
+  rlon= pi()*(lon-last_lon)/180 | eval a = sin(rlat/2) * sin(rlat/2) + cos(rlat1)
+  * cos(rlat2) * sin(rlon/2) * sin(rlon/2)| eval c = 2 * atan2(sqrt(a), sqrt(1-a))
+  | eval distance_miles = 6371 * c, time_difference_hours = round((_time - last_time)
+  / 3600,2), speed=round(distance_miles/ ( time_difference_hours),2) | fields - rlat*
+  a c | eval day=strftime(_time, "%m/%d/%Y") | search last_Country!=Country distance_miles!=0
+  speed>1000 | stats values(*) as * values(time_difference_hours) as time_difference_hours
+  values(speed) as speed first(last_location) as location_one first(location) as location_two
+  values(*src_ip) as *src_ip min(_time) as first_time first(_time) as _time by user,
+  distance_miles, day | eval first_time=strftime(first_time, "%Y-%m-%dT%H:%M:%S.%Q")
+  | sort - distance_miles | rename location_one AS first_location, location_two AS
+  second_location| eval first_src_ip=last_src_ip, second_src_ip=src_ip| fields _time,
+  host, user, account, http_user_agent, user, user_id, identity_type, event_name,
+  cloud_service, identity, action, resource_id, first_*, second_*, speed, distance_miles,
+  time_difference_hours '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Office 365 audit logs
+references: null

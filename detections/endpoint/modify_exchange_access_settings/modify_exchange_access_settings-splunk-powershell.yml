@@ -1,0 +1,19 @@
+id: '5696.5958'
+title: Modify Exchange Access Settings
+description: 'Set-CASMailbox cmdlet to configure client access settings on a mailbox.
+  For example, you can configure settings for Exchange ActiveSync, Outlook, Outlook
+  on the web, POP3, and IMAP4. Attacker added their own devices as allowed IDs for
+  active sync. - Threat Actor Association: APT29/Nobelium/Cozy Bear'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(EventCode=4103)) TERM(Set-CASMailbox) | table _time, host, user signature_id,
+  process, process_* `group_events("host",1s)` '
+techniques:
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.volexity.com/blog/2020/12/14/dark-halo-leverages-solarwinds-compromise-to-breach-organizations/

@@ -1,0 +1,21 @@
+id: '6110.6590'
+title: Linux Kernel Module Commands
+description: 'Adversaries may modify the kernel to automatically execute programs
+  on system boot. Loadable Kernel Modules (LKMs) are pieces of code that can be loaded
+  and unloaded into the kernel upon demand. Atomics T1014 Test #1 Atomics T1014 Test
+  #2 Atomics T1547.006 Test#1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (type=proctitle OR type=execve
+  OR sourcetype=bash_history) AND ((TERM(insmod) OR TERM(rmmod) OR TERM(depmod)) OR
+  TERM(modprobe) OR TERM(lsmod) OR TERM(modinfo) OR TERM(kmod)) | table _time, host,
+  user, process, process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- privilege-escalation:boot or logon autostart execution:kernel modules and extensions
+- persistence:boot or logon autostart execution:kernel modules and extensions
+technique_id:
+- T1547.006
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://www.crowdstrike.com/blog/http-iframe-injecting-linux-rootkit/

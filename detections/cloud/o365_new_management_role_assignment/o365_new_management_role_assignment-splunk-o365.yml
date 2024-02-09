@@ -1,0 +1,18 @@
+id: '6498.7277'
+title: O365 New Management Role Assignment
+description: 'Use case looks for when a new role has been assigned to a management
+  group in Office 365. Adversaries may use this tactic for continued persistence.
+  - Threat Actor Association: Lapsus$'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` New-ManagementRoleAssignment | table
+  _time, host, user,account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- Office 365 audit logs
+references:
+- https://docs.microsoft.com/en-us/microsoft-365/admin/add-users/about-admin-roles?view=o365-worldwide

@@ -1,0 +1,20 @@
+id: '5381.14571'
+title: Clear Command History
+description: 'An adversary may clear the command history of a compromised account
+  to conceal the actions undertaken during an intrusion. macOS and Linux both keep
+  track of the commands users type in their terminal so that users can retrace what
+  they''ve done. Atomics T1070.003 Test #1 Atomics T1070.003 Test #3 Atomics T1070.003
+  Test #6 Atomics T1070.003 Test #7'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*(((unset\\\s+HISTFILE)|(export\\\s+HIST(FILE|SIZE|FILEZIE).+(0|\/dev\/null))|(history\\\s+\\\-(c|cw|d\\\s+\\\d+))|(set\\\s+\\\+o\\\s+history)|(shopt\\\s+(\\\-ou|\\\-o\\\s+\\\-u|\\\-u\\\s+\\\-o)\s+history)|((HISTSIZE|HISTFILESIZE)\\\=0)|((rm|cat\\\s+\\\/dev\\\/null\\\s+\\\>|cat\\\s+\\\>).+\\\.bash_history))|(((echo\\\s+\\\"\\\"\\\s+>)|(ln\\\s+.+?\\\s+/dev/null)|(truncate))\\\s+.+?\\\.bash_history)).*'',
+  ''i'') '
+techniques:
+- defense-evasion:indicator removal:clear command history
+technique_id:
+- T1070.003
+data_category:
+- EDR Logs
+references:
+- https://www.countercraftsec.com/blog/post/new-threat-actor-alert-unc0628/

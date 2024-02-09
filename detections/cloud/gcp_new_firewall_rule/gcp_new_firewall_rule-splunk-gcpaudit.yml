@@ -1,0 +1,15 @@
+id: '5396.5727'
+title: 'GCP: New Firewall Rule'
+description: New firewall rule created
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gcp` "compute.firewalls.insert" | table _time,
+  host, user event_name account resource_id action acl_permission user_type src_ip
+  http_user_agent bucket_name msg region vendor_product`group_events("src_ip", 1)``hec_collect`'
+techniques:
+- defense-evasion:impair defenses:disable or modify cloud firewall
+- defense-evasion:valid accounts
+technique_id:
+- T1562.007
+data_category:
+- GCP audit logs
+references: null

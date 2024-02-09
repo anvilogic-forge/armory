@@ -1,0 +1,12 @@
+id: '5353.16098'
+title: 'Okta: User Created'
+description: Okta user account creation
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and event_type
+  ilike ''user.lifecycle.create'' '
+techniques:
+- persistence:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references: null

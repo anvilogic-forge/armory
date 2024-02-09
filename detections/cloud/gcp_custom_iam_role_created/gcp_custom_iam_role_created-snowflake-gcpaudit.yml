@@ -1,0 +1,16 @@
+id: '12502.18530'
+title: 'GCP: Custom IAM Role Created'
+description: 'Custom roles are created by the user and allow for multiple permissions
+  to be assigned. Adversaries can leverage this ability to assign additional privileges
+  for further compromise. Unfamiliar or unauthorized custom role creation should be
+  investigated. '
+logic_format: snowflake
+logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
+  to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name = ''createRole'' '
+techniques:
+- privilege-escalation:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- GCP audit logs
+references: null

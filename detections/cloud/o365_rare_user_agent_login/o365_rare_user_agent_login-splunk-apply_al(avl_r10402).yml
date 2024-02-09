@@ -1,0 +1,27 @@
+id: '8332.10402'
+title: O365 Rare User Agent Login
+description: This use case looks for rare user agent logins per run time, or logins
+  from the same user with more than 1 user agent per run time
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` TERM(UserLoggedIn) | table _time, host,
+  user,account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id, bucket_name, bytes_in, bytes_out,
+  file_path, requester_account, duration, login, failure_reason `group_events("user",10min)`
+  | eventstats c(http_user_agent) as c_agent by http_user_agent| eventstats dc(http_user_agent)
+  as dc_agent by user| where dc_agent > 1 OR c_agent < 5| iplocation src_ip| rename
+  Region as region, Country as country, City as city '
+techniques:
+- persistence:valid accounts
+- persistence:valid accounts:cloud accounts
+- initial-access:valid accounts:cloud accounts
+- privilege-escalation:valid accounts
+- privilege-escalation:valid accounts:cloud accounts
+- defense-evasion:valid accounts:cloud accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id:
+- T1078.004
+data_category:
+- Office 365 audit logs
+references: null

@@ -1,0 +1,15 @@
+id: '5369.5729'
+title: 'GCP: Many Compute Instances created'
+description: Looks for many GCP compute instances being created
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gcp` TERM(compute.instances.insert) | table
+  _time, host, user event_name account resource_id action acl_permission user_type
+  src_ip http_user_agent bucket_name msg region vendor_product`group_events("account",
+  300)`| where event_count > 10`hec_collect`'
+techniques:
+- impact:resource hijacking
+technique_id: null
+data_category:
+- GCP audit logs
+references:
+- https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert

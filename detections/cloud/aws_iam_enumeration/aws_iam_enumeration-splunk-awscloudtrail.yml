@@ -1,0 +1,24 @@
+id: '15662.23265'
+title: AWS IAM Enumeration
+description: 'Amazon Elastic Container Services or ECS, is an offering from Amazon
+  Web Services (AWS) designed to provide a platform to host containerized applications
+  in the cloud. Adversaries may enumerate Task definitions as they are responsible
+  for configuring the actual containers that will be running in ECS. Since task definitions
+  define how containers will run, a plethora of information can be found within. --
+  Threat Actor Association: GUI-vil'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(ListAttachedRolePolicies) OR TERM(ListRolePolicies)
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=90s | stats values(*) as * by _time, src_ip | where match(event_name, "(?i)ListAttachedRolePolicies")
+  and match(event_name, "(?i)ListRolePolicies") | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- discovery:system information discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

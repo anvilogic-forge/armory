@@ -1,0 +1,20 @@
+id: '20681.36836'
+title: Potential ngrok Tunnel - Windows
+description: 'ngrok is a reverse proxy utility with the ability to establish tunnels
+  on targets using reverse SSH, even if the target does not have ngrok installed.
+  Attackers have been observed abusing ngrok to establish persistence and perform
+  lateral movement on compromised targets by exposing RDP services. This use case
+  detects artifacts specific to RDP sessions established using ngrok. -- Threat Actor
+  Association: Scattered Spider (aka. Muddled Libra, Scatter Swine, Starfraud, UNC3944)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4779) OR
+  "<EventID>4779<") "%16777216" | table _time, host, user, process_*, src_ip, src_port,
+  dest_ip, dest_port | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:protocol tunneling
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://www.logpoint.com/en/blog/a-deep-look-at-the-darkside-ransomware-operators-and-their-affiliates/
+- https://ngrok.com/docs/secure-tunnels/tunnels/ssh-reverse-tunnel-agent/

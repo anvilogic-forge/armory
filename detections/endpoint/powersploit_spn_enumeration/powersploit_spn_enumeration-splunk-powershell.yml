@@ -1,0 +1,48 @@
+id: '1078.1116'
+title: Powersploit SPN Enumeration
+description: 'Kerberoast is a series of tools for attacking MS Kerberos implementations.
+  Threat Actor Association: APT29/Nobelium/Cozy Bear Software Association: Cuba, Vice
+  Society #TrendingThreat #Russia #Ukraine Atomics T1558.003 #Test1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` ("Kerberoast.ps1" OR "GetUserSPNS.ps1"
+  "KERBEROAST" OR "INVOKE-KERBEROAST" OR "Get-DomainSPNTicket" OR ("Get-NetUser" AND
+  "-SPN") OR "Get-SPNTicket" OR "Convert-LDAPProperty" OR ("Get-DomainUser" AND "-SPN"))
+  OR ( TERM(System.IdentityModel.Tokens.KerberosRequestorSecurityToken) OR (TERM(System.DirectoryServices.SearchResult)
+  AND TERM(System.Collections.Hashtable))OR(TERM(System.IdentityModel) AND TERM(System.DirectoryServices.ActiveDirectory.Forest)
+  AND TERM(GetCurrentForest)) OR (TERM(System.IdentityModel) AND TERM(LoadWithPartialName)
+  AND TERM(Reflection.Assembly)) OR (TERM(setspn.exe) AND TERM(System.IdentityModel.Tokens.KerberosRequestorSecurityToken))
+  OR (TERM(System.DirectoryServices.ActiveDirectory.Domain) AND TERM(System.DirectoryServices.ActiveDirectory.DirectoryContext)
+  AND (TERM(GetDomain))) OR (TERM(System.DirectoryServices.DirectorySearcher) AND
+  TERM(servicePrincipalName) OR TERM(servicePrincipalName)) OR (TERM(System.DirectoryServices.SecurityMasks)
+  AND (TERM(Dacl) OR TERM(GROUP) OR TERM(OWNER) OR TERM(SACL) OR TERM(NONE))) OR (TERM(System.DirectoryServices.ReferralChasingOption)
+  AND TERM(ALL)) OR (TERM(Security.AccessControl.RawSecurityDescriptor) OR (TERM(System.Security.Principal.SecurityIdentifier)
+  AND (TERM(System.MarshalByRefObject)) AND TERM(System.Reflection.BindingFlags) AND
+  TERM(GetProperty))) OR TERM(Diagnostics.CodeAnalysis.SuppressMessageAttribute) OR
+  (TERM(adminCount=1) ) OR TERM(Management.Automation.PSCredential) OR (TERM(System.IdentityModel.Tokens.KerberosRequestorSecurityToken)
+  AND TERM(System.BitConverter) AND TERM(ToString)) ) | rex field=_raw max_match=5
+  (?<known_ioc>"(?i)Kerberoast|GetUserSPNS|Get-DomainSPNTicket|Get-NetUser.+-SPN|Get-SPNTicket|Convert-LDAPProperty|Get-DomainUser.+-SPN")|
+  rex field=_raw max_match=1 (?<keywords_spn>"(?i)ServicePrincipalName") | rex field=_raw
+  max_match=5 (?<file>"[a-zA-Z0-9_]+.ps1")| rex field=_raw (?<identity>"(?i)System.IdentityModel")
+  | rex field=_raw (?<token>"(?i)System.IdentityModel.Tokens.KerberosRequestorSecurityToken")|
+  rex field=_raw (?<forest>"(?i)System.DirectoryServices.ActiveDirectory.Forest.+")
+  | rex field=_raw (?<setspn>"(?i)setspn.exe") | rex field=_raw (?<ad>"(?i)System.DirectoryServices.ActiveDirectory")
+  | rex field=_raw (?<convert>"(?i)System.BitConverter.+ToString") | rex field=_raw
+  (?<credential>"(?i)Management.Automation.PSCredential") | rex field=_raw (?<privilege>"(?i)adminCount=1")|
+  rex field=_raw (?<error>"(?i)Diagnostics.CodeAnalysis.SuppressMessageAttribute.+")|
+  rex field=_raw (?<security1>"(?i)Security.AccessControl.RawSecurityDescriptor")|
+  rex field=_raw (?<security2>"(?i)System.Security.Principal.SecurityIdentifier")|
+  rex field=_raw (?<properties>"(?i)System.Reflection.BindingFlags.+GetProperty")|
+  rename ScriptBlock_ID as scriptblock_id | eval user=mvfilter(NOT match(user, "(?i)convert|_")),
+  kerberoast_request=mvappend(keywords_spn, identity, token, forest, setspn, ad, convert,
+  credential, privilege, error, security1, security2, properties) | table _time, host,
+  user_time, file, host, scriptblock_id, signature_id, event_id, kerberoast_request,
+  known_ioc, error | bin span=120s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:steal or forge kerberos tickets:kerberoasting
+technique_id:
+- T1558.003
+data_category:
+- PowerShell logs
+references:
+- https://github.com/nidem/kerberoast
+- https://attack.mitre.org/techniques/T1558/003/

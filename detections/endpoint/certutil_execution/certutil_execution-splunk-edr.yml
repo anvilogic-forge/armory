@@ -1,0 +1,25 @@
+id: '6167.13353'
+title: Certutil Execution
+description: 'certutil is a command-line utility that can be used to obtain certificate
+  authority information and configure Certificate Services. This use case looks for
+  process executions of certutil. -- Threat Actor Association: DarkSide, BlackMatter,
+  REvil - Software Association: HermeticWiper/Trojan.Killdisk -- Living Off the Land
+  Binary and Scripts (LOLBAS) (LOLBIN) -- Atomics 1003.002 Test #5 Atomics 1140 Test
+  #1'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` (TERM(certutil) OR "certutil.exe")
+  | table _time, host, user, signature_id, process, process_*, parent_* | bin span=1s
+  | stats values(*) as * by _time, host | where match(process_name, "(?i)certutil")
+  `hec_collect`'
+techniques:
+- command-and-control:data encoding
+- command-and-control:ingress tool transfer
+- defense-evasion:deobfuscate/decode files or information
+- defense-evasion:obfuscated files or information
+technique_id: null
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+- https://www.fireeye.com/blog/threat-research/2018/09/apt10-targeting-japanese-corporations-using-updated-ttps.html

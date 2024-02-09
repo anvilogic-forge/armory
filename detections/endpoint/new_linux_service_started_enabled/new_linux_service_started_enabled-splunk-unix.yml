@@ -1,0 +1,20 @@
+id: '5030.5084'
+title: New Linux Service Started_Enabled
+description: 'Looks for new services being started or configured to start on boot.
+  This could be used for persistence - Threat Actor Association: TeamTNT'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` type IN("EXECVE", "proctitle")
+  ((TERM(systemctl) (TERM(start) OR TERM(enable))) OR ("/etc/init.d/" TERM(start))
+  OR (TERM(chkconfig) TERM(on)) OR (TERM(service) TERM(start))) | rex field=_raw "(?i)proctitle=(\")?(?<proc>.+")|
+  eval process=mvappend(proc, process)| rex field=process "(?i)(enable|start|\Q/etc/init.d\E|\Q/sbin/service\E)(\s)?(\/)?(?<service>[A-Za-z0-9\-\.\_\x5c]+")
+  | table _time, host, user, process, process_*, service | bin span=1s | stats values(*)
+  as * by _time, host, process '
+techniques:
+- persistence:create or modify system process:systemd service
+- privilege-escalation:create or modify system process:systemd service
+technique_id:
+- T1543.002
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references: null

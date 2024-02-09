@@ -1,0 +1,22 @@
+id: '1053.21999'
+title: Web Application File Upload
+description: 'Uploaded files represent a significant risk to applications. The first
+  step in many attacks is to get some code to the system to be attacked. Then the
+  attack only needs to find a way to get the code executed. Using a file upload helps
+  the attacker accomplish the first step. Threat Actor Association: Agrius, APT41,
+  FIN13, Lazarus, Magic Hound (aka APT35, Charming Kitten, Phosphorus, and Mint Sandstorm),
+  OilRig, PROPHET SPIDER, UNC5221, UTA0178, Volt Typhoon (Bronze Silhouette, Vanguard
+  Panda) -- Software Association: AvosLocker, Clop, Cring'
+logic_format: snowflake
+logic: 'select * from cloudflare_waf where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (http_method
+  ilike ''POST'' or http_method ilike ''PUT'') and regexp_like(uri_path, ''.*\\\.(php|jsp|jspx|py|asp|aspx|asmx|pl|ascx|ashx|cfm|cgi|amf).*'',
+  ''i'') '
+techniques:
+- initial-access:exploit public-facing application
+- persistence:server software component:web shell
+technique_id:
+- T1505.003
+data_category:
+- Web application firewall logs
+references: null

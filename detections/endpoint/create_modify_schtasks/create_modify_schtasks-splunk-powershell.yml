@@ -1,0 +1,32 @@
+id: '1071.1109'
+title: Create_Modify Schtasks
+description: 'Detects possible persistent backdoor access using schtasks -- Threat
+  Group Association: Actinium/Gamaredon/Primitive Bear, Alloy Taurus/Gallium, APT29/Nobelium/Cozy
+  Bear, APT31, APT33, APT34/OilRig, APT35/Phosphorus/Magic Hound, APT41, APT43, BlackByte,
+  BlackCat, Blind Eagle/APT-C-36, Evilnum, FIN7, FIN12, Gamaredon Group/Shuckworm,
+  GoldenJackal, Lazarus, Memento Team, MuddyWater, Redfly, TA428, Turla (akaSecret
+  Blizzard, KRYPTON, and UAC-0003), Vice Society, WinterVivern/UAC-0114, WIRTE, Witchetty
+  - Software Association: Blackbyte, Black Basta, BianLian, Cactus, Conti, GoMet,
+  HermeticWiper/Trojan.Killdisk, Lockbit, Lorenz, LV, NanoCore, Play, Prestige, Prometheus/Spook,
+  Rhysida, Trickbot, XingLocker - Atomics T1036.004 Test #1 Atomics T1053.005 Test#1
+  Atomics T1053.005 Test#2 Atomics T1053.005 Test#3 Atomics T1053.005 Test#4 - #TrendingThreat
+  #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  TERM(EventCode=4103)) AND (("schtasks" AND ("/create" OR "/change")) OR (TERM(Schedule.Service)
+  "GetFolder") OR "New-ScheduledTask")| rex field=process mode=sed max_match=0 "s/(?mi)^(Path.+)|^(ScriptBlock
+  ID.+)|^(Creating Scriptblock.+)//g"| rex field=process mode=sed "s/([\n\r]+)|(\s\s+)//g"|
+  rex field=process max_match=0 (?<schtask>"(?i)(schtasks\s+\/(create|change)|Schedule.Service.{1,20})")|
+  rex field=process max_match=0 (?<user>"(?i)/ru.+")| rex field=user mode=sed max_match=0
+  "s/(?i)^(\/ru )//g"| table _time, host, user _time, host, process, user, signature_id,
+  schtask| bin span=300s | stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+technique_id:
+- T1053.005
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://attack.mitre.org/techniques/T1053/005/

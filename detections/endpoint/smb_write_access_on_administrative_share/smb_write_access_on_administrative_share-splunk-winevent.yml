@@ -1,0 +1,25 @@
+id: '24475.45119'
+title: SMB Write Access on Administrative Share
+description: SMB is a Windows file and printer sharing protocol. Threat actors may
+  use SMB to connect to shared drives when moving laterally. An administrative share
+  is a network share created by default on Windows systems for administrative purposes,
+  allowing privileged users remote access to system resources, typically hidden from
+  regular network users (denoted by $). Domain controllers may have administrative
+  shares NETLOGON or SYSVOL. This use case detects SMB access attempts targeting Administrative
+  shares with write access masks (0x2) from non-system accounts.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5145) OR
+  "<EventID>5145<" OR TERM(EventCode=5140) OR "<EventID>5140<") "0x2" ("$" OR "SYSVOL"
+  OR "NETLOGON") | rex "<Data Name=''ShareName''>(?<share_name>[^<]+)</Data>"| rex
+  "<Data Name=''AccessMask''>(?<access_mask>[^<]+)"| where match(share_name, "(?i)(.*\$$)|NETLOGON|SYSVOL")
+  and match(access_mask, "(?i)0x2") and not match(user, ".*\$$") | table _time, host,
+  user process, process_*, parent_process_name, parent_process_path, share_name |
+  bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+technique_id:
+- T1021.002
+data_category:
+- Windows event logs
+references:
+- https://securitydatasets.com/notebooks/atomic/windows/lateral_movement/SDWIN-200806015757.html?highlight=create%20file

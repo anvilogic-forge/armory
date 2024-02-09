@@ -1,0 +1,21 @@
+id: '20545.36425'
+title: Okta suspicious use of a session cookie
+description: 'Detects when an adversary attempts to reuse a stolen web session cookie
+  in a different device that has a different IP and OS or Browser. -- Threat Actor
+  Association: LUCR-3, Scattered Spider (aka. 0ktapus, UNC3944)'
+logic_format: Splunk
+logic: '`get_authentication_data` eventType="policy.evaluate_sign_on" ("ALLOW" or
+  "CHALLENGE" or "ALLOW_WITH_MODIFICATION") | rex field=debug_data "(?i)dthash\"?\:\s+?(?<dt_hash>.+")|
+  rex field=dt_hash mode=sed "s/\"|\,//g" | table _time, host, user, action, dest_host,
+  src_ip, src_user, signature, reason, activity, dt_hash | bin span=3600s | stats
+  values(*) as * by _time, user, dt_hash | eventstats dc(src_ip) as dc_src dc(http_user_agent_browser)
+  as dc_browser dc(http_user_agent_os) as dc_os by user, _time| where dc_src > 1 and
+  (dc_browser > 1 or dc_os > 1) '
+techniques:
+- defense-evasion:use alternate authentication material:web session cookie
+- credential-access:steal web session cookie
+technique_id:
+- T1550.004
+data_category:
+- Authentication logs
+references: null

@@ -1,0 +1,17 @@
+id: '13044.18766'
+title: 'Okta: Multiple OKTA push requests'
+description: This use case looks for when a user has received multiple push requests
+  for authentication via Okta.
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and event_type
+  ilike ''system.push.send_factor_verify_push'' '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://okta.github.io/okta-help/en/prod/Content/Topics/Security/threat-insight/configure-threatinsight-system-log.htm

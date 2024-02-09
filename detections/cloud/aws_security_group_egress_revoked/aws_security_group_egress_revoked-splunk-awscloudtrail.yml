@@ -1,0 +1,22 @@
+id: '20718.36914'
+title: AWS Security Group Egress Revoked
+description: Detects when an egress rule has been removed from a security group. An
+  egress rule permits instances to send traffic to the specified IPv4 or IPv6 CIDR
+  address range, or to the instances that are associated with the specified destination
+  security groups.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(RevokeSecurityGroupEgress) | table
+  _time, host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/sugarcrm-cloud-incident-black-hat/
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_RevokeSecurityGroupEgress.html

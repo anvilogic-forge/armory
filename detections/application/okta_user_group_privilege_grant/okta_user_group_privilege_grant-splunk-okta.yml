@@ -1,0 +1,18 @@
+id: '9049.12173'
+title: 'Okta: User_Group Privilege Grant'
+description: Admin privilege granted. This can be used to audit the provisioning of
+  admin privileges for groups and users.
+logic_format: Splunk
+logic: '`get_application_data` eventType="group.privilege.grant" OR eventType="user.account.privilege.grant"
+  | eval dest_user=''target{}.alternateId'' | table _time, host, user, action, dest_host,
+  src_ip, src_user, signature, dest_user | bin span=1s | stats values(*) as * by _time,
+  src_ip '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://developer.okta.com/docs/reference/api/event-types/#catalog

@@ -1,0 +1,20 @@
+id: '6091.6540'
+title: Go Run Execution
+description: Malicious actors are beginning to turn to Golang as a malware language
+  since it is not typically picked up by antivirus software. Although the language
+  is about 10 years old, and is used by many legitimate programmers, there has not
+  been as much activity with Golang malware. This use case looks for run executions
+  by go.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(GO) OR "go.exe") TERM(RUN) | rex field=process
+  (?<ioc>"(?i)\S+\.go") | table _time, host, user, signature_id, process, process_*,
+  parent_process_* ioc | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+technique_id: null
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://www.f5.com/labs/articles/threat-intelligence/new-golang-malware-is-spreading-via-multiple-exploits-to-mine-mo

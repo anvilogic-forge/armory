@@ -1,0 +1,18 @@
+id: '5712.5985'
+title: Azure Consent Grant
+description: 'In a consent grant attack, an attacker tricks an end user into granting
+  a malicious application consent to access their data, usually via a phishing attack.
+  -- Threat Actor Association: Storm-1283'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "Consent to application" TERM(success)
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- credential-access:steal application access token
+technique_id: null
+data_category:
+- Azure activity logs
+- OAuth audit logs
+references: null

@@ -1,0 +1,26 @@
+id: '21579.38119'
+title: Potential Executable Masquerading as Document - Windows
+description: 'Adversaries may abuse double extensions to attempt to conceal dangerous
+  file types of payloads. This use case detects executions of files that appear to
+  be document or image files but execute as script or executable files, or executable/script
+  files with 3 or more spaces or underscores preceding the extension in an effort
+  to obscure the file''s actual extension. CVE-2023-38831 -- Threat Actor Association:
+  APT28, APT40, Sandworm Team, UAC-0057 (GhostWriter)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (".pdf" OR ".jpg" OR ".jpeg" OR "gif" OR ".ico"
+  OR ".doc" OR ".xls" OR ".docx" OR ".xlsx" OR ".png" OR ".xml" OR ".csv" OR ".ppt"
+  OR ".pptx" OR ".rtf" OR ".txt") (".cmd" OR ".bat" OR ".ps1" OR ".vbs" OR ".js" OR
+  ".py" OR ".exe" OR ".msi" OR ".vbe" OR ".lnk" OR ".scr") | regex process="(?i)((\s{3,}|_{3,})|(\.(pdf|jpg|jpeg|gif|ico|doc|xls|docx|xlsx|png|xml|csv|ppt|pptx|rtf|txt)(\s+)?))\.(cmd|bat|ps1|vbs|js|py|exe|msi|vbe|lnk|scr)"
+  | table _time, host, user, process, process_*, parent_process_* | bin span=1s |
+  stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:masquerading:double file extension
+technique_id:
+- T1036.007
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.group-ib.com/blog/cve-2023-38831-winrar-zero-day/
+- https://www.microsoft.com/en-us/security/blog/2024/01/17/new-ttps-observed-in-mint-sandstorm-campaign-targeting-high-profile-individuals-at-universities-and-research-orgs/

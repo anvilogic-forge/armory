@@ -1,0 +1,23 @@
+id: '24797.45812'
+title: Google Workspace Domain Wide Delegation
+description: This use case detects when a domain-wide delegation of authority is granted
+  to a service account. Domain-wide delegation can be configured to grant third-party
+  and internal applications to access the data of Google Workspace users. An adversary
+  may configure domain-wide delegation to maintain access to their target’s data.
+  This activity on its own does not indicate malicious activity, but should be validated
+  due to its wide-reaching access.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gsuite` "AUTHORIZE_API_CLIENT_ACCESS" | table
+  _time, host, user event_* account resource_id action user_type src_ip http_user_agent
+  msg region vendor_product `group_events("user", 1)` '
+techniques:
+- initial-access:valid accounts:cloud accounts
+- privilege-escalation:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- Application logs
+- GCP audit logs
+references:
+- https://unit42.paloaltonetworks.com/critical-risk-in-google-workspace-delegation-feature/
+- https://developers.google.com/workspace/guides/create-credentials

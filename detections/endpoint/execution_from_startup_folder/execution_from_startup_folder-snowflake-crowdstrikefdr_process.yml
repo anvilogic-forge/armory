@@ -1,0 +1,20 @@
+id: '5997.14611'
+title: Execution from Startup Folder
+description: 'Adversaries may achieve persistence by adding a program to a startup
+  folder. This use case looks for executions of processes that reside in those folders.
+  NOTE, this use case will not identify the creation or execution of shortcuts(lnks)
+  saved in the startup folder. -- Threat Actor Association: APT29/Nobelium, Kimsuky,
+  Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE PRESIDENT/TA416/RedDelta),
+  UNC2465 - Software Association: Play, SmokedHAM, YellowCockatoo --'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process_path, ''.*(Microsoft\\\x5cWindows\\\x5cStart\\\s+Menu\\\x5cPrograms\\\x5cStartUp).*'',
+  ''i'') '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+technique_id:
+- T1547.001
+data_category:
+- EDR Logs
+references:
+- https://www.fireeye.com/blog/threat-research/2014/11/operation_doubletap.html

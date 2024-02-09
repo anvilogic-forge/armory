@@ -1,0 +1,43 @@
+id: '1033.1041'
+title: Mimikatz
+description: 'Mimikatz is used to extract plaintexts passwords, hash, PIN code and
+  Kerberos tickets from memory. Mimikatz can also perform pass-the-hash, pass-the-ticket
+  or build Golden tickets. -- Threat Actor Association: APT10/Cicada, APT27/Emissary
+  Panda, APT29/Nobelium, APT41/Wicked Panda, Carbanak, DarkSide, BlackMatter, FamousSparrow,
+  FIN7, FIN12, Hello Kitty / Five Hands, Karakurt, Lapsus$, LockBit, Memento Team,
+  TRACER KITTEN, TRAVELING SPIDER, SILENCE, UNC2596, Witchetty -- Software Association:
+  Blackcat/ALPHV, Conti, Cuba, Midas, Lockbit, LV, Nefilim, Play, Qakbot, Revil, SamSam,
+  Stonefly, WASTEDLOCKER -- Atomics T1003.001 Test #6 Atomics T1003.001 Test #10 Atomics
+  T1550.002 Test#1'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` (EventCode=1 AND ( "mimikatz"
+  OR "gentilkiwi" OR "whoami" OR "IntegriyLevel=High" )) OR (EventCode=10 AND ("lsass.exe"
+  OR mimikatz)) | table _time, host, user dest, direction, dvc, dvc_nt_host, event_id,
+  eventtype, hashes, host, index, parent_process, parent_process_id, parent_process_name,
+  parent_process_path, process, process_current_directory, process_id, process_name,
+  process_path, signature_id, source, sourcetype, tag, user, user_id | bin span=60s
+  | stats values(*) as * by _time, host | where (match(parent_process_name,"(?i)(powershell.exe)|(cmd.exe)")
+  AND match(parameters,"(?i)gentilkiwi") OR match(process,"(?i)mimikatz")) OR (match(parameters,"(?i)granted_access=0x1010")
+  AND match(parent_process_name,"(?i)(powershell.exe)|(cmd.exe)") AND match(process_path,"(?i).lsass.exe")
+  AND match(process,"(?i)KERNELBASE.dll") AND match(process,"(?i)ntdll.dll") AND match(process,"(?i)whoami"))
+  | bin span=300s _time | stats values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping:lsass memory
+- credential-access:os credential dumping:security account manager
+- credential-access:os credential dumping:dcsync
+- credential-access:os credential dumping:lsa secrets
+- credential-access:steal or forge kerberos tickets:golden ticket
+- credential-access:steal or forge kerberos tickets:silver ticket
+- credential-access:unsecured credentials:credentials in registry
+technique_id:
+- T1552.002
+- T1003.006
+- T1003.004
+- T1003.002
+- T1558.002
+- T1558.001
+- T1003.001
+data_category:
+- Windows Sysmon
+references:
+- https://www.sans.org/reading-room/whitepapers/detection/mimikatz-overview-defenses-detection-36780

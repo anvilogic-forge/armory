@@ -1,0 +1,23 @@
+id: '8301.14718'
+title: pypykatz commands
+description: 'pypykatz is a Mimikatz implementation in Python. This use case looks
+  for command parameters associated with pypykatz. -- Threat Actor Association: APT15,
+  Muddled Libra, Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE PRESIDENT/TA416/RedDelta)
+  -- Software Association: BianLian, Vice Society, Yanluowang -- Atomics T1003.001
+  Test #7 Atomics T1003.002 Test #2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*(\\\s+live\\\s+(lsa|registry|smb|kerberos|users|token|dpapi|process|ldap))|(\\\s+((lsa\\\s+(minidump|rekall|\\\-\\\-?\\\w))|(registry\\\s+(\\\-\\\-?\\\w|hk|\\\x5c).+)|(crypto\\\s+(nt|lm|dcc|gppass|\\\-\\\-?\\\w))|(kerberos\\\s+(tgt|tgs|brute|asreproast|spnroast|s4u|keytab|ccache|kirbi|\\\-\\\-?\\\w))|(dpapi\\\s+(prekey|minidump|masterkey|credential|vcred|vpol|securestring|blob|\\\-\\\-?\\\w))|(smb\\\s+(client|lsassfile|lsassdump|regfile|regdump|dcsync|secretsdump|shareenum|printnightmare|parprintnightmare|\\\-\\\-?\\\w))|(ldap\\\s+(client|\\\-\\\-?\\\w)))).*'',
+  ''i'') '
+techniques:
+- credential-access:os credential dumping
+- credential-access:os credential dumping:lsass memory
+technique_id:
+- T1003.001
+data_category:
+- EDR Logs
+references:
+- https://blog.talosintelligence.com/2020/04/poetrat-covid-19-lures.html
+- https://github.com/skelsec/pypykatz/wiki
+- https://github.com/redcanaryco/atomic-red-team/blob/717757d539c1e7d5b8a2ab05b029f4697fbcc978/atomics/T1003.002/T1003.002.md#atomic-test-2---registry-parse-with-pypykatz

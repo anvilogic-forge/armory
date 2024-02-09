@@ -1,0 +1,29 @@
+id: '5757.6031'
+title: Azure Information Gathering
+description: An adversary could run multiple commands in order to find all the necessary
+  information regarding users, accounts, service principals, groups etc.
+logic_format: Splunk
+logic: '`get_cloud_data` ("Get-AzureADDirectoryRole" OR "Get-AzureADDirectoryRoleMember"
+  OR "Get-AzureADUserMembership" OR "Get-AzRoleAssignment" OR "Get-AzADUser" OR "Get-AzADGroupMember"
+  OR "Get-AzADGroup" OR "Get-AzureADDevice" OR "Get-AzureADDeviceRegisteredOwner"
+  OR ("deviceManagementScripts" AND "GET") OR "Get-AzResource" OR "Get-AzADApplication"
+  OR "Get-AzAutomationAccount" OR "Get-AzADServicePrincipal" OR "Get-AzRoleDefinition"
+  OR "Get-AzSqlServer" OR "Get-AzSqlDatabase" OR "Get-AzureGraphToken" OR "Get-AzKeyVault"
+  OR "Set-AzKeyVaultAccessPolicy" OR "Get-AzKeyVaultSecret" OR "Get-AzKeyVaultKe"
+  OR "Get-AzKeyVaultCertificate" OR "Get-AzStorageAccount" OR "Get-AzStorageContainer"
+  OR "Get-AzStorageBlob" OR "Get-AzStorageShare" OR "Get-AzStorageFile" OR "Get-AzAutomationJobOutput"
+  OR "Get-AzAutomationRunbook" OR "Get-AzStorageFileContent" OR "Get-AzDisk") | table
+  _time, host, user,account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id `group_events("identity",120s)`
+  | eventstats dc(event_name) as dc_event_name by identity, event_name| where dc_event_name
+  > 1 '
+techniques:
+- discovery:cloud infrastructure discovery
+- discovery:account discovery:cloud account
+- discovery:cloud service discovery
+technique_id:
+- T1087.004
+data_category:
+- Azure activity logs
+references: null

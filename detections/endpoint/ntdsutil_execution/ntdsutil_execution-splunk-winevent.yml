@@ -1,0 +1,23 @@
+id: '6589.7619'
+title: NTDSUtil.exe execution
+description: 'ntdsutil.exe is a native Windows command line utility used to export
+  Active Directory. Adversaries can utilize ntdsutil to potential dump credentials
+  from files like ntds.dit. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+  Threat Actor Association: APT29/Nobelium/Cozy Bear, CL-STA-0043, FIN6, FIN12, Lapsus$,
+  TA428, Trickbot, Vice Society, Volt Typhoon, Wizard Spider Software Association:
+  ALPHV/BlackCat, Bazar, BianLian, Conti, Hafnium, Lockbit, Prestige, Vice Society
+  -- Atomics T1003.003 Test #3 -- #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<") "ntdsutil" | table _time, host, user user, process, process_*,
+  parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping:ntds
+- credential-access:os credential dumping
+technique_id:
+- T1003.003
+data_category:
+- Windows event logs
+references:
+- https://adsecurity.org/?p=2398#CreateIFM
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Ntdsutil/#dump

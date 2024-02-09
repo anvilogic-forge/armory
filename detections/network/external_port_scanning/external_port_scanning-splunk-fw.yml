@@ -1,0 +1,21 @@
+id: '1102.1163'
+title: External Port Scanning
+description: 'A primitive port scanner can be constructed using solely the bash shell
+  via its /dev/tcp virtual file. -- Threat Actor Association: Sandworm (UAC-0165)'
+logic_format: Splunk
+logic: '`get_network_data` `get_network_data_fw` dest_ip IN(10.0.0.0/8, 172.16.0.0/12,
+  192.168.16.0/16) AND NOT src_ip IN(10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12,
+  192.168.0.0/16, 224.0.0.0/4, 255.255.255.255, "::1", "FE80::/10", "FF00::/8") |
+  table _time, host, user,rule, dest_ip, dest_port, src_ip, dest_translated_ip | bin
+  span=30s | stats values(*) as * by _time, dest_ip | stats dc(dest_port) as count_ports
+  dc(dest_translated_ip) as count_dest values(*) as * by src_ip, _time | where (count_ports>=250
+  OR count_dest>=250 ) | lookup dnslookup clientip as src_ip OUTPUT clienthost as
+  src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country |
+  eval dest_port = if(count_ports>10,null(),dest_port)| eval dest_ip = if(count_dest>10,null(),dest_ip)
+  `hec_collect`'
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Network device logs
+references: null

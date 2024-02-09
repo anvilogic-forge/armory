@@ -1,0 +1,16 @@
+id: '20627.36743'
+title: Okta user failed number challenge
+description: 'Detects when an Okta user failed a number challenge during push notification.
+  -- Threat Actor Association: Scattered Spider (aka. Muddled Libra, Scatter Swine,
+  Starfraud, UNC3944)'
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
+  event_time)) < $latest$ and event_type ilike ''user.authentication.auth_via_mfa''
+  and action ilike ''block'' and debug_data ilike ''%OV_WITH_CHALLENGE_RESPONSE_INVALID%'' '
+techniques:
+- credential-access:forced authentication
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+references: null

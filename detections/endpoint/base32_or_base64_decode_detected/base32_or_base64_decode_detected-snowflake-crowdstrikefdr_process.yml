@@ -1,0 +1,27 @@
+id: '12274.17325'
+title: Base32 or Base64 decode detected
+description: 'May be used to perform privileged reads or disclose files outside a
+  restricted file system. If the binary has the SUID bit set, it does not drop the
+  elevated privileges and may be abused to access the file system, escalate or maintain
+  privileged access as a SUID backdoor. If the binary is allowed to run as superuser
+  by sudo, it does not drop the elevated privileges and may be used to access the
+  file system, escalate or maintain privileged access. -- Threat Actor Association:
+  UNC5221, UTA0178 -- GTFOBins LOLBins Atomics T1027 Test #1 Atomics T1140 Test #5
+  Atomics T1140 Test #7'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  (event_platform = ''Lin'' or event_platform = ''Mac'') and (regexp_like(process,
+  ''.*(--decode\\\s+).*'',''i'') or regexp_like(process, ''.*(-d\\\s+).*'', ''i''))
+  and regexp_like(process, ''.*(base64|base32|basenc|base58|basez).*'', ''i'') '
+techniques:
+- defense-evasion:deobfuscate/decode files or information
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://gtfobins.github.io/gtfobins/base64/
+- https://gtfobins.github.io/gtfobins/base32/
+- https://gtfobins.github.io/gtfobins/base58/
+- https://gtfobins.github.io/gtfobins/basenc/
+- https://gtfobins.github.io/gtfobins/basez/

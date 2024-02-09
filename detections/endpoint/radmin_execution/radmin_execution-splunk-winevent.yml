@@ -1,0 +1,21 @@
+id: '8155.10007'
+title: Radmin execution
+description: Adversaries may gain access to and use third-party software suites installed
+  within an enterprise network, such as administration, monitoring, and deployment
+  systems, to move laterally through the network. Radmin is a remote management software
+  that can be used to remotely control workstations. Silence Atomics T1072 Test#1
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "radmin.exe" OR "/connect:*" | table _time, host,
+  user process, process_*, signature_id, parent_* | bin span=1s | stats values(*)
+  as * by _time, host | where match(process_name, "(?i)radmin") OR match(process,
+  "(?i)\/connect\:.*?\:") '
+techniques:
+- execution:software deployment tools
+- lateral-movement:software deployment tools
+technique_id: null
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://www.group-ib.com/resources/threat-research/silence_moving-into-the-darkside.pdf

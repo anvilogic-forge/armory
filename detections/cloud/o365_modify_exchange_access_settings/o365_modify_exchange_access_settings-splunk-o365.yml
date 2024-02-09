@@ -1,0 +1,18 @@
+id: '5727.6000'
+title: O365 Modify Exchange Access Settings
+description: 'Set-CASMailbox cmdlet to configure client access settings on a mailbox.
+  For example, you can configure settings for Exchange ActiveSync, Outlook, Outlook
+  on the web, POP3, and IMAP4. Attacker added their own devices as allowed IDs for
+  active sync. - Threat Actor Association: APT29/Nobelium/Cozy Bear'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` TERM(Set-CASMailbox) | table _time,
+  host, user,account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+technique_id: null
+data_category:
+- Office 365 audit logs
+references: null

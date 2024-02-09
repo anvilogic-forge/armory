@@ -1,0 +1,24 @@
+id: '1093.1147'
+title: Add DLL_EXE Registry Value
+description: 'Adding an entry to the "run keys" in the Registry or startup folder
+  will cause the program referenced to be executed when a user logs in. -- Threat
+  Actor Association: CL-STA-0043, FamousSparrow, FIN6, Flax Typhoon, WIRTE -- Software
+  Association: Blackbyte'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ( signature_id=13 AND (TERM(HKU)
+  OR TERM(HKCU) OR TERM(HKLM)) AND (registry_value_name="*\\Temp\\*.exe" OR registry_value_name="*\\Temp\\*.dll"
+  OR registry_value_name="*\\Common Files\\*.dll" OR registry_value_name="*\\Common
+  Files\\*.exe") ) | table _time, host, user, process process_name, parent_process_name,
+  signature_id, dest_ip, registry_value_name | bin span=1s | stats values(*) as *
+  by _time, host | table _time, host, user, process process_name, parent_process_name,
+  signature_id dest_ip registry_value_name `hec_collect`'
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+technique_id:
+- T1547.001
+data_category:
+- Windows Registry
+- Windows Sysmon
+references:
+- https://www.hackingarticles.in/multiple-ways-to-persistence-on-windows-10-with-metasploit/
+- https://blog.talosintelligence.com/2021/09/tinyturla.html

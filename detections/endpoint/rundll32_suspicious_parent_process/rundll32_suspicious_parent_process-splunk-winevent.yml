@@ -1,0 +1,20 @@
+id: '27464.49948'
+title: rundll32 Suspicious Parent Process
+description: Expected legitimate parent processes for rundll32 include svchost, explorer,
+  spoolsv, and rundll32 itself. This use case detects executions of rundll32 with
+  parent process names that are commonly targeted by threat actors for abuse. Living
+  Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "rundll32.exe" OR TERM(rundll32) | regex parent_process_name="(?i)(winword|excel|powerpnt|onenote|msaccess|lsass|taskeng|winlogon|schtask|regsvr32|wmiprvse|wsmprovhost|chrome|firefox|msedge|opera|iexplore|outlook|thunderbird|powershell|pwsh|cmd|wscript|cscript)\.exe"|
+  where not (match(parent_process_name, "(?i)iexplore\.exe") and match(process, "(?i)C:\x5cWindows\x5csystem32\x5cinetcpl\.cpl,ClearMyTracksByProcess"))|
+  table _time, host, user, process, process_*, parent_process_* | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- Windows event logs
+references:
+- https://redcanary.com/blog/lolbins-abuse/

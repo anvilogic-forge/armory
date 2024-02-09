@@ -1,0 +1,24 @@
+id: '16972.27550'
+title: Account Discovery Commands - Windows
+description: 'Adversaries may attempt to get a listing of local system accounts. This
+  information can help adversaries determine which local accounts exist on a system
+  to aid in follow-on behavior. Atomics T1087.001 Test #8 Atomics T1087.001 Test #9
+  Atomics T1087.001 Test #10 Atomics T1087.002 Test #1 Atomics T1087.002 Test #2 Atomics
+  T1087.002 Test #3 Atomics T1087.002 Test #9'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*((net(\\\.exe)?\\\s+(user|group|localgroup))|query\\\s+user|Get-(LocalGroupMember|AdUser)).*'',
+  ''i'') and not regexp_like(process, ''.*\\\s+/(add|delete).*'', ''i'') '
+techniques:
+- discovery:account discovery
+- persistence:create account:domain account
+- persistence:create account:local account
+technique_id:
+- T1136.002
+- T1136.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1087.002/T1087.002.md
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1087.001/T1087.001.md

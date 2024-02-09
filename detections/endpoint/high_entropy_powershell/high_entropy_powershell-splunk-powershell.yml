@@ -1,0 +1,24 @@
+id: '6029.6450'
+title: High Entropy Powershell
+description: 'There are many tools that assist in obfuscating powershell executions
+  such as Base64 encoding. Other methods include using tools like Chimera, which is
+  a PowerShell obfuscation script designed to bypass AMSI and antivirus solutions.
+  It digests malicious PS1''s known to trigger AV and uses string substitution and
+  variable concatenation to evade common detection signatures. This use case uses
+  Splunks URL Toolbox to find high entropy powershell commands. -- Software Association:
+  BianLian'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` TERM(EventCode=4104) |
+  eval process_path=Path |`ut_shannon(process)` | table _time, host, user process,
+  process_*, signature_id, ut_* | bin span=1s | stats values(*) as * by _time, host
+  |eventstats avg(ut_shannon) as avg_ut by host, process_path, _time|where avg_ut
+  > 5 '
+techniques:
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+data_category:
+- Process command-line parameters
+- PowerShell logs
+references:
+- https://github.com/tokyoneon/Chimera

@@ -1,0 +1,17 @@
+id: '5697.8028'
+title: Multiple Host logons
+description: 'Use case looks for users who have logged into multiple hosts. -- Threat
+  Actor Association: CL-STA-0043'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` type IN(user_auth, user_login)
+  op IN(success, login) NOT TERM(failed) | eval user=coalesce(acct, user, id), src_ip=coalesce(addr,
+  hostname) | table _time, host, user, process, process_*, parent_*, src_ip, addr,
+  hostname, acct, id, res | bin span=86400s | stats values(*) as * by _time, user
+  | eventstats dc(host) as dc_host by user, _time | where dc_host > 1 '
+techniques:
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Linux audit logs
+references:
+- https://www.cadosecurity.com/post/responding-to-solarigate

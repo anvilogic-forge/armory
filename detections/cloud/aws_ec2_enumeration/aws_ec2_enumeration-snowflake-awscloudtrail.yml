@@ -1,0 +1,16 @@
+id: '15703.23326'
+title: AWS EC2 Enumeration
+description: 'Threat identifier for AWS API calls associated with EC2 enumeration.
+  -- Threat Actor Association: GUI-vil, LUCR-3'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and (event_name = 'GetConsoleScreenshot' or event_name = 'GetLaunchTemplateData'
+  or event_name = 'DescribeInstanceTypes' or event_name = 'DescribeBundleTasks' or
+  event_name = 'DescribeInstanceAttribute' or event_name = 'DescribeReplaceRootVolumeTasks')
+techniques:
+- discovery:cloud infrastructure discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

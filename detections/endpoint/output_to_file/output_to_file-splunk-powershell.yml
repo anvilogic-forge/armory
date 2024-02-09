@@ -1,0 +1,29 @@
+id: '6144.6642'
+title: Output to File
+description: 'Adversaries may stage collected data in a central location or directory
+  on the local system prior to Exfiltration. This use case looks for indicators of
+  commands being saved to a file such as "&gt;" or "&gt;&gt;". Typically a new process
+  is not created when executed from a command prompt, however adversaries may output
+  process results to a txt document during discovery. -- Threat Actor Association:
+  Lazarus, Mustang Panda (aka. Stately Taurus//Earth Preta/BRONZE PRESIDENT/TA416/RedDelta),
+  OilRig, TeamTNT - Software Association: Bazar, Clop, Conti, DarkWatchman, EagleEye,
+  Hive, Koxic, Polyglot, SysJoker Atomics T1059.003 Test #2 Atomics T1059.003 Test
+  #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  TERM(EventCode=4104) OR "<EventID>4103<" OR "<EventID>4104<")(TERM(Out-File) OR
+  TERM(>) OR ">>") | regex process="(?i)(\s+|\;|\:\,|\d+|\|)(out-file|\>{1,2})(\s|\;|\:\,\|).{1,}"
+  | table _time, host, user, signature_id, process_name, user, process | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- collection:data staged:local data staging
+- defense-evasion:masquerading
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1074.001
+- T1059.003
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.mcafee.com/blogs/other-blogs/mcafee-labs/gold-dragon-widens-olympics-malware-attacks-gains-permanent-presence-on-victims-systems/

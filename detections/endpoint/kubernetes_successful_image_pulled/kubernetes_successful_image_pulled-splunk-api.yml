@@ -1,0 +1,23 @@
+id: '6845.8057'
+title: Kubernetes Successful Image Pulled
+description: Adversaries may deploy a container into an environment to facilitate
+  execution or evade defenses. In some cases, adversaries may deploy a new container
+  to execute processes associated with a particular image or deployment, such as processes
+  that execute or download malware. This use case looks for when an image has been
+  successfully pulled when a pod is created.
+logic_format: Splunk
+logic: '`get_application_data` `get_application_data_api` TERM(create) "Successfully
+  pulled image" | rex field=request_message "\"(?<imagename>.*?\"") | rex field=imagename
+  mode=sed "s/\"//g" | eval image=coalesce(image, imagename) | table _time, host,
+  user action, reason, uri, uri_path, status, src_ip, user_group, user_id, user, user_agent,
+  event_type, object_*, request_*, response_*, image, command_*, test | bin span=1s
+  | stats values(*) as * by _time, host | eventstats dc(object_name) as dc_pods by
+  image, _time '
+techniques:
+- defense-evasion:deploy container
+- execution:deploy container
+technique_id: null
+data_category:
+- API monitoring
+references:
+- https://azure.microsoft.com/en-us/blog/detect-largescale-cryptocurrency-mining-attack-against-kubernetes-clusters/

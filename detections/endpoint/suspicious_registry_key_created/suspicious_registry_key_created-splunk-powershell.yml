@@ -1,0 +1,29 @@
+id: '5857.6625'
+title: Suspicious Registry Key Created
+description: 'Adversaries may achieve persistence by adding a program or referencing
+  it with a Registry run key or by utilizing content triggered by Image File Execution
+  Options (IFEO) debugger keys. Run keys may exist under multiple hives and IFEOs
+  can also enable an arbitrary monitor program to be launched when a specified program
+  silently exits. Multiple APTs leverage these Hives in order to establish persistence
+  or execute additional payloads that appear to blend in with normal traffic. -- Threat
+  Group Association: APT29/Nobelium/Cozy Bear, APT31, Kimsuky, TA505, Wizard Spider
+  -- Software Association: BABYSHARK, Bazar, DirtyMoe, GhostShell, TrickBot -- Atomics
+  T1003 Test #2 Atomic T1574.012 Test#1 Atomic T1574.012 Test#2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` TERM(new-itemproperty)
+  ("HKLM" OR "HKCU") ("dll" OR "vbs") | table _time, host, user process, process_*,
+  signature_id | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+- persistence:event triggered execution:image file execution options injection
+- privilege-escalation:boot or logon autostart execution:registry run keys / startup
+  folder
+- privilege-escalation:event triggered execution:image file execution options injection
+technique_id:
+- T1547.001
+- T1546.012
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://blog.talosintelligence.com/2021/09/tinyturla.html

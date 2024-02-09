@@ -1,0 +1,35 @@
+id: '1040.1060'
+title: Executable File Written to Disk
+description: 'Detects when a potentially malicious file is written to the disk. -
+  Threat Actor Association: Alloy Taurus/Gallium, Andariel, APT28 (aka.Fancy Bear,
+  Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM), APT29/Nobelium/Cozy
+  Bear, APT34/OilRig, APT37, APT41, Arid Viper/APT C-23, Babuk, Carbanak, Evilnum,
+  FIN6, FIN7, FIN8, Gamaredon (aka. Armageddon, UAC-0010), Kimsuky, Lazarus, MalKamak,
+  Memento Team, Mustang Panda, Night Spider, TA2541, TA,505, TA551, Prophet Spider,
+  Phosphorus/Magic Hound/APT35, SaintBear (aka UAC-0056, UNC2589, TA471), Scatter
+  Swine, TA576, Wizard Spider -- Software Association: BadHatch, Bazar, Black Basta,
+  BlackByte, Clop, Conti, Cring, Emotet, GhostShell, Hancitor, Harvester, IcedID,
+  Lapsus$, MirrorBlast, PYSA/Mespinoza, QakBot, Ransom Cartel, Remcos, Ryuk, SquirrelWaffle,
+  TargetCompany, Trickbot, Vidar Stealer, WhisperGate, XingLocker, Yanluowang, Zloader'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` EventCode=11 (TERM("bat")
+  OR TERM("bin") OR TERM("cmd") OR TERM("com") OR TERM("e_e") OR TERM("ex_") OR TERM("exe")
+  OR TERM("hta") OR TERM("jar") OR TERM("js") OR TERM("out") OR TERM("plx") OR TERM("ps1")
+  OR TERM("py") OR TERM("pyc") OR TERM("rgs") OR TERM("script") OR TERM("sct") OR
+  TERM("server") OR TERM("vb") OR TERM("ws") OR TERM("docm") OR TERM("dotm") OR TERM("xlm")
+  OR TERM("xlsm") OR TERM("xltm") OR TERM("xla") OR TERM("xlam") OR TERM("xll") OR
+  TERM("otm") OR TERM("pptm") OR TERM("potm") OR TERM("ppsm") OR TERM("sldm")) | regex
+  file_name="\.(bat|bin|cmd|com|e_e|ex_|exe|hta|jar|js|out|plx|ps1|py|pyc|rgs|script|sct|server|vb|ws|docm|dotm|xlm|xlsm|xltm|xla|xlam|xll|otm|pptm|potm|ppsm|sldm)$"
+  | regex file_path!="C:\x5cWindows\x5cTemp\x5c__PSScriptPolicyTest_\S+ps1" | eventstats
+  c(file_path) as c_file_path by file_path| eventstats c(file_name) as c_file_name
+  by file_name|where c_file_path < 10 AND c_file_name < 10 | table _time, host, user
+  dest, direction, dvc, dvc_nt_host, event_id, eventtype, file_name, file_path, parent_process_id,
+  process_id, process_name, process_path, signature_id, tag, user_id | bin span=1s
+  | stats values(*) as * by _time, host, file_path '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4656

@@ -1,0 +1,25 @@
+id: '12575.17925'
+title: Msxsl Execution
+description: 'To support complex operations, the XSL standard includes support for
+  embedded scripting in various languages. Adversaries may abuse this functionality
+  to execute arbitrary files while potentially bypassing application control. Similar
+  to Trusted Developer Utilities Proxy Execution, the Microsoft common line transformation
+  utility binary (msxsl.exe) and can be installed and used to execute malicious JavaScript
+  embedded within local or remote (URL referenced) XSL files. Living Off the Land
+  Binary and Scripts (LOLBAS) (LOLBIN) Atomics T1220 Test #1 Atomics T1220 Test #2 '
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) ("msxsl.exe")
+  OR ((".xml" ".xsl") OR (".xsl" ".xsl")) | table _time, host, user signature_id,
+  process, process_*, parent_* | bin span=1s | stats values(*) as * by _time, host
+  | where match(process_name, "(?i)msxsl") OR match(process, "(?i)\S+\.x[ms]l\s+.*\.xsl")
+  `hec_collect`'
+techniques:
+- defense-evasion:xsl script processing
+technique_id: null
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://medium.com/@threathuntingteam/msxsl-exe-and-wmic-exe-a-way-to-proxy-code-execution-8d524f642b75
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Msxsl/

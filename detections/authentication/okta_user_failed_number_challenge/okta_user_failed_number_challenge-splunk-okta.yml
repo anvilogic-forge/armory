@@ -1,0 +1,17 @@
+id: '20627.36744'
+title: Okta user failed number challenge
+description: 'Detects when an Okta user failed a number challenge during push notification.
+  -- Threat Actor Association: Scattered Spider (aka. Muddled Libra, Scatter Swine,
+  Starfraud, UNC3944)'
+logic_format: Splunk
+logic: '`get_authentication_data` eventType="user.authentication.auth_via_mfa" "block"
+  "OV_WITH_CHALLENGE_RESPONSE_INVALID" | table _time, host, user, action, dest_host,
+  src_ip, src_user, signature, reason, activity | bin span=1s | stats values(*) as
+  * by _time, user '
+techniques:
+- credential-access:forced authentication
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+references: null

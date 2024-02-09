@@ -1,0 +1,20 @@
+id: '8610.11024'
+title: AWS Unused_Unsupported Regions
+description: Adversaries may create cloud instances in unused geographic service regions
+  in order to evade detection. Access is usually obtained through compromising accounts
+  used to manage cloud infrastructure. This use case requires heavy filtering via
+  the avl allowlist macro.
+logic_format: Splunk
+logic: '`get_cloud_data` awsRegion=* | table _time, host, user, account, region, src_ip,
+  http_user_agent, access_key, user, user_id, identity_type, role, event_name, event_category,
+  cloud_service, request_parameters, response, mfa_enabled, permissions, identity,
+  action, resource_id, object_id, dest_* | bin span=1s | stats values(*) as * by _time,
+  user | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip| rename src_Country as src_country '
+techniques:
+- defense-evasion:unused/unsupported cloud regions
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://blog.cloudsploit.com/the-danger-of-unused-aws-regions-af0bf1b878fc

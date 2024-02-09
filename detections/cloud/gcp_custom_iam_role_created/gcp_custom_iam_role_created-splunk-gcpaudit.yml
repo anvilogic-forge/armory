@@ -1,0 +1,18 @@
+id: '12502.17769'
+title: 'GCP: Custom IAM Role Created'
+description: 'Custom roles are created by the user and allow for multiple permissions
+  to be assigned. Adversaries can leverage this ability to assign additional privileges
+  for further compromise. Unfamiliar or unauthorized custom role creation should be
+  investigated. '
+logic_format: Splunk
+logic: ' `get_cloud_data` `get_cloud_data_gcp` TERM(createRole) | table _time, host,
+  user event_name account user role resource_id action acl_permission user_type src_ip
+  http_user_agent bucket_name msg region vendor_product `group_events("src_ip", 1)`
+  `hec_collect`'
+techniques:
+- privilege-escalation:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- GCP audit logs
+references: null

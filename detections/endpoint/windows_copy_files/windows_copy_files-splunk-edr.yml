@@ -1,0 +1,25 @@
+id: '5685.12628'
+title: Windows Copy Files
+description: 'Adversaries may search local system sources, such as file systems or
+  local databases, or network shares to find files of interest and sensitive data
+  prior to Exfiltration. Interactive command shells may be in use, and common functionality
+  within cmd may be used to gather information. These events are only detected when
+  a new process is created, or if powershell logging is enabled and used. Threat Actor
+  Association: APT29, Evilnum, REvil, TA428, Vice Society Software Association: Black
+  Basta, SamSam Atomics T1505.003 Test #1'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_edr` (TERM(copy) OR TERM(xcopy) OR
+  TERM(robocopy)) | regex process="(?i)(((^|\s+)copy|(xcopy|robocopy)(\.exe)?\"?)\s+)"
+  | table _time, host, user signature_id, process, process_*, parent_* | bin span=1s
+  | stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- collection:data from local system
+- execution:command and scripting interpreter
+- collection:data from network shared drive
+technique_id: null
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://book.hacktricks.xyz/exfiltration
+- https://www.computerhope.com/xcopyhlp.htm

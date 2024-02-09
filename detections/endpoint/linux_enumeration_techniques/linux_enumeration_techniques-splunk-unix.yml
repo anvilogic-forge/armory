@@ -1,0 +1,46 @@
+id: '1048.1079'
+title: Linux Enumeration Techniques
+description: 'Once the attacker has a limited shell it is useful to escalate that
+  shell''s privileges. In order to find all kind of information about the system and
+  find a way to escalate, the attacker uses multiple scripts that will output information
+  like kernel information, current user/group info, users that have previously logged
+  onto the system, group memberships, admin users, contents of /etc/passwd, sudo commands
+  without password, environment information, cron jobs, network and ip information,
+  running processes, interesting files (SUIG, SGID), bash_history etc. Threat Actor
+  Association: Watch Dog'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (type IN ("CRED_ACQ", "USER_ACCT",
+  "CRED_DISP", "USER_END", "USER_START", "CRED_REFR", "USER_CMD") op IN ("PAM:setcred",
+  "PAM:accounting", "PAM:session_close", "PAM:session_open") grantors IN ("pam_env",
+  "pam_keyinit", "pam_access", "pam_unix") exe IN ("/usr/bin/crontab", "/usr/bin/sudo")
+  terminal IN ("cron", "/dev/pts*")) OR (bash_command="*.sh*") OR ((COMMAND IN ("/bin/id",
+  "list", "/usr/bin/id") TTY="pts*")) OR process="crontab" | table _time, host, user,
+  process, process_*, TTY, auid, op, grantors, terminal, type, acct | bin span=60s
+  | stats values(*) as * by _time, host | where ((process like "%/bin/id%" OR process
+  like "%list%") AND TTY like "%pts%" AND (type like "%CRED_ACQ%" OR type like "%USER_ACCT%"
+  OR type like "%CRED_DISP%" OR type like "%USER_END%" OR type like "%USER_START%"
+  OR type like "%CRED_REFR%" OR type like "%USER_CMD%") AND (op like "%PAM:setcred%"
+  OR op like "%PAM:accounting%" OR op like "%PAM:session_close%" OR op like "%PAM:session_open%")
+  AND (grantors like "%pam_env" OR grantors like "%pam_keyinit%" OR grantors like
+  "%pam_access%" OR grantors like "%pam_unix%") AND (process_path like "%/usr/bin/crontab%"
+  OR process_path like "%/usr/bin/sudo%") AND (terminal like "%cron%" OR terminal
+  like "%/dev/pts%") AND process like "%.sh%") OR ((process like "%list%" OR process
+  like "%/usr/bin/id%") AND TTY like "%pts%" AND process like "%crontab%" AND process
+  like "%.sh%") '
+techniques:
+- execution:command and scripting interpreter:unix shell
+- discovery:account discovery
+- discovery:file and directory discovery
+- discovery:permission groups discovery
+- discovery:system information discovery
+- discovery:system network configuration discovery
+- discovery:system network connections discovery
+- discovery:system owner/user discovery
+- collection:automated collection
+technique_id:
+- T1059.004
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh

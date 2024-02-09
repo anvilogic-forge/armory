@@ -1,0 +1,19 @@
+id: '8385.10515'
+title: Linux CURL or WGET Direct to IPv4 Address
+description: 'This rule looks for endpoint logs that contain a CURL or WGET command
+  inside of the process line that try and connect directly to an IP address. This
+  use case was originally created in response to CVE-2021-44228. -- Software Association:
+  TeamTNT'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` (TERM(curl) OR TERM(wget)) NOT
+  ("localhost" OR "169.254.169.254" OR "127.0.0.1") | rex max_match=0 field=process
+  "https?://(?<dest_ip>[^\/:\s]+)" | regex dest_ip="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+  | search dest_ip!="172.16.0.0/12" AND dest_ip!="10.0.0.0/8" AND dest_ip!="192.168.0.0/16"
+  | table _time, host, user, process*, src* parent_*, file_*, dest*| bin span=1s |
+  stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- initial-access:exploit public-facing application
+technique_id: null
+data_category:
+- Linux audit logs
+references: null

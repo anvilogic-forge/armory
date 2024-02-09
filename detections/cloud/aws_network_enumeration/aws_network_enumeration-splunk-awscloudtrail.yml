@@ -1,0 +1,22 @@
+id: '15704.23329'
+title: AWS Network Enumeration
+description: 'Threat identifier for AWS API calls associated with Network enumeration.
+  -- Threat Actor Association: GUI-vil'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(DescribeCarrierGateways) OR TERM(DescribeVpcEndpointConnectionNotifications)
+  OR TERM(DescribeTransitGatewayMulticastDomains) OR TERM(DescribeClientVpnRoutes)
+  OR TERM(DescribeDhcpOptions) OR TERM(GetTransitGatewayRouteTableAssociations) |
+  table _time, host, user, account, region, src_ip, http_user_agent, access_key, user,
+  user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id `group_events("src_ip",90s)`|
+  eventstats dc(event_name) as dc_event by src_ip, _time| where dc_event > 2 | lookup
+  dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country '
+techniques:
+- discovery:system network connections discovery
+- discovery:network service discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

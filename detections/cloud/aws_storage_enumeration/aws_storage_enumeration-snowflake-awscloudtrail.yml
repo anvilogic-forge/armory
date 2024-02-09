@@ -1,0 +1,18 @@
+id: '15686.23303'
+title: AWS Storage Enumeration
+description: 'Identify commands associated with enumerating storage services like
+  S3 in AWS -- Threat Actor Association: GUI-vil'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and (event_name = 'ListBuckets' or event_name = 'GetBucketCors' or event_name =
+  'GetBucketInventoryConfiguration' or event_name = 'GetBucketPublicAccessBlock' or
+  event_name = 'GetBucketMetricsConfiguration' or event_name = 'GetBucketPolicy' or
+  event_name = 'GetBucketTagging')
+techniques:
+- discovery:cloud service discovery
+- discovery:cloud storage object discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

@@ -1,0 +1,22 @@
+id: '24860.46041'
+title: Esentutl.exe Collecting Browser Data
+description: 'Esentutl.exe is a Windows command line utility that provides database
+  utilities for the Extensible Storage Engine (ESE). While esentutl.exe is a legitimate
+  and useful tool within Windows environments, its abuse has been observed in malware
+  infections including Qakbot, where it has been used to collect data from Internet
+  Explorer and Microsoft Edge. This use case detects command line arguments used with
+  esentutl.exe to collect data from web browsers. -- Software Association: Akira --
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "esentutl.exe" OR ("/r " "\\Windows\\WebCache") | where match(process, "(?i)\s/r\s.*\x5cWindows\x5cWebCache")
+  | table _time, host, user, signature_id, process, process_*, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- collection:data from local system
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://thedfirreport.com/2022/02/07/qbot-likes-to-move-it-move-it/
+- https://www.cybereason.com/blog/threat-alert-aggressive-qakbot-campaign-and-the-black-basta-ransomware-group-targeting-u.s.-companies

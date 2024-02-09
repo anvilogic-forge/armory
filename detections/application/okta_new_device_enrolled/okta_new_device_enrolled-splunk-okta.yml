@@ -1,0 +1,15 @@
+id: '13774.20216'
+title: 'Okta: New Device Enrolled'
+description: This use case detects when a new device is registered successfully for
+  Okta Verify. The user must have below the max allowed devices and a valid device
+  status (not suspended or deactivated).
+logic_format: Splunk
+logic: '`get_application_data` eventType="device.enrollment.create" `group_events("src_ip",
+  1)` '
+techniques:
+- persistence:account manipulation
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references: null

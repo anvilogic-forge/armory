@@ -1,0 +1,15 @@
+id: '5351.12197'
+title: 'Okta: Auth from Suspicious Country'
+description: 'Looks for suspicious authentication in Okta based on Country. This use
+  case will require allow listing for specific countries in order to function correctly.
+  - Threat Actor Association: Scatter Swine'
+logic_format: Splunk
+logic: '`get_authentication_data` eventType="user.session.start" | table _time, host,
+  user, action, src_ip, src_user, signature, City, Region, Country '
+techniques:
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+- Third-party application logs
+references: null

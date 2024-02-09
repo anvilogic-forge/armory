@@ -1,0 +1,18 @@
+id: '8398.24840'
+title: Rare shell script execution
+description: 'Unix shell scripts that enable sequential execution of commands as well
+  as other typical programming operations such as conditionals and loops. - Threat
+  Actor Association: AbcBot, Sandworm (UAC-0165), TeamTNT, Teal Kurma (aka Sea Turtle,
+  Marbled Dust, Cosmic Wolf), UNC5221, UTA0178, WatchDog, Winnti Group - Software
+  Association: Mélofée'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ".sh" | table _time, host, user
+  process*, comm | bin span=1s | stats values(*) as * by _time, host | eventstats
+  c(comm) as c_comm by comm | where c_comm < 5 and match(comm, "(?i)\.sh") '
+techniques:
+- execution:command and scripting interpreter:unix shell
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references: null

@@ -1,0 +1,19 @@
+id: '13044.18765'
+title: 'Okta: Multiple OKTA push requests'
+description: This use case looks for when a user has received multiple push requests
+  for authentication via Okta.
+logic_format: Splunk
+logic: '`get_application_data` eventType="system.push.send_factor_verify_push" | table
+  _time, host, user, action, dest_host, src_ip, src_user, signature, reason | bin
+  span=1s | stats values(*) as * by _time, user | eventstats count(signature) as c_signature
+  by user| where c_signature > 4 '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://okta.github.io/okta-help/en/prod/Content/Topics/Security/threat-insight/configure-threatinsight-system-log.htm

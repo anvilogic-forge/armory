@@ -1,0 +1,21 @@
+id: '13512.24845'
+title: Keychain Export - MacOS
+description: 'Adversaries may acquire credentials from Keychain. Keychain (or Keychain
+  Services) is the macOS credential management system that stores account names, passwords,
+  private keys, certificates, sensitive application data, payment data, and secure
+  notes. Keychains can be viewed and edited through the Keychain Access application
+  or using the command-line utility security. This use case detects commands used
+  to access, dump, or export information from keychains. Atomics T1555.001 Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "security" AND ("find-certificate"
+  OR "keychain" OR "export") | table _time, host, user, process, process_*| where
+  match (process, "(?i)(find-certificate)|((list|default|login|show|dump)-keychain)|(export)")
+  and match(parent_process_name, "(?i)zsh|bash|sh|tcsh|csh|ksh") `group_events(host,1)` '
+techniques:
+- credential-access:credentials from password stores:keychain
+technique_id:
+- T1555.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1555.001/T1555.001.md

@@ -1,0 +1,20 @@
+id: '5704.5965'
+title: Windows FTP Exfiltration
+description: 'FTP is a utility commonly available with operating systems to transfer
+  information over the File Transfer Protocol (FTP). Adversaries can use it to transfer
+  other tools onto a system or to exfiltrate data. - Threat Actor Association: APT35,
+  Karakurt - Software Association: Agent Tesla, BianLian, Diavol, PureCrypter'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<") TERM(ftp) | regex process="(?i)ftp\s+(.{1,})?\-s\:.{1,}\.\w{2,5}"
+  | table _time, host, user process, process_*, signature_id, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:application layer protocol:file transfer protocols
+- exfiltration:exfiltration over alternative protocol
+technique_id:
+- T1071.002
+data_category:
+- Windows event logs
+references:
+- https://book.hacktricks.xyz/exfiltration

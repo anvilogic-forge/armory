@@ -1,0 +1,22 @@
+id: '15888.23735'
+title: PowerShell Install-Module or Import-Module
+description: 'The PowerShell cmdlet Install-Module gets one or more modules that meet
+  specified criteria from an online repository. Import-Module loads an existing module
+  into the current PowerShell session. -- Threat Actor Association: APT28 (aka.Fancy
+  Bear, Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM) -- Atomics T1059.001
+  Test #15 Atomics T1059.001 Test #16 Atomics T1059.001 Test #17 Atomics T1059.001
+  Test #18 Atomics T1070.006 Test #8'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*(Install|Import)-Module.*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter
+technique_id:
+- T1059.001
+data_category:
+- EDR Logs
+references:
+- https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershell-7.3

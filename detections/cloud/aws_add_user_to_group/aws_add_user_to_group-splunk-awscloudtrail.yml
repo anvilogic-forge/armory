@@ -1,0 +1,19 @@
+id: '6396.7151'
+title: AWS Add user to group
+description: 'This use case looks for when a user has been added to a group. '
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_iam` eventName=AddUserToGroup | eval group_name=''requestParameters.groupName''
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, dest_*,
+  group_name | bin span=1s | stats values(*) as * by _time, user | lookup dnslookup
+  clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip|
+  rename src_Country as src_country '
+techniques:
+- privilege-escalation:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- AWS CloudTrail logs
+references:
+- http://andresriancho.github.io/nimbostratus/pivoting-in-amazon-clouds.pdf

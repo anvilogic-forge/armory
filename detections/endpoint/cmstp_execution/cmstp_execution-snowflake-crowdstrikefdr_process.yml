@@ -1,0 +1,20 @@
+id: '13810.20278'
+title: Cmstp Execution
+description: 'Adversaries may abuse CMSTP to proxy execution of malicious code. The
+  Microsoft Connection Manager Profile Installer (CMSTP.exe) is a command-line program
+  used to install Connection Manager service profiles. CMSTP.exe accepts an installation
+  information file (INF) as a parameter and installs a service profile leveraged for
+  remote access connections. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+  Atomics T1218.003 Test #1 Atomics T1218.003 Test #2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(cmstp|\\\s+\\\/s\\\s+.+\\\.inf|\\\s+\\\/ni\\\s+.{4,}|\\\s+\\\/ns\\\s+.{4,}).*'',
+  ''i'') '
+techniques:
+- defense-evasion:system binary proxy execution:cmstp
+technique_id:
+- T1218.003
+data_category:
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Cmstp/

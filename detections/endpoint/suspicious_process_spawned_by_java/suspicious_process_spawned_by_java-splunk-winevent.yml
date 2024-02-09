@@ -1,0 +1,26 @@
+id: '8445.10630'
+title: Suspicious process Spawned by Java
+description: 'Detect Java Spawning suspicious processes. This could indicate successful
+  execution of vulnerabilities such as log4j CVE-2021-44228. - Threat Actor Association:
+  Evilnum, Volt Typhoon'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "java.exe" ("powershell.exe" OR "cmd.exe" OR "AppInstaller.exe"
+  OR "Bitsadmin.exe" OR "CertOC.exe" OR "CertReq.exe" OR "cmdl32.exe" OR "Control.exe"
+  OR "Cscript.exe" OR "Desktopimgdownldr.exe" OR "Diantz.exe" OR "Esentutl.exe" OR
+  "Eventvwr.exe" OR "Expand.exe" OR "Extrac32.exe" OR "Findstr.exe" OR "Finger.exe"
+  OR "Ftp.exe" OR "GfxDownloadWrapper.exe" OR "Hh.exe" OR "IMEWDBLD.exe" OR "Ieexec.exe"
+  OR "Installutil.exe" OR "Makecab.exe" OR "MpCmdRun.exe" OR "Mshta.exe" OR "Msiexec.exe"
+  OR "OneDriveStandaloneUpdater.exe" OR "PrintBrm.exe" OR "Regasm.exe" OR "Regsvr32.exe"
+  OR "Replace.exe" OR "Rundll32.exe" OR "Sc.exe" OR "Schtasks.exe" OR "Wmic.exe" OR
+  "Wscript.exe" OR "Xwizard.exe" OR "Excel.exe" OR "Powerpnt.exe" OR "Squirrel.exe"
+  OR "Winword.exe" OR "Wsl.exe" OR "nslookup.exe" OR "Certutil.exe") | table _time,
+  host, user event_id, parent_*, process_*, process, signature_id | bin span=1s |
+  stats values(*) as * by _time, host | where match(parent_process_name,"(?i)java\.exe") '
+techniques:
+- execution:exploitation for client execution
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://blog.qualys.com/vulnerabilities-threat-research/2021/12/14/log4shell-exploit-detection-and-response-with-qualys-multi-vector-edr

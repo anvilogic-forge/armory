@@ -1,0 +1,28 @@
+id: '5017.5058'
+title: Large Data Transfer Proxy
+description: 'This use case is looking for potential data exfiltration attempts over
+  the proxy. It is looking for a client sending at least 20MB chunks of data summing
+  more than a specified total byte size to the same website within 1 hour. -- Threat
+  Actor Association: APT33, Daixin Team, FamousSparrow, FIN7, FIN8 (Syssphinx), Gorgon
+  Group, Karakurt, Kimsuky, OilRig, TA505, TRAVELING SPIDER, Wizard Spider -- Software
+  Association: Clop, Conti, Hafnium, NanoCore, Nefilim, Remcos, Ryuk, Trickbot'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_proxy` TERM(200) | where (bytes_out > 5000000)
+  AND NOT match(http_method,"(?i)get") AND match(status,"200") | fillnull uri_path
+  value="-" | fields _time, host, user, action, bytes, bytes_in, bytes_out, category,
+  dest_host, dest_ip, dest_port, http_content_type, http_referrer, http_user_agent,
+  status, uri_query, uri_path, http_method, duration, site, src_ip | bin _time span=1h|
+  stats count sum(bytes_out) as bytes_out values(*) as * by site, uri_path, src_ip,
+  _time | where bytes_out > 1000000000 | eval bytes_out_gb = bytes_out / 1024 / 1024
+  / 1024| table _time, host, user, action, bytes, bytes_in, bytes_out, count, category,
+  dest_host, dest_ip, dest_port, http_content_type, http_referrer, http_user_agent,
+  status, uri_query, uri_path, http_method, duration `hec_collect`'
+techniques:
+- exfiltration:automated exfiltration
+- exfiltration:data transfer size limits
+- exfiltration:exfiltration over c2 channel
+- exfiltration:exfiltration over web service
+technique_id: null
+data_category:
+- Web proxy
+references: null

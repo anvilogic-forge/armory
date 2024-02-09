@@ -1,0 +1,29 @@
+id: '5331.5416'
+title: EC2 Data Enumeration
+description: 'Detect enumeration of the following EC2 data from a set of regions on
+  an AWS account: instances, security groups, elastic IP addresses, VPN customer gateways,
+  dedicated hosts, network ACLs, NAT gateways, network interfaces, route tables, subnets,
+  VPCs, and VPC endpoints.'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` eventType="AwsApiCall" user_type="IAMUser"
+  eventName IN("DescribeVpcs", "DescribeVpcEndpoints", "DescribeLaunchTemplates",
+  "DescribeNetworkInterfaces", "DescribeSubnets", "DescribeRouteTables", "DescribeNatGateways",
+  "DescribeNetworkAcls", "DescribeHosts", "DescribeCustomerGateways", "DescribeSecurityGroups",
+  "DescribeAddresses", "DescribeInstances") | table _time, host, user, account, region,
+  src_ip, http_user_agent, access_key, user, user_id, identity_type, role, event_name,
+  event_category, cloud_service, request_parameters, response, mfa_enabled, permissions,
+  identity, action, resource_id, object_id, instance_id, os_type, image_id, instance_type
+  | bin span=60s | stats values(*) as * by _time, src_ip | eventstats dc(event_name)
+  as dc_event_name by _time, user, src_ip | where dc_event_name>1 | lookup dnslookup
+  clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip
+  | rename src_Country as src_country '
+techniques:
+- discovery:cloud infrastructure discovery
+- discovery:system location discovery
+- discovery:software discovery:security software discovery
+- discovery:cloud service discovery
+technique_id:
+- T1518.001
+data_category:
+- AWS CloudTrail logs
+references: null

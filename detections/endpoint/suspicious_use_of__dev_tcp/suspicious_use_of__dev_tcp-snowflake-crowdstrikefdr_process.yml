@@ -1,0 +1,16 @@
+id: '8918.14694'
+title: Suspicious Use of _dev_tcp
+description: Detects suspicious command with /dev/tcp
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and (event_platform = 'Lin' or event_platform = 'Mac') and regexp_like(process,
+  '.*(\\\/dev\\\/tcp).*', 'i')
+techniques:
+- execution:command and scripting interpreter
+- discovery:network service discovery
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.cadosecurity.com/coinstomp-malware-family-targets-asian-cloud-service-providers/
+- https://github.com/SigmaHQ/sigma/blob/2dce43507adcd787a8d9b55f1849c4e1794556f3/rules/linux/builtin/lnx_susp_dev_tcp.yml

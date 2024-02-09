@@ -1,0 +1,27 @@
+id: '1063.1098'
+title: NMAP Port Scan
+description: 'Port Scanning is the name for the technique used to identify open ports
+  and services available on a network host. It is sometimes utilized by security technicians
+  to audit computers for vulnerabilities, however, it is also used by hackers to target
+  victims. It can be used to send requests to connect to the targeted computers, and
+  then keep track of the ports which appear to be opened, or those that respond to
+  the request. -- Threat Actor Association: Alloy Taurus/Gallium'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` "/nice%20ports%2C/Trinity.txt.bak" OR "/
+  RTSP/1.0"|table _time, host, user, uri_path, dest_ip, dest_port, src_ip, src_port,
+  protocol, http_method| bin span=5m _time| stats values(index) as index, values(sourcetype)
+  as sourcetype, values(source) as source, values(uri_path) as uri_path, values(dest_port)
+  as dest_port, values(src_ip) as src_ip, values(src_port) as src_port, values(protocol)
+  as protocol, values(http_method) as http_method by _time, dest_ip| where match(uri_path,
+  "(?i)(Trinity.txt.bak)|(/\s+RTSP/1.0)") AND match(http_method, "(?i)(GET)|(OPTIONS)")|
+  lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country | table _time, host, user, uri_path,
+  dest_ip, dest_port, src_ip, src_port, protocol, http_method `hec_collect`'
+techniques:
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Web application firewall logs
+references:
+- https://dl.packetstormsecurity.net/docs/infosec/enemy2.html
+- https://github.com/Fincer/linux-server-setup/blob/master/exercises/h5.md

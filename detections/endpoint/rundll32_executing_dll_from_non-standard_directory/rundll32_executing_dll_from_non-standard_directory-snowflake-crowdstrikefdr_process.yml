@@ -1,0 +1,24 @@
+id: '27238.49669'
+title: rundll32.exe Executing DLL from Non-standard Directory
+description: rundll32.exe is a legitimate Windows utility used to run functions stored
+  in Dynamic Link Libraries. Because rundll32 is a trusted system utility with the
+  ability to execute code, it is a high value target for abuse by threat actors. Threat
+  actors leveraging Qbot malware have been observed dropping DLLs into writeable paths
+  and calling them with rundll32.exe. This use case detects when a DLL in a nonstandard
+  directory is called by rundll32. Living Off the Land Binary and Scripts (LOLBAS)
+  (LOLBIN)
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe'' and process
+  ilike ''%.dll%'' and not regexp_like(process, ''.*(rundll32(\\\.exe)?\\\"?\\\s+(\\\/\\\w+\\\s+)?[\\\w.]+\\\.dll).*'',
+  ''i'') and not regexp_like(process, ''.*(C:\\\x5c(Windows\\\x5c(System32|WinSxS|SysWoW64)|Program\\\sFiles(\\\s\\\(x86\\\))?\\\x5c.+\\\.dll)).*'',
+  ''i'') '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/blog/lolbins-abuse/

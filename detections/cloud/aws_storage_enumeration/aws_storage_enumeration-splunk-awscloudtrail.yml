@@ -1,0 +1,22 @@
+id: '15686.23304'
+title: AWS Storage Enumeration
+description: 'Identify commands associated with enumerating storage services like
+  S3 in AWS -- Threat Actor Association: GUI-vil'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(ListBuckets) OR TERM(GetBucketCors)
+  OR TERM(GetBucketInventoryConfiguration) OR TERM(GetBucketPublicAccessBlock) OR
+  TERM(GetBucketMetricsConfiguration) OR TERM(GetBucketPolicy) OR TERM(GetBucketTagging)
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id `group_events("src_ip",90s)`|
+  eventstats dc(event_name) as dc_event by src_ip, _time| where dc_event > 2 | lookup
+  dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country '
+techniques:
+- discovery:cloud service discovery
+- discovery:cloud storage object discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

@@ -1,0 +1,29 @@
+id: '5036.5130'
+title: Detect Brute-Forcing Permissions (AWS)
+description: Permissions let you specify access to AWS resources. Permissions are
+  granted to IAM entities (users, groups, and roles) and by default, these entities
+  start with no permissions. In other words, IAM entities can do nothing in AWS until
+  you grant them your desired permissions. To give entities permissions, you can attach
+  a policy that specifies the type of access, the actions that can be performed, and
+  the resources on which the actions can be performed. In addition, you can specify
+  any conditions that must be set for access to be allowed or denied. If an attacker
+  has your ID, various attack scenarios become feasible, including resource enumeration
+  (identifying existing roles, users, and permissions.) In order to find the permissions
+  for a certain user, there is a brute-forcing technique which consists in making
+  all the possible AWS API calls.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` userIdentity.type=IAMUser eventType=AwsApiCall
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, src
+  | bin span=60s | stats values(*) as * by _time, src_ip | eventstats dc(event_name)
+  as dc_event_name by _time, user, src_ip | where event_count>120 and dc_event_name>1
+  | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- discovery:permission groups discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://hackingthe.cloud/aws/enumeration/brute_force_iam_permissions/

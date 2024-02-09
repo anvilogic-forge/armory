@@ -1,0 +1,19 @@
+id: '24793.45806'
+title: Google Workspace Access Token Requested
+description: This use case detects when an access token for Google Workspace is requested.
+  This activity on its own does not indicate malicious activity, but should be validated
+  when correlated with granting of other types of access such as domain-wide delegation.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_gsuite` "tokens.googleapis.com" "GenerateAccessToken"
+  | table _time, host, user event_* account resource_id action user_type src_ip http_user_agent
+  msg region vendor_product `group_events("user", 1)` '
+techniques:
+- initial-access:valid accounts:cloud accounts
+- privilege-escalation:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- Application logs
+- GCP audit logs
+references:
+- https://unit42.paloaltonetworks.com/critical-risk-in-google-workspace-delegation-feature/

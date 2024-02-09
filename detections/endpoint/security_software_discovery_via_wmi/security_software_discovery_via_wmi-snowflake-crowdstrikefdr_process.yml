@@ -1,0 +1,22 @@
+id: '14971.22127'
+title: Security Software Discovery via WMI
+description: 'Adversaries may attempt to get a listing of security software, configurations,
+  defensive tools, and sensors that are installed on a system or in a cloud environment.
+  This may include things such as firewall rules and anti-virus. Adversaries may use
+  the information from Security Software Discovery during automated discovery to shape
+  follow-on behaviors, including whether or not the adversary fully infects the target
+  and/or attempts specific actions. This use case detects enumeration commands for
+  antivirus software using WMI. Atomics Test T1518.001 Test #6'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*(wmi.*\\\s+.*\\\s+AntiVirusProduct\\\s+).*'',
+  ''i'') '
+techniques:
+- discovery:software discovery:security software discovery
+technique_id:
+- T1518.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1518.001/T1518.001.md#atomic-test-6---security-software-discovery---av-discovery-via-wmi

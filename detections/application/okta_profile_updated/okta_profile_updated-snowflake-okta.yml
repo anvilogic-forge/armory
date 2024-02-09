@@ -1,0 +1,14 @@
+id: '5352.16097'
+title: 'Okta: Profile Updated'
+description: Okta user profile updated
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and event_type
+  ilike ''user.account.update_profile'' '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references: null

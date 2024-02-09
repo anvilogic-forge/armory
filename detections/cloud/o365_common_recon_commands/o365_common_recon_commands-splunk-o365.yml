@@ -1,0 +1,22 @@
+id: '5724.5997'
+title: O365 Common Recon Commands
+description: 'Detect Common Exchange cmdlet reconnaissance commands used by attackers
+  in order to collect information and/or to spread malware within the network after
+  gaining access to a machine. - Threat Actor Association: APT29/Nobelium/Cozy Bear,
+  CL-STA-0043'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` (TERM(Get-AcceptedDomain) OR TERM(Get-CASMailbox)
+  OR TERM(Get-Mailbox) OR TERM(Get-ManagementRoleAssignment) OR TERM(Get-OrganizationConfig)
+  OR TERM(Get-MailboxExportRequest) OR TERM(Get-OwaVirtualDirectory) OR TERM(Get-WebServicesVirtualDirectory))
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id `group_events("user",120s)`
+  | eventstats dc(event_name) as dc_event_name by user, event_name| where dc_event_name
+  > 1 '
+techniques:
+- discovery:account discovery
+- discovery:cloud service discovery
+technique_id: null
+data_category:
+- Office 365 audit logs
+references: null

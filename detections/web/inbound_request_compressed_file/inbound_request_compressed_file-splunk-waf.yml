@@ -1,0 +1,30 @@
+id: '5537.5777'
+title: Inbound Request Compressed File
+description: 'An adversary may compress and/or encrypt data that is collected prior
+  to exfiltration. This use case looks for requests to collect files with common compression/archiving
+  extensions. -- Threat Actor Association: Earth Estries'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` TERM(GET) (TERM(200) OR TERM(ALLOW)) ("zip"
+  OR "7z" OR "rar" OR "bz2" OR "gz" OR "lz" OR "xz" OR "z" OR "a" OR "ar" OR "shar"
+  OR "LBR" OR "LQR" OR "mar" OR "sbx" OR "tar" OR "f" OR "?xf" OR "lz4" OR "lzma"
+  OR "lzo" OR "rz" OR "sfark" OR "sz" OR "?Q?" OR "?Z?" OR "zst" OR "??_" OR "s7z"
+  OR "ace" OR "afa" OR "alz" OR "arc" OR "ark" OR "cdx" OR "arj" OR "b1" OR "b6z"
+  OR "ba" OR "bh" OR "cab" OR "car" OR "cfs" OR "cpt" OR "dar" OR "dd" OR "dgc" OR
+  "dmg" OR "ear" OR "gca" OR "ha" OR "hki" OR "ice" OR "jar" OR "kgb" OR "lzh" OR
+  "lha" OR "lzx" OR "pak" OR "partimg" OR "paq6" OR "paq7" OR "paq8" OR "pea" OR "pim"
+  OR "pit" OR "qda" OR "rk" OR "sda" OR "sea" OR "sen" OR "sfx" OR "shk" OR "sit"
+  OR "sitx" OR "sqx" OR "tgz" OR "tbz2" OR "tlz" OR "txz" OR "uc" OR "uc0" OR "uc2"
+  OR "ucn" OR "ur2" OR "ue2" OR "uca" OR "uha" OR "war" OR "xar" OR "xp3" OR "yz1"
+  OR "zipx" OR "zoo" OR "zpaq" OR "zz")| regex site!="\w\.windowsupdate\.com" | regex
+  uri_path="(?i)\.(zip|7z|rar|bz2|gz|lz|xz|z|a|ar|shar|LBR|LQR|mar|sbx|tar|f|\Q?xf\E|lz4|lzma|lzo|rz|sfark|sz|\Q?Q?\E|\Q?Z?\E|zst|\Q??_\E|s7z|ace|afa|alz|arc|ark|cdx|arj|b1|b6z|ba|bh|cab|car|cfs|cpt|dar|dd|dgc|dmg|ear|gca|ha|hki|ice|jar|kgb|lzh|lha|lzx|pak|partimg|paq6|paq7|paq8|pea|pim|pit|qda|rk|sda|sea|sen|sfx|shk|sit|sitx|sqx|tgz|tbz2|tlz|txz|uc|uc0|uc2|ucn|ur2|ue2|uca|uha|war|xar|xp3|yz1|zipx|zoo|zpaq|zz)$"
+  | table _time, host, user app, bytes_*, dest_ip, dest_port, src_ip, src_port, uri_*,
+  site | bin span=1s | stats values(*) as * by _time, host | iplocation prefix="src_"
+  src_ip | rename src_Country as src_country '
+techniques:
+- exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
+  non-c2 protocol
+technique_id:
+- T1048.003
+data_category:
+- Web application firewall logs
+references: null

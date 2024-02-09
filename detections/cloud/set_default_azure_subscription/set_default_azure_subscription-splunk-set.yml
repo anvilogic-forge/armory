@@ -1,0 +1,15 @@
+id: '5756.6030'
+title: Set Default Azure Subscription
+description: An Azure subscription is a logical container used to provision resources
+  in Azure. To set to a default is necessary if is a tenant with multiple subscriptions.
+logic_format: Splunk
+logic: '`get_cloud_data` ("Set-AzContext") | table _time, host, user,account, region,
+  src_ip, http_user_agent, access_key, user, user_id, identity_type, role, event_name,
+  event_category, cloud_service, request_parameters, response, mfa_enabled, permissions,
+  identity, action, resource_id, object_id | bin span=1s | stats values(*) as * by
+  _time, identity '
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category: null
+references: null

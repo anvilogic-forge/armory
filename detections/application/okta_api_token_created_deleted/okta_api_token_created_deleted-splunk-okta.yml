@@ -1,0 +1,17 @@
+id: '10788.17830'
+title: 'Okta: API Token Created_Deleted'
+description: This use-case will detect when API tokens are created or deleted in Okta
+logic_format: Splunk
+logic: '`get_application_data` (eventType="system.api_token.create" OR eventType="system.api_token.revoke")
+  | eval request_parameter=''target{}.displayName'', request_type=''target{}.type''
+  | table _time, host, user, action, dest_host, src_ip, src_user, signature, request_*
+  | bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- defense-evasion:use alternate authentication material:application access token
+- lateral-movement:use alternate authentication material:application access token
+technique_id:
+- T1550.001
+data_category:
+- Application logs
+- Third-party application logs
+references: null

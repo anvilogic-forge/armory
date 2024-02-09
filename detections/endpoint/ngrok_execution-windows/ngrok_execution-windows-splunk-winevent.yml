@@ -1,0 +1,25 @@
+id: '20685.36863'
+title: ngrok Execution - Windows
+description: 'Ngrok is a legitimate reverse proxy tool that can create a secure tunnel
+  to servers located behind firewalls or on local machines that do not have a public
+  IP. Ngrok has been leveraged by threat actors in several campaigns including use
+  for lateral movement and data exfiltration. This use case detects process creation
+  events for ngrok.exe or command patterns likely to be unique to ngrok in the event
+  of a renamed executable. -- Threat Actor Association: Scattered Spider (aka. Muddled
+  Libra, Scatter Swine, Starfraud, UNC3944)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) TERM(ngrok) OR (TERM(start) "--all" "--config"
+  ".yml") OR (TERM(tcp) ("139" OR "445" OR "3389" OR "5985" OR "5986")) | where match(process,
+  "(?i)(tcp\s+(139|445|3389|5985|5986))|(\.exe\s+|(authtoken\s|start\s+--all))|(start\s.*\s--all\s.*\s--config\s.+\.yml)")
+  OR match(process_path, "(?i)ngrok\.exe") | table _time, host, user, signature_id,
+  process, process_*, parent_process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- command-and-control:protocol tunneling
+technique_id: null
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.logpoint.com/en/blog/a-deep-look-at-the-darkside-ransomware-operators-and-their-affiliates/

@@ -1,0 +1,26 @@
+id: '12911.18540'
+title: IcedID Discovery Commands
+description: IcedID may automatically run several initial discovery commands that
+  provided environmental information about the host, network, and domain. This use
+  case looks for a combination of those commands commonly seen after IcedID is executed.
+  - Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("net.exe" OR "net1.exe" OR "ipconfig" OR "ipconfig.exe"
+  OR "nltest" OR "nltest.exe" OR "systeminfo" OR "systeminfo.exe") | table _time,
+  host, user process, process_*, signature_id, parent_* | bin span=60s | stats values(*)
+  as * by _time, host | where match(process_name, "(?i)systeminfo.exe") and match(process_name,
+  "(?i)net1?.exe") and match(process_name, "(?i)nltest.exe") and match(process_name,
+  "(?i)ipconfig.exe") '
+techniques:
+- discovery:permission groups discovery:domain groups
+- discovery:network share discovery
+- discovery:account discovery
+- discovery:system information discovery
+- collection:automated collection
+technique_id:
+- T1069.002
+data_category:
+- Windows event logs
+references:
+- https://thedfirreport.com/2022/04/25/quantum-ransomware/

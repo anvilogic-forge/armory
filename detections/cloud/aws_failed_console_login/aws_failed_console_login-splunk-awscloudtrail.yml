@@ -1,0 +1,20 @@
+id: '20722.36937'
+title: AWS Failed Console Login
+description: 'Adversaries may attempt to gain access to the AWS console by logging
+  in with guessed or recovered credentials. -- Threat Actor Association: LUCR-3'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(ConsoleLogin) "Failure" | where
+  match(response, "(?i)Failure") | table _time, host, user, account, region, src_ip,
+  http_user_agent, access_key, user, user_id, identity_type, role, event_name, event_category,
+  cloud_service, request_parameters, response, mfa_enabled, permissions, identity,
+  action, resource_id, object_id | bin span=1s | stats values(*) as * by _time, src_ip
+  | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- credential-access:brute force
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/sugarcrm-cloud-incident-black-hat/
+- https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html

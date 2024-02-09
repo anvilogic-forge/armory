@@ -1,0 +1,18 @@
+id: '5733.6084'
+title: Azure Command Execution on Virtual Machine
+description: 'Identifies command execution on a virtual machine (VM) in Azure. --
+  Threat Actor Association: Storm-1283'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION"
+  TERM(success) | table _time, host, user,account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+- collection:data from cloud storage
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/virtual-machines/windows/run-command

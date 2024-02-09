@@ -1,0 +1,26 @@
+id: '15846.23648'
+title: PowerShell Downgrade
+description: 'Adversaries may downgrade or use a version of system features that may
+  be outdated, vulnerable, and/or does not support updated security controls such
+  as logging. For example, PowerShell versions 5+ includes Script Block Logging (SBL)
+  which can record executed script content. However, adversaries may attempt to execute
+  a previous version of PowerShell that does not support SBL with the intent to impair
+  defenses while running malicious scripts that may have otherwise been detected.
+  This use case detects attempts to execute PowerShell commands using a version earlier
+  than 7. -- Threat Actor Association: Earth Estries -- Atomics T1059.001 Test #12'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") TERM(-version) | regex
+  process="(?i)powershell\.exe\s+-version\s+[123456]" | table _time, host, user process,
+  process_*, signature_id | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1059.003
+data_category:
+- PowerShell logs
+references:
+- https://kurtroggen.wordpress.com/2017/05/17/powershell-security-powershell-downgrade-attacks/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md#atomic-test-12---powershell-downgrade-attack

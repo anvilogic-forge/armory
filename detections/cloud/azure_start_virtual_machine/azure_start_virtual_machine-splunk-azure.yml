@@ -1,0 +1,21 @@
+id: '6234.6896'
+title: Azure Start Virtual Machine
+description: 'The Start Virtual Machine (VM) on Connect (preview) feature lets you
+  save costs by allowing end users to turn on their VMs only when they need them.
+  You can then turn off VMs when they''re not needed. Adversaries may start and stop
+  virtual machines, this use case looks for start virtual machines. -- Threat Actor
+  Association: Storm-1283'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "Microsoft.Compute/virtualMachines/start/action"
+  "Start Virtual Machine" TERM(Succeeded) | table _time, host, user,account, region,
+  src_ip, http_user_agent, access_key, user, user_id, identity_type, role, event_name,
+  event_category, cloud_service, request_parameters, response, mfa_enabled, permissions,
+  identity, action, resource_id, object_id | bin span=1s | stats values(*) as * by
+  _time, user '
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/virtual-desktop/start-virtual-machine-connect

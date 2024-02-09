@@ -1,0 +1,21 @@
+id: '6388.13671'
+title: AWS Create IAM Role OR Policy
+description: 'This use case looks for creations of new IAM roles or policies, which
+  may indicate an attacker attempting to elevate priveleges. -- Threat Actor Association:
+  GUI-vil, LUCR-3'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and ( event_name = 'CreateRole' or event_name = 'CreatePolicy')
+techniques:
+- persistence:account manipulation
+- persistence:valid accounts:cloud accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts:cloud accounts
+technique_id:
+- T1078.004
+data_category:
+- AWS CloudTrail logs
+references:
+- http://andresriancho.github.io/nimbostratus/pivoting-in-amazon-clouds.pdf
+- https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreateRole.html
+- https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html

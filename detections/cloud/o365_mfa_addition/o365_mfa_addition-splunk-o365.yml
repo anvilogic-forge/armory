@@ -1,0 +1,26 @@
+id: '19081.32936'
+title: O365 MFA Addition
+description: This use case looks the addition of a MFA device onto a user account.
+  Malicious activity could likely initiate from a compromised account with the threat
+  actor establishing persistence the new MFA device
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` ("Update user" AND "StrongAuthenticationMethod")
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id| bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+- persistence:valid accounts:cloud accounts
+- initial-access:valid accounts:cloud accounts
+- privilege-escalation:valid accounts
+- privilege-escalation:valid accounts:cloud accounts
+- defense-evasion:valid accounts:cloud accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id:
+- T1078.004
+data_category:
+- Office 365 audit logs
+references:
+- https://blog.sygnia.co/cracking-global-phishing-campaign-using-threat-intelligence-toolkit

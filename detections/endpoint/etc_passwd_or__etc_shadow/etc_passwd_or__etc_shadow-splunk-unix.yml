@@ -1,0 +1,22 @@
+id: '8291.10277'
+title: _etc_passwd OR _etc_shadow
+description: 'Adversaries may attempt to dump the contents of /etc/passwd and /etc/shadow
+  to enable offline password cracking. Most modern Linux operating systems use a combination
+  of /etc/passwd and /etc/shadow to store user account information including password
+  hashes in /etc/shadow. -- Threat Actor Association: TeamTNT -- Atomics T1003.008
+  Test#1 Atomics T1003.008 Test#2 Atomics T1081.001 Test #1 Atomics T1081.001 Test
+  #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` " /etc/shadow" OR " /etc/passwd"
+  | table _time, host, user, process | bin span=1s | stats values(*) as * by _time,
+  host | where match(process, "(?i)\s+/etc/(shadow|passwd)") '
+techniques:
+- credential-access:os credential dumping:/etc/passwd and /etc/shadow
+- credential-access:os credential dumping
+technique_id:
+- T1003.008
+data_category:
+- Linux audit logs
+- Process command-line parameters
+references:
+- https://tldp.org/LDP/lame/LAME/linux-admin-made-easy/shadow-file-formats.html

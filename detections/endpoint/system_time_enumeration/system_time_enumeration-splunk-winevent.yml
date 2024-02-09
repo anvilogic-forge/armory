@@ -1,0 +1,21 @@
+id: '8151.10003'
+title: System Time enumeration
+description: 'An adversary may gather the system time and/or time zone from a local
+  or remote system. The system time is set and stored by the Windows Time Service
+  within a domain to maintain time synchronization between systems and services in
+  an enterprise network. This use case looks for net time executions. -- Threat Actor
+  Association: APT28 (aka.Fancy Bear, Fighting Ursa, Forest Blizzard, Pawn Storm,
+  TA422, STRONTIUM) - Software Association: Conti'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "net" TERM(time) | regex process="(?i)net.*?time.*?\x5c\x5c"
+  | table _time, host, user process, process_*, signature_id, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- discovery:system time discovery
+technique_id: null
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://research.nccgroup.com/2021/01/12/abusing-cloud-services-to-fly-under-the-radar/

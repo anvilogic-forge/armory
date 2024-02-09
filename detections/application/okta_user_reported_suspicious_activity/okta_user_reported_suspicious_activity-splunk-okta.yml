@@ -1,0 +1,19 @@
+id: '9280.12621'
+title: Okta User Reported Suspicious Activity
+description: 'Detect when a user has reported suspicious activity - Threat Actor Association:
+  Scatter Swine'
+logic_format: Splunk
+logic: '`get_application_data` eventType="user.account.report_suspicious_activity_by_enduser"
+  | eval activity=''debugContext.debugData.suspiciousActivityEventType'' | table _time,
+  host, user, action, dest_host, src_ip, src_user, signature, reason, activity | bin
+  span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- persistence:valid accounts:cloud accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id:
+- T1078.004
+data_category:
+- Application logs
+references: null

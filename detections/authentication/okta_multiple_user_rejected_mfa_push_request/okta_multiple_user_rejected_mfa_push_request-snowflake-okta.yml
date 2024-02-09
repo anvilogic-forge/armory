@@ -1,0 +1,16 @@
+id: '20539.36400'
+title: Okta Multiple User Rejected MFA Push Request
+description: 'Okta user rejected multiple MFA push requests in a 10 min period. -
+  Threat Actor Association: LUCR-3, Scattered Spider (aka. 0ktapus, UNC3944), Scatter
+  Swine'
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
+  event_time)) < $latest$ and event_type ilike ''user.mfa.okta_verify.deny_push''
+  or (event_type ilike ''user.authentication.auth_via_mfa'' and action ilike ''failure''
+  and reason ilike ''INVALID_CREDENTIALS'' and debug_data ilike ''%OKTA_VERIFY_PUSH%'') '
+techniques:
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Authentication logs
+references: null

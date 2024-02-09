@@ -1,0 +1,26 @@
+id: '15032.23584'
+title: Command Line .cmd Execution
+description: 'Adversaries may attempt to manipulate features of their artifacts to
+  make them appear legitimate or benign to users and/or security tools. Masquerading
+  occurs when the name or location of an object, legitimate or malicious, is manipulated
+  or abused for the sake of evading defenses and observation. This may include manipulating
+  file metadata, tricking users into misidentifying the file type, and giving legitimate
+  task or service names. This use case detects the use of cmd.exe /c to execute .cmd
+  files. This technique has been used by BazaLoader to execute malware masquerading
+  as a PDF inside a .zip file. -- Threat Actor Association: Andariel, APT28, APT40,
+  APT-K-47/Mysterious Elephant, GoldenJackal, Kimsuky, Rhysida, Sandworm Team, Volt
+  Typhoon -- Atomics T1036 Test #2 Atomics T1059.003 Test #5'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*cmd(\\\.exe)?(\\\")?\\\s+/c\\\s+.*?\\\w+\\\.cmd.*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.003
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1036/T1036.md#atomic-test-2---malware-masquerading-and-execution-from-zip-file
+- https://twitter.com/ffforward/status/1481672378639912960

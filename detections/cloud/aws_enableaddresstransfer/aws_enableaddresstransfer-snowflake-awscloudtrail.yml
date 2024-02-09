@@ -1,0 +1,14 @@
+id: '15710.23350'
+title: AWS EnableAddressTransfer
+description: Threat identifier for AWS API call EnableAddressTransfer can be used
+  in Elastic IP Hijacking attack
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_name = 'EnableAddressTransfer'
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.mitiga.io/blog/elastic-ip-hijacking-a-new-attack-vector-in-aws

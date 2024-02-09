@@ -1,0 +1,36 @@
+id: '1073.1110'
+title: Common Active Directory Commands
+description: 'Detects the possible execution of specific AD commands on hosts. Threat
+  Actor Association: APT29/Nobelium/Cozy Bear, APT41, FIN6, FIN10, Carbanak, CL-STA-0043,
+  Lapsus$, Lazarus, MuddyWater, Sandworm Team, TA428, Turla, UNC2596, Vice Society,
+  Volt Typhoon (Bronze Silhouette, Vanguard Panda), Witchetty, Wizard Spider Software
+  Association: Akira, ALPHV/BlackCat, AvosLocker, Bazarloader, BianLian, Black Basta,
+  Clop, Conti, Cuba, Havex, IcedID, Insekt, Lockbit, Revil, Ryuk, Snatch, WASTEDLOCKER
+  Tags: TrendingThreat, Russia, Ukraine'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_powershell` (signature_id=4104 ("csvde.exe"
+  OR "dsacls.exe" OR "dcpromo.exe" OR "dcdiag.exe" OR "dsamain.exe" OR "dsmgmt.exe"
+  OR "ldifde.exe" OR "ldp.exe" OR "netdom.exe" OR "nltest.exe" OR "setspn.exe" OR
+  ("net" AND ("/domain" OR "computer" )) OR "whoami /groups" OR "ADComputer*" OR "ADGroup*"
+  OR "ADUser*" OR "ADOrganizationalUnit*" OR "ADGroupMember*" OR "Get-AdmPwdPassword*"
+  OR "ADAccount*" OR "ADObject*" OR "ADDomain*" OR "ADDefaultDomainPasswordPolicy*"
+  OR "ADForest" OR "ADPrincipal*" OR "ADService*" OR "ADResourceProperty*" OR "ADResource*"
+  OR "ADFineGrainedPasswordPolicy*" OR "ADClaim*" OR "ADCentral*" OR "ADAuthentication*"
+  OR "ADDirectory*" OR "ADTrust" OR "ADRoot*" OR "ADOptional*" OR "Get-Net*" OR "Find-GPO*"
+  OR "Get-Domain*")) | eval process=coalesce(process,Message), process_path=coalesce(process_path,Path)
+  | rex field=process mode=sed max_match=0 "s/(?mi)^(Path.+)|^(ScriptBlock ID.+)|^(Creating
+  Scriptblock.+)//g" | rex field=process max_match=0 "(?i)(?<process2>([^\s\.\\\]+)?((csvde\.exe)|(dsacls\.exe)|(dcpromo\.exe)|(dcdiag\.exe)|(dsamain\.exe)|(dsmgmt\.exe)|(ldifde\.exe)|(ldp\.exe)|(netdom\.exe)|(nltest\.exe)|(setspn\.exe)|(net.+((/domain)|(computer)))|(whoami\s+/groups)|(ADComputer)|(ADGroup)|(ADUser)|(ADOrganizationalUnit)|(ADGroupMember)|(Get-AdmPwdPasswor)|(ADAccount)|(ADObject)|(ADDomain)|(ADDefaultDomainPasswordPolicy)|(ADForest)|(ADPrincipal)|(ADService)|(ADResourceProperty)|(ADResource)|(ADFineGrainedPasswordPolicy)|(ADClaim)|(ADCentral)|(ADAuthentication)|(ADDirectory)|(ADTrust)|(ADRoot)|(ADOptional)|(Get-Net)|(Find-GPO)|(Get-Domain))(\S+)?(\s+)?[^\n\r]{0,40})"
+  | rex field=process2 mode=sed "s/([\n\r]+)|(\s\s+)//g" | rename process2 as process
+  | fields - process2 | table _time, host, user, dvc, event_id, host, process, process_path,
+  signature_id, tag, user_id | bin span=300s | stats values(*) as * by _time, host
+  | where isnotnull(process) '
+techniques:
+- discovery:account discovery:domain account
+- discovery:system service discovery
+technique_id:
+- T1087.002
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://www.pwc.co.uk/cyber-security/pdf/cloud-hopper-annex-b-final.pdf

@@ -1,0 +1,27 @@
+id: '5467.5632'
+title: GuardDuty Alert
+description: Use Case is utilized to combine all built in GuardDuty alerts into one
+  generating search.
+logic_format: Splunk
+logic: '`get_cloud_data` sourcetype=aws:guardduty | eval signature=''BodyJson.detail.description'',
+  title=''BodyJson.detail.title'', dest_ip=''BodyJson.detail.service.action.networkConnectionAction.remoteIpDetails.ipAddressV4'',
+  access_key=''BodyJson.detail.resource.accessKeyDetails.accessKeyId'', user=''BodyJson.detail.resource.accessKeyDetails.userName'',
+  src_ip=coalesce(''BodyJson.detail.service.action.networkConnectionAction.localIpDetails.ipAddressV4'',
+  ''BodyJson.detail.service.action.portProbeAction.portProbeDetails{}.remoteIpDetails.ipAddressV4'')
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, title,
+  signature, dest_ip | bin span=1s | stats values(*) as * by _time, signature '
+techniques:
+- initial-access:valid accounts:cloud accounts
+- persistence:valid accounts:cloud accounts
+- privilege-escalation:valid accounts:cloud accounts
+- defense-evasion:modify cloud compute infrastructure
+- defense-evasion:valid accounts:cloud accounts
+- discovery:permission groups discovery:cloud groups
+technique_id:
+- T1078.004
+- T1069.003
+data_category:
+- AWS CloudTrail logs
+references: null

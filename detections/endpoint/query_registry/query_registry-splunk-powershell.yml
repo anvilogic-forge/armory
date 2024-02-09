@@ -1,0 +1,26 @@
+id: '6138.6633'
+title: Query Registry
+description: 'Adversaries may interact with the Windows Registry to gather information
+  about the system, configuration, and installed software. -- Threat Actor Association:
+  APT29/Nobelium/Cozy Bear, APT33, APT37, Carbanak, GoldenJackal, Lazarus, SaintBear
+  (aka UAC-0056, UNC2589, TA471), TA505, Wizard Spider, WIRTE - - Software Associations:
+  Bazar, Conti, Dridex, Emotet, NanoCore, PowerShortShell, Snatch, SquirrelWaffle,
+  Ursnif, Zloader -- Atomics T1012 Test#1 Atomics T1218 Test#4 Atomics T1547.005 Test#1
+  -- #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  TERM(EventCode=4104)) (((TERM(reg) OR "reg.exe") TERM(query)) OR ((("Get-Item" TERM(property))
+  OR "Get-ItemProperty" OR "Set-Location" OR "New-Object") (TERM(Registry) OR TERM(HKLM)
+  OR TERM(HKCU))) OR ( "RegEnumValue" OR "RegQueryInfoKey" OR "RegEnumKeyEx")) | table
+  _time, host, user, signature_id, process_name, user, process | bin span=1s | stats
+  values(*) as * by _time, host | eventstats c(process) as c_process by process| where
+  c_process < 20 '
+techniques:
+- discovery:query registry
+technique_id: null
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://securelist.com/the-epic-turla-operation/65545/
+- https://www.welivesecurity.com/wp-content/uploads/2016/10/eset-sednit-part-2.pdf

@@ -1,0 +1,16 @@
+id: '5732.6083'
+title: Azure Blob Container Access Level Modification
+description: Identifies for changes to container access levels in Azure.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "MICROSOFT.STORAGE/STORAGEACCOUNTS/BLOBSERVICES/CONTAINERS/WRITE"
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:account manipulation
+- collection:data from cloud storage
+technique_id: null
+data_category:
+- Azure activity logs
+references: null

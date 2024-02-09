@@ -1,0 +1,20 @@
+id: '1028.1029'
+title: CSVDE Export Active Directory
+description: 'Detects the administration tool csvde.exe attempting to export Active
+  Directory data in an APT scenario. -- Threat Actor Association: Volt Typhoon'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` EventCode=4104 AND TERM(csvde)
+  AND TERM(-f) | rex field=process mode=sed max_match=0 "s/(?mi)^(Path.+)|^(ScriptBlock
+  ID.+)|^(Creating Scriptblock.+)//g"| rex field=process mode=sed "s/([\n\r]+)|(\s\s+)//g"
+  | table _time, host, user process, signature_id | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- discovery:account discovery:local account
+- discovery:account discovery:domain account
+technique_id:
+- T1087.001
+- T1087.002
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references: null

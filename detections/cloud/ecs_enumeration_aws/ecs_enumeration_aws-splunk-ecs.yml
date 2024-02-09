@@ -1,0 +1,23 @@
+id: '5483.5658'
+title: ECS Enumeration AWS
+description: Amazon Elastic Container Services or ECS, is an offering from Amazon
+  Web Services (AWS) designed to provide a platform to host containerized applications
+  in the cloud. Adversaries may enumerate the targeted environment for all avialable
+  information on ECS.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` eventType="AwsApiCall" eventSource="ecs.amazonaws.com"
+  eventName IN ("ListClusters", "ListContainerInstances", "ListServices", "ListTaskDefinitions")
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=5s | stats values(*) as * by _time, src_ip | eventstats dc(event_name) as dc_event_name
+  by _time, user, src_ip | where dc_event_name>1 | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- discovery:container and resource discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://github.com/RhinoSecurityLabs/pacu/blob/master/modules/ecs__enum/main.py

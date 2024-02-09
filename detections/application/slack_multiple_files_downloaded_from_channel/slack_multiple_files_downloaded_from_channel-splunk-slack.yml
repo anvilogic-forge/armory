@@ -1,0 +1,17 @@
+id: '10662.17476'
+title: 'Slack: Multiple files downloaded from channel'
+description: This use-case will detect when a user downloads 10 or more files from
+  a Slack channel in a 60 minute timeframe. Data harvesting from Slack has been observed
+  by threat groups such as LAPSUS$ to obtain sensitive data
+logic_format: Splunk
+logic: ' `get_application_data` "file_downloaded" | table _time, host, user, action,
+  http_user_agent, signature, user, object_id, src_*,process_*, parent_* `group_events("user",60m)`
+  | eval object_count=mvcount(object_id) | where object_count >= 10 | fields - dc_*
+  object_count `hec_collect`'
+techniques:
+- initial-access:valid accounts
+- collection:data from information repositories
+technique_id: null
+data_category:
+- Application logs
+references: null

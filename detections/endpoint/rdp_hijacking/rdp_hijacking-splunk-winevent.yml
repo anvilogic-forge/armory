@@ -1,0 +1,31 @@
+id: '5464.5627'
+title: RDP Hijacking
+description: 'Adversaries may hijack a legitimate user’s remote desktop session to
+  move laterally within an environment. Remote desktop is a common feature in operating
+  systems. It allows a user to log into an interactive session with a system desktop
+  graphical user interface on a remote system. Microsoft refers to its implementation
+  of the Remote Desktop Protocol (RDP) as Remote Desktop Services (RDS) - Threat Actor
+  Association: APT10, APT27, APT29/Nobelium/Cozy Bear, APT31, APT41, BlackMatter,
+  Carbanak, DarkSide, DragonFly, FIN6, Lazarus, Whisper Spider, Wizard Spider, UNC2628,
+  UNC2596 - Software Association: Bazarloader, BlackByte, BlackMatter, Conti, Cuba,
+  Dharma, Diavol, Lockbit, LV, Midas, PYSA/Mespinoza, Snatch'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4778) OR
+  "<EventID>4778<" OR TERM(EventCode=4779) OR "<EventID>4779<") OR (("rdpclip.exe"
+  OR "tstheme.exe") (TERM(EventCode=4688) OR "<EventID>4688<")) | table _time, host,
+  user, signature_id, src_ip, process, process_id, process_name, parent_process_name
+  `group_events("host",5m)`| eventstats dc(user) as users by user | where (match(signature_id,
+  "(?i)4778") AND match(signature_id, "(?i)4779") AND match(process_name, "(?i)rdpclip.exe")
+  AND match(process_name, "(?i)tstheme.exe")) AND users>=2 | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip| rename
+  src_Country as src_country '
+techniques:
+- initial-access:external remote services
+- lateral-movement:remote service session hijacking:rdp hijacking
+technique_id:
+- T1563.002
+data_category:
+- Windows event logs
+references:
+- https://www.hackingarticles.in/rdp-session-hijacking-with-tscon/
+- https://www.ired.team/offensive-security/lateral-movement/t1076-rdp-hijacking-for-lateral-movement

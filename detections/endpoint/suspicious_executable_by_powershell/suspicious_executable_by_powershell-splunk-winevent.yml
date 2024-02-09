@@ -1,0 +1,26 @@
+id: '1041.1224'
+title: Suspicious Executable by Powershell
+description: 'Detect when an executable has been launched by powershell and similar
+  processes. Such as powershell cscript or cmd and similar processes spawning cmd.exe,
+  cscript rundll32 and similar processes being a child process of powershell. - Threat
+  Actor Association: APT29/Nobelium/Cozy Bear, APT34/OilRig, APT41, APT43, FIN7, Flax
+  Typhoon, Lancefly, MuddyWater, RedEyes - Software Association: Bazarloader, Blackbyte,
+  IcedID, Qakbot/Qbot - #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "powershell.exe" ("cmd.exe" OR "services.exe"
+  OR "dllhost.exe" OR "rundll32.exe" OR "cscript.exe" OR "mshta.exe" OR "regsvr32.exe")
+  | regex parent_process_name="(?i)(powershell\.exe)" | regex process_path="(?i)((cmd)|(services)|(dllhost)|(rundll32)|(mshta)|(regsvr32)|(cscript))\.exe"
+  | table _time, host, user event_id, parent_*, process_*, process, signature_id,
+  src_*, dest_* | bin span=1s | stats values(*) as * by _time, host | where isnotnull(user) '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1059.003
+data_category:
+- Windows event logs
+references:
+- https://docs.broadcom.com/doc/increased-use-of-powershell-in-attacks-16-en
+- https://www.clearskysec.com/wp-content/uploads/2018/11/MuddyWater-Operations-in-Lebanon-and-Oman.pdf

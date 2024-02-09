@@ -1,0 +1,23 @@
+id: '6108.33622'
+title: IIS Worker (W3WP) Spawn Command Line
+description: 'IIS instances (w3wp.exe) host various web-facing client services such
+  as Outlook on the web (formerly known as Outlook Web App or OWA) or Exchange admin
+  center (EAC; formerly known as the Exchange Control Panel or ECP). This use case
+  looks for w3wp executions of command terminal. - Threat Actor Association: CL-STA-0043,
+  OilRig -- Software Association: ALPHV/BlackCat, Clop'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(w3wp) (TERM(cmd) OR TERM(powershell))
+  | regex parent_process_name="(?i)w3wp"| regex process_name="(?i)cmd\.exe|powershell(\_ISE)?\.exe|pwsh\.exe|csc\.exe"
+  | table _time, host, user, signature_id, process, process_*, parent_process_* |
+  bin span=1s | stats values(*) as * by _time, host, process_name | eventstats c(process_name)
+  as c_process_name by process_name| where c_process_name < 25 '
+techniques:
+- persistence:server software component:iis components
+- defense-evasion:system binary proxy execution
+technique_id:
+- T1505.004
+data_category:
+- EDR Logs
+references:
+- https://www.microsoft.com/security/blog/2021/02/11/web-shell-attacks-continue-to-rise/
+- https://www.huntress.com/blog/moveit-transfer-critical-vulnerability-rapid-response

@@ -1,0 +1,26 @@
+id: '5709.13820'
+title: Windows C$ Share Access
+description: 'Windows systems have hidden network shares that are accessible only
+  to administrators and provide the ability for remote file copy and other administrative
+  functions. This Use case identifies when network shares C$, ADMIN$, and IPC$ have
+  had an object call. Adversaries may use this technique in conjunction with administrator-level
+  Valid Accounts to remotely access a networked system. -- Threat Actor Association:
+  APT29, APT31, Blackmatter, Darkside, FIN8 (Syssphinx), OilRig, Volt Typhoon, Wizard
+  Spider -- Software Association: Bazar, Black Basta, Clop, Conti, GhostShell, Hafnium,
+  Qakbot, Ryuk, SamSam, Vice Society -- Atomics T1021.002 Test#1 Atomics T1021.002
+  Test#2 Atomics T1021.002 Test#4'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) AND ((event_simpleName="SmbClientShareOpenedEtw"
+  OR TERM(SmbClientShareOpenedEtw)) OR (event_simpleName="SmbServerShareOpenedEtw"
+  OR TERM(SmbServerShareOpenedEtw))) TERM(admin) | regex object="(?i)admin\$" | table
+  _time, host, user signature_id, object, share_*, src_ip, relative_target_name |
+  bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+technique_id:
+- T1021.002
+data_category:
+- EDR Logs
+references:
+- https://support.malwarebytes.com/hc/en-us/articles/360038524714

@@ -1,0 +1,34 @@
+id: '21033.37467'
+title: Okta Mismatch Source and Response for Verify Push Request
+description: 'Detects potential variations in values for source and response events
+  to identify suspicious request behavior. OKTA behavior conditions can be removed
+  however, that significantly degrades the use case. - Threat Actor Association: LUCR-3,
+  Scattered Spider (aka. 0ktapus, UNC3944)'
+logic_format: Splunk
+logic: '`get_authentication_data` (eventType="user.authentication.auth_via_mfa" "OKTA_VERIFY_PUSH")
+  OR eventTyupe="system.push.send_factor_verify_push" | table _time, host, user session_id
+  event_type debugContext.debugData.factor action user client_device_s src_ip http_user_agent
+  debugContext.debugData.behaviors| eval group_push_time=_time | bin span=2s group_push_time
+  | fillnull value=NULL | eventstats min(_time) as _time by session_id event_type
+  debugContext.debugData.factor action user client_device_s src_ip http_user_agent
+  debugContext.debugData.behaviors group_push_time| eventstats min(_time) as _time
+  dc(src_ip) as dc_ip sum(eval(if(event_type="system.push.send_factor_verify_push"
+  AND ''action''="SUCCESS",1,0))) as total_pushes sum(eval(if(event_type="user.authentication.auth_via_mfa"
+  AND ''action''="SUCCESS",1,0))) as total_successes sum(eval(if(event_type="user.authentication.auth_via_mfa"
+  AND ''action''="FAILURE",1,0))) as total_rejected sum(eval(if(event_type="system.push.send_factor_verify_push"
+  AND ''debugContext.debugData.behaviors'' LIKE "%New Device=POSITIVE%",1,0))) as
+  suspect_device_from_source sum(eval(if(event_type="system.push.send_factor_verify_push"
+  AND ''debugContext.debugData.behaviors'' LIKE "%New IP=POSITIVE%",1,0))) as suspect_ip_from_source
+  values(eval(if(event_type="system.push.send_factor_verify_push",''src_ip'',"")))
+  as src values(eval(if(event_type="user.authentication.auth_via_mfa",''src_ip'',"")))
+  as dest values(*) as * by session_id| eval ratio = round(total_successes/total_pushes,2)
+  | search ((ratio < 1.5 AND total_pushes >= 2) OR (total_rejected > 0)) AND dc_ip
+  > 1 AND suspect_device_from_source > 0 AND suspect_ip_from_source > 0`group_events(user,
+  1)` `hec_collect`'
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: null
+data_category:
+- Authentication logs
+references:
+- https://sec.okta.com/shareddetections

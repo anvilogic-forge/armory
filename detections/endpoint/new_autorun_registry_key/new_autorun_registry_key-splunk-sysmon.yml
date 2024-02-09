@@ -1,0 +1,29 @@
+id: '1042.1066'
+title: New AutoRun Registry Key
+description: 'Detects when common autorun scripts in the Windows registry are modified.
+  -- Threat Actor Association: APT27/Emissary Panda, APT28, APT29/Nobelium/Cozy Bear,
+  APT33, APT37, APT40, APT43, Blind Eagle/APT-C-36, Carbanak, FIN6, FIN7, FIN13, Lazarus,
+  MuddyWater, Mustang Panda, NewsPenguin, RedEyes, RomCom, SaintBear (aka UAC-0056,
+  UNC2589, TA471), Sandworm Team, TA2541, TA505, UAC-0056, UNC4990 - Software Association:
+  ALPHV/BlackCat, Bazarloader, Blackbyte, Havex, LockBit, MirrorBlast, NanoCore, Phosphorus/Magic
+  Hound/APT35, Prometheus / Spook, Sodinokibi/REvil, Ransom Cartel, Remcos RAT, Trigona,
+  Vice Society, Zloader -- Atomics T1547.001 Test#3 Atomics T1547.001 Test#4'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` AND EventCode=1 AND ("Windows\\CurrentVersion\\RunOnce"
+  OR "Windows\\CurrentVersion\\Run" OR "Windows\\CurrentVersion\\RunServices" OR "Windows\\CurrentVersion\\RunServicesOnce"
+  OR "Windows\\CurrentVersion\\RunOnceEx") | table _time, host, user dest, direction,
+  dvc, dvc_nt_host, event_id, eventtype, hashes, host, index, parent_process, parent_process_id,
+  parent_process_name, parent_process_path, process, process_current_directory, process_id,
+  process_name, process_path, signature_id, source, sourcetype, tag, user, user_id
+  | bin span=60s | stats values(*) as * by _time, host | rex field=process max_match=0
+  (?<registry_path>"[^\"\s]+Windows\\\CurrentVersion\\\Run[^\"\s]{0,}") | eventstats
+  values(registry_path) as registry_path by _time dvc '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+- privilege-escalation:boot or logon autostart execution:registry run keys / startup
+  folder
+technique_id:
+- T1547.001
+data_category:
+- Windows Sysmon
+references: null

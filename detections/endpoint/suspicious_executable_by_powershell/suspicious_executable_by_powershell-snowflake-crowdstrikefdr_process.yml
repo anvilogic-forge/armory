@@ -1,0 +1,26 @@
+id: '1041.14581'
+title: Suspicious Executable by Powershell
+description: 'Detect when an executable has been launched by powershell and similar
+  processes. Such as powershell cscript or cmd and similar processes spawning cmd.exe,
+  cscript rundll32 and similar processes being a child process of powershell. - Threat
+  Actor Association: APT29/Nobelium/Cozy Bear, APT34/OilRig, APT41, APT43, FIN7, Flax
+  Typhoon, Lancefly, MuddyWater, RedEyes - Software Association: Bazarloader, Blackbyte,
+  IcedID, Qakbot/Qbot - #TrendingThreat #Russia #Ukraine'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and parent_process_name ilike ''%powershell.exe''
+  and (process_path ilike ''%cmd.exe'' or process_path ilike ''%services.exe'' or
+  process_path ilike ''%dllhost.exe'' or process_path ilike ''%rundll32.exe'' or process_path
+  ilike ''%cscript.exe'' or process_path ilike ''%wscript.exe'' or process_path ilike
+  ''%mshta.exe'' or process_path ilike ''%regsvr32.exe'') '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1059.003
+data_category:
+- EDR Logs
+references:
+- https://docs.broadcom.com/doc/increased-use-of-powershell-in-attacks-16-en
+- https://www.clearskysec.com/wp-content/uploads/2018/11/MuddyWater-Operations-in-Lebanon-and-Oman.pdf

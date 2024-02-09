@@ -1,0 +1,36 @@
+id: '6204.6825'
+title: Azure Update Creds Application or Principle
+description: 'This use case looks for when a new/modified credential has been added
+  to a service principle or an application. Adversaries may abuse this feature to
+  authenticate as an application. Rule should work for O365 or Azure, AAD Logs. --
+  Threat Actor Association: Storm-1283'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` ("Add service principal credentials"
+  OR "Certificates and secrets management") TERM(KeyDescription) TERM(success) | rex
+  field=_raw "(?i)KeyDescription\",\s\"oldValue\"\:\s+(?<oldkey>\"\[.*?]\")"| rex
+  field=_raw "(?i)KeyDescription\",\s\"oldValue\"\:\s\"\[.*?]\"\,\s\"newValue\"\:\s(?<newkey>\"\[.*?]\")"|
+  rex field=_raw "(?i)KeyDescription\"\,\s\"NewValue\"\:\s+(?<newkey1>\"\[.*?\]\")"|
+  rex field=_raw "(?i)KeyDescription\"\,\s\"NewValue\"\:\s+\"\[.*?\]\"\,\s\"OldValue\"\:\s(?<oldkey1>\"\[.*?\]\")"|
+  eval old_key=coalesce(oldkey, oldkey1), new_key=coalesce(newkey, newkey1), target_name=''targetResources{}.displayName''|
+  rex field=new_key max_match=10 "(?i)keyidentifier\=(?<new_key_id>.*?,)"| rex field=new_key
+  max_match=10 "(?i)keytype\=(?<new_key_type>.*?,)"| rex field=new_key max_match=10
+  "(?i)keyusage\=(?<new_key_identity>.*?,)"| rex field=new_key max_match=10 "(?i)displayname\=(?<new_key_name>.*?\])"|
+  rex field=old_key max_match=10 "(?i)keyidentifier\=(?<old_key_id>.*?,)"| rex field=old_key
+  max_match=10 "(?i)keytype\=(?<old_key_type>.*?,)"| rex field=old_key max_match=10
+  "(?i)keyusage\=(?<old_key_identity>.*?,)"| rex field=old_key max_match=10 "(?i)displayname\=(?<old_key_name>.*?\])"|
+  foreach old_key_* [ rex field=<<FIELD>> mode=sed "s/(\,|\])//g"]| foreach new_key_*
+  [ rex field=<<FIELD>> mode=sed "s/(\,|\])//g"]| where !like(old_key_id, new_key_id)
+  and isnotnull(old_key_id) | table _time, host, user,account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id, target_name, old_*, new_* | bin span=1s | stats values(*) as * by _time,
+  user '
+techniques:
+- persistence:account manipulation
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal
+- https://techcommunity.microsoft.com/t5/azure-sentinel/solarwinds-post-compromise-hunting-with-azure-sentinel/ba-p/1995095
+- https://us-cert.cisa.gov/ncas/alerts/aa21-008a

@@ -1,0 +1,17 @@
+id: '21033.37466'
+title: Okta Mismatch Source and Response for Verify Push Request
+description: 'Detects potential variations in values for source and response events
+  to identify suspicious request behavior. OKTA behavior conditions can be removed
+  however, that significantly degrades the use case. - Threat Actor Association: LUCR-3,
+  Scattered Spider (aka. 0ktapus, UNC3944)'
+logic_format: snowflake
+logic: select * from okta where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
+  event_time)) < $latest$ and event_type ilike 'user.authentication.auth_via_mfa'
+  or event_type ilike 'system.push.send_factor_verify_push'
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: null
+data_category:
+- Authentication logs
+references:
+- https://sec.okta.com/shareddetections

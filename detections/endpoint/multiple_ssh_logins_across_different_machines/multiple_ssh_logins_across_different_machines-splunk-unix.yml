@@ -1,0 +1,19 @@
+id: '5462.5624'
+title: 'Multiple SSH Logins Across Different Machines '
+description: 'This rule looks for multiple SSH logins using password authentication
+  type onto multiple servers within a period of time from same source IP. - Threat
+  Actor Association: Lightbasin / UNC1945, Sandworm (UAC-0165), TeamTNT'
+logic_format: Splunk
+logic: '`get_endpoint_data_unix` TERM(sshd) (accepted) TERM(password) | rex field=_raw
+  "(?i)accepted (?<auth_type>[^\s]+) " | search auth_type="password" | search user!=root
+  user!=admin | table _time, host, user, user | stats count values(*) as * dc(host)
+  as dc_host earliest(_time) as _time by user, client_ip | fields - host source client_nt_host
+  | where dc_host < 1000 AND dc_host > 10 | table _time, host, user dc_host user count
+  client_ip `hec_collect`'
+techniques:
+- lateral-movement:remote services:ssh
+technique_id:
+- T1021.004
+data_category:
+- Linux audit logs
+references: null

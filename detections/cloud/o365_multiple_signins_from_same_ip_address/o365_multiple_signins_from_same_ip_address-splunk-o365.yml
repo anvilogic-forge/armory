@@ -1,0 +1,22 @@
+id: '6558.7401'
+title: O365 Multiple signins from Same IP address
+description: 'This use case looks for multiple signings from the same IP address. '
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` (UserLoginFailed OR PasswordLogonInitialAuthUsingPassword
+  OR UserLoggedIn) | eval action=if(isnotnull(LogonError), "failure", "success") |
+  table _time, host, user,account, region, src_ip, http_user_agent, access_key, user,
+  user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, bucket_name,
+  bytes_in, bytes_out, file_path, requester_account, duration, login, failure_reason
+  `group_events("src_ip",10min)` | iplocation src_ip| rename Region as region, Country
+  as country, City as city | eventstats dc(user) as dc_user by src_ip, _time| where
+  dc_user > 1 '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Office 365 audit logs
+references: null

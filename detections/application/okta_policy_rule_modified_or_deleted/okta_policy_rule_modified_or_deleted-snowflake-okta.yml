@@ -1,0 +1,16 @@
+id: '9054.16114'
+title: 'Okta: Policy Rule Modified or Deleted'
+description: 'This use case looks for when an OKTA policy rule has been modified or
+  deleted. '
+logic_format: snowflake
+logic: select * from okta where event_time > dateadd(hour, -2, sysdate()) and (event_type
+  ilike 'policy.rule.update' or event_type ilike 'policy.rule.delete')
+techniques:
+- persistence:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://developer.okta.com/docs/reference/api/event-types/#catalog

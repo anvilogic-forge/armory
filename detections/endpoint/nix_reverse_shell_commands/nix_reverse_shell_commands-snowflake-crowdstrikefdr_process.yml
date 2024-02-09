@@ -1,0 +1,29 @@
+id: '1054.14603'
+title: NIX Reverse Shell Commands
+description: 'A reverse shell is a type of shell in which the target machine communicates
+  back to the attacking machine. The attacking machine has a listener port on which
+  it receives the connection, which by using, code or command execution is achieved.
+  -- Threat Actor Association: Sandworm (UAC-0165), Teal Kurma (aka Sea Turtle, Marbled
+  Dust, Cosmic Wolf), UNC5221, UTA0178 - Software Association: LoggerMiner'
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and (event_platform = 'Lin' or event_platform = 'Mac') and ((regexp_like(process,
+  '.*nc[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]-e[^a-z].*', 'i') and regexp_like(process,
+  '.*[^a-z]\\\Wbin\\\Wsh[^a-z].*', 'i')) OR ((regexp_like(process, '.*[^a-z]bash[^a-z].*',
+  'i') OR regexp_like(process, '.*[^a-z]sh[^a-z].*', 'i')) and regexp_like(process,
+  '.*[^a-z]-i.*', 'i') and process ilike '%dev/tcp%' and process ilike '%0>&1%' )
+  OR (regexp_like(process, '.*python[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]\\\Wbin\\\Wsh[^a-z].*',
+  'i') and regexp_like(process, '.*[^a-z]-c[^a-z].*', 'i') and regexp_like(process,
+  '.*[^a-z]socket[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]subprocess\\\.call.*',
+  'i')) OR (regexp_like(process, '.*[^a-z]php.*', 'i') and regexp_like(process, '.*[^a-z]-r[^a-z].*',
+  'i') and regexp_like(process, '.*[^a-z]fsockopen.*', 'i') and regexp_like(process,
+  '.*[^a-z]exec[^a-z].*', 'i') and regexp_like(process, '.*[^a-z]\\\Wbin\\\Wsh[^a-z].*',
+  'i') and regexp_like(process, '.*[^a-z]-i.*', 'i')) OR process_path ilike '%ncat%')
+techniques:
+- execution:command and scripting interpreter:unix shell
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references:
+- https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md

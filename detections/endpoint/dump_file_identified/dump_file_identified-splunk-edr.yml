@@ -1,0 +1,21 @@
+id: '6003.20463'
+title: Dump File Identified
+description: 'Adversaries may attempt to dump credentials to obtain account login
+  and credential material, normally in the form of a hash or a clear text password,
+  from the operating system and software. This use case looks command line arguments
+  that include a ".dmp" file, which may indicate a dump has teken place or that a
+  dmp file is being analyzed locally. -- Threat Actor Association: Cadet Blizzard,
+  Redfly - Software Association: Akira, Black Basta, LockBit, Quantum, Rhysida, Vice
+  Society'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(dmp) | regex process="(?i)\.dmp"
+  | table _time, host, user parent_*, process, process_*, signature_id | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping
+technique_id: null
+data_category:
+- Process command-line parameters
+- EDR Logs
+references:
+- https://www.ired.team/offensive-security/credential-access-and-credential-dumping/dumping-lsass-passwords-without-mimikatz-minidumpwritedump-av-signature-bypass

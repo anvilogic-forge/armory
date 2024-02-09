@@ -1,0 +1,20 @@
+id: '1045.1073'
+title: Unusual HTTP Download
+description: Detects possible malicious download which was made using a browser or
+  wget over the http or https protocol.
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` ((EventCode=3 (protocol="https"
+  OR protocol="http"))) OR (EventCode=15 AND ("chrome.exe"OR "firefox.exe" OR "iexplorer.exe"
+  OR "opera.exe" OR "MicrosoftEdge.exe"))| table _time, host, user, host, dest_ip,
+  src_ip, dvc, tag, process_*, event_id, dest_port, src_port, dvc_nt_host, signature,
+  user, direction, protocol| bin span=60s | stats values(*) as * by _time, host |
+  table _time, host, user, dest_ip, dest_port, src_ip, src_port, event_id, process_id,
+  process_name, process_path, signature, direction, protocol `hec_collect`'
+techniques:
+- command-and-control:ingress tool transfer
+- command-and-control:application layer protocol:web protocols
+technique_id:
+- T1071.001
+data_category:
+- Windows Sysmon
+references: null

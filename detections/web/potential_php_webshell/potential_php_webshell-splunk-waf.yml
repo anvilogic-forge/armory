@@ -1,0 +1,23 @@
+id: '6080.6525'
+title: Potential PHP Webshell
+description: 'A web shell is a malicious script used by an attacker with the intent
+  to escalate and maintain persistent access on an already compromised web application.
+  This use case looks for common php functions that can execute shell commands such
+  as exec() or system(). -- Threat Actor Association: Teal Kurma (aka Sea Turtle,
+  Marbled Dust, Cosmic Wolf)'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` ((TERM(GET) OR TERM(POST)) (TERM(200) OR
+  TERM(allow)) ".php" (system OR exec OR shell_exec OR passthru OR proc_open OR popen
+  OR curl_exec OR curl_multi_exec OR parse_ini_file OR show_source)) | regex "(system|exec|(shell|curl(\_multi\_)?)\_exec|passthru|(proc\_|p)open|show\_source|parse\_ini\_file)\(.+?\)"|
+  rex (?<ioc>"(system|exec|(shell|curl(\_multi\_)?)\_exec|passthru|(proc\_|p)open|show\_source|parse\_ini\_file)\(.+?\)")
+  | table _time, host, user, action, bytes, bytes_in, bytes_out, dest_ip, dest_port,
+  dest_mac, http_user_agent, site, src_ip, src_port, src_mac, status, uri_query, uri_path,
+  http_method, ioc | bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- persistence:server software component:web shell
+technique_id:
+- T1505.003
+data_category:
+- Web application firewall logs
+references:
+- https://www.acunetix.com/blog/articles/web-shells-101-using-php-introduction-web-shells-part-2/

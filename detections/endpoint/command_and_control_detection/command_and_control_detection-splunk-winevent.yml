@@ -1,0 +1,20 @@
+id: '1043.1069'
+title: Command and Control Detection
+description: 'Detects malicious (like Github repositories or known suspicious IPs)
+  sources based on a list of IPs and domains. - Threat Actor Association: APT29/Nobelium/Cozy
+  Bear, Magic Hound (APT32, Phosphorus, Mint Sandstorm), UNC4990 - Software Association:
+  Alchimist, Remcos RAT'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5156) OR
+  "<EventID>5156<") `fltr_bl_ip_address` | table _time, host, user dest_ip, dest_port,
+  direction, dvc, dvc_nt_host, event_id, host, index, process_id, process_name, process_path,
+  signature_id, source, sourcetype, src_ip, src_port, tag, transport, user | bin span=60s
+  | stats values(*) as * by _time, host `hec_collect`'
+techniques:
+- command-and-control:application layer protocol:web protocols
+- command-and-control:non-application layer protocol
+technique_id:
+- T1071.001
+data_category:
+- Windows event logs
+references: null

@@ -1,0 +1,19 @@
+id: '6110.15070'
+title: Linux Kernel Module Commands
+description: 'Adversaries may modify the kernel to automatically execute programs
+  on system boot. Loadable Kernel Modules (LKMs) are pieces of code that can be loaded
+  and unloaded into the kernel upon demand. Atomics T1014 Test #1 Atomics T1014 Test
+  #2 Atomics T1547.006 Test#1'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*(insmod|rmmod|depmod|modprobe|lsmod|modinfo|kmod).*'', ''i'') '
+techniques:
+- privilege-escalation:boot or logon autostart execution:kernel modules and extensions
+- persistence:boot or logon autostart execution:kernel modules and extensions
+technique_id:
+- T1547.006
+data_category:
+- EDR Logs
+references:
+- https://www.crowdstrike.com/blog/http-iframe-injecting-linux-rootkit/

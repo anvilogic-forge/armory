@@ -1,0 +1,16 @@
+id: '21865.38566'
+title: Net.exe Use with URL
+description: This use case detects net share commands mapping a drive to a URL as
+  observed by the BumbleBee loader.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(net) TERM(use) "://" | regex
+  process="://" | table _time, host, user process, process_* | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+technique_id:
+- T1021.002
+data_category:
+- EDR Logs
+references:
+- https://twitter.com/Kostastsale/status/1701111694611898446

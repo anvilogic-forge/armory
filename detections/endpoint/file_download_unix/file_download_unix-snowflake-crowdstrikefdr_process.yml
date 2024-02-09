@@ -1,0 +1,21 @@
+id: '1122.15103'
+title: File Download (Unix)
+description: 'This use case is for detecting when files have been downloaded on a
+  Unix machine. - Threat Actor Association: 8220 Gang, Sandworm Team, TeamTNT, Teal
+  Kurma (aka Sea Turtle, Marbled Dust, Cosmic Wolf), Winnti Group - Software Association:
+  Alchimist, Cyclops Blink, Mélofée, TeamTNT, WatchDog - Atomics T1074.001 Test#2
+  Atomics T1059.004 Test#2'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*((wget|curl|git|lwp\\\-download)\\\s.+\\\:\\\/\\\/).*'', ''i'') and not regexp_like(process,
+  ''.*(curl.+(PUT|\\\-d|\\\-\\\-data|\\\-F|\\\-T|\\\-\\\-upload)).*'', ''i'') '
+techniques:
+- execution:command and scripting interpreter:unix shell
+- lateral-movement:lateral tool transfer
+- command-and-control:ingress tool transfer
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references: null

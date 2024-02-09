@@ -1,0 +1,18 @@
+id: '20701.36883'
+title: AWS Get Cost and Usage
+description: Adversaries may request cost and usage metrics for an account in order
+  to determine accounts that are active with high costs. They can use this information
+  to target active resources in an attempt to evade detection as the expenses might
+  not be immediately noticeable.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
+  = 'GetCostAndUsage'
+techniques:
+- discovery:system information discovery
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/sugarcrm-cloud-incident-black-hat/
+- https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_GetCostAndUsage.html

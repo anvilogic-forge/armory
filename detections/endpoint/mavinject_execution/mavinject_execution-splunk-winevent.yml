@@ -1,0 +1,26 @@
+id: '7825.9432'
+title: Mavinject Execution
+description: 'Mavinject is a legitimate Windows component that can be used, and abused,
+  to perform arbitrary code injections inside any running process. As this is a common
+  component on Windows, it can be leveraged to perform living-off-the-land attacks.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN) -- Threat Actor Assocaition:
+  Lancefly -- Atomics T1218 Test #1 Atomics T1055.001 Test#1 Atomics T1056.004 Test#1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("mavinject.exe") OR TERM(/INJECTRUNNING) | table
+  _time, host, user process, process_*, signature_id, parent_* | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- defense-evasion:process injection:dynamic-link library injection
+- collection:input capture:credential api hooking
+- defense-evasion:system binary proxy execution
+- credential-access:input capture:credential api hooking
+- privilege-escalation:process injection:dynamic-link library injection
+technique_id:
+- T1056.004
+- T1055.001
+data_category:
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Mavinject/
+- https://posts.specterops.io/mavinject-exe-functionality-deconstructed-c29ab2cf5c0e

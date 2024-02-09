@@ -1,0 +1,28 @@
+id: '5525.5750'
+title: Native Archive Commands
+description: 'An adversary may compress and/or encrypt data that is collected prior
+  to exfiltration. Compressing the data can help to obfuscate the collected data and
+  minimize the amount of data sent over the network. - Threat Actor Association: APT28
+  (aka.Fancy Bear, Fighting Ursa, Forest Blizzard, Pawn Storm, TA422, STRONTIUM),
+  APT29/Nobelium/Cozy Bear, APT33, Conti, DarkSide, BlackMatter, FIN7, Karakurt, MuddyWater,
+  TA428, Volt Typhoon, Witchetty - Software Association: Black Basta, NanoCore, Ransom
+  Cartel, SquirrelWaffle - Atomics T1074.001 Test#3 Atomics T1560 Test#1 Atomics T1560.001
+  Test #5 Atomics T1560.001 Test #6 Atomics T1560.001 Test #7 Atomics T1560.001 Test
+  #8 Atomics T1560.001 Test #9 - #TrendingThreat #Russia #Ukraine'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(compress) OR TERM(zip) OR
+  TERM(tar) OR TERM(gzip) OR TERM(gunzip) OR TERM(bzip2) OR TERM(xz) OR TERM(lzma)
+  | regex process!="(^find)|(which)|(^wget)|(^chmod)|(^curl)|(install)(^mv)|(^rm)|(^cp)|(\-\-unpack)|(install)|(compress|zip|tar|gzip|bzip2|xz|lzma)\s+\-?(\wd|d\w?|\-decompress|\wx|x|\-extract|-get)"|
+  regex process="(?i)compress|zip|tar|gzip|bzip2|xz|lzma" | table _time, host, user,
+  process, process_* | bin span=1s | stats values(*) as * by _time, host | eventstats
+  dc(process) as dc_process by process, host, _time| where dc_process < 3 '
+techniques:
+- collection:data staged:local data staging
+- collection:archive collected data
+technique_id:
+- T1074.001
+data_category:
+- Process command-line parameters
+- Linux audit logs
+references:
+- https://liberty-shell.com/sec/2019/11/06/living-off-the-land-pt2/

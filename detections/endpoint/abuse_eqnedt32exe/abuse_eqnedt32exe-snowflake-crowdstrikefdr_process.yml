@@ -1,0 +1,15 @@
+id: '1074.14701'
+title: Abuse EQNEDT32.EXE
+description: 'Detects potential malicious Microsoft Office payload (CVE-2017-11882
+  or CVE-2018-0798) on host. Equation Editor. -- Threat Actor Association: Bitter
+  APT, Lotus Blossom, SideWinder, TA428, Tonto Team - Software Association: Soul'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and parent_process_name ilike ''%EQNEDT32.EXE%'' '
+techniques:
+- execution:exploitation for client execution
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.fireeye.com/blog/threat-research/2017/12/targeted-attack-in-middle-east-by-apt34.html

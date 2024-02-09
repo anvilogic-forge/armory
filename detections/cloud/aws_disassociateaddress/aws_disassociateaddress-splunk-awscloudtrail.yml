@@ -1,0 +1,21 @@
+id: '15712.23356'
+title: AWS DisassociateAddress
+description: Threat identifier for AWS API call DisassociateAddress, threat actors
+  can initiate a Elastic IP Hijacking attack by querying for all IP addresses and
+  disassociate an existing Elastic IP assign it to a new host
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(DisassociateAddress) | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | where match(event_name, "(?i)DisassociateAddress")
+  | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- persistence:account manipulation
+- defense-evasion:impair defenses
+technique_id: null
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.mitiga.io/blog/elastic-ip-hijacking-a-new-attack-vector-in-aws

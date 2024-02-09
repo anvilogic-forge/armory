@@ -1,0 +1,21 @@
+id: '6259.6939'
+title: Azure Public Blob Access
+description: Anonymous public read access to containers and blobs in Azure Storage
+  is a convenient way to share data, but may also present a security risk. By default,
+  public access to your blob data is always prohibited. However, the default configuration
+  for a storage account permits a user with appropriate permissions to configure public
+  access to containers and blobs in a storage account.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_storage` allowBlobPublicAccess | regex properties.requestbody="(?i)allowBlobPublicAccess\"\:true"
+  | rex field=src_ip mode=sed max_match=0 "s/\:\d{1,5}//g" | table _time, host, user,
+  account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id | bin span=60s | stats values(*)
+  as * by _time, src_ip '
+techniques:
+- collection:data from cloud storage
+technique_id: null
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent

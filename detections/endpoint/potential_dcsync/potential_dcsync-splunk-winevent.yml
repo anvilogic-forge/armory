@@ -1,0 +1,21 @@
+id: '13811.20280'
+title: Potential DCSync
+description: 'Adversaries may attempt to access credentials and other sensitive information
+  by abusing a Windows Domain Controller''s application programming interface (API)
+  to simulate the replication process from a remote domain controller using a technique
+  called DCSync. -- Threat Actor Association: FIN8 (Syssphinx), Muddled Libra'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4662) OR
+  "<EventID>4662<") "0x100" ("Replicating Directory Changes all" OR "1131f6ad-9c07-11d1-f79f-00c04fc2dcd2"
+  OR "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2" OR "9923a32a-3607-11d2-b9be-0000f87a36b2"
+  OR "89e95b76-444d-4c62-991a-0facbeda640c") |regex user!=".*\$" | table _time, host,
+  user process, process_*, signature_id, parent_*, parameters | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping:dcsync
+technique_id:
+- T1003.006
+data_category:
+- Windows event logs
+references:
+- https://blog.blacklanternsecurity.com/p/detecting-dcsync

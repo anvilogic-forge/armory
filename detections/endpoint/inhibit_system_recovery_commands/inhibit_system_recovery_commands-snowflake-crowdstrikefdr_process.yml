@@ -1,0 +1,37 @@
+id: '1115.14725'
+title: Inhibit System Recovery Commands
+description: 'Adversaries may disable or delete system recovery features during a
+  ransomware attack, which can help fix corrupted systems, such as a backup catalog,
+  volume shadow copies, and automatic repair features. - Software Association: Babuk,
+  BlackByte, Blackcat/ALPHV, Black Basta, Clop, Conti, Cring, Hive, Lockbit, Play,
+  Prestige, PYSA/Mespinoza, RagnarLoocker, Rhysida, Samas, Snatch, Trigona, Trojan.Killdisk/HermeticWiper,
+  Vice Society Atomics T1490 Test #1 Atomics T1490 Test #2 Atomics T1490 Test #3 Atomics
+  T1490 Test #4 Atomics T1490 Test #7'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform ilike ''%Win%'' and ((regexp_like(process, ''.*vssadmin[^a-z].*'',
+  ''i'') and regexp_like(process, ''.*[^a-z]delete[^a-z].*'', ''i'') and regexp_like(process,
+  ''.*[^a-z]shadows[^a-z].*'', ''i'') and regexp_like(process, ''.*[^a-z]all.*'',
+  ''i'') and regexp_like(process, ''.*[^a-z]quiet.*'', ''i'')) OR (regexp_like(process,
+  ''.*wmic[^a-z].*'', ''i'') and regexp_like(process, ''.*[^a-z]shadowcopy[^a-z].*'',
+  ''i'') and regexp_like(process, ''.*[^a-z]delete[^a-z].*'', ''i'') and regexp_like(process,
+  ''.*[^a-z]all.*'', ''i'') and regexp_like(process, ''.*[^a-z]quiet.*'', ''i''))
+  OR ((regexp_like(process, ''.*bcdedit[^a-z].*'', ''i'') and regexp_like(process,
+  ''.*[^a-z]/set[^a-z].*'', ''i'')) and ((regexp_like(process, ''.*[^a-z]recoveryenabled[^a-z].*'',
+  ''i'') and regexp_like(process, ''.*[^a-z]no.*'', ''i'')) or (regexp_like(process,
+  ''.*[^a-z]bootstatuspolicy.*'', ''i'') ))) OR ((regexp_like(process, ''.*wbadmin[^a-z].*'',
+  ''i'') and regexp_like(process, ''.*[^a-z]delete.*'', ''i'')) and ((regexp_like(process,
+  ''.*[^a-z]catalog[^a-z].*'', ''i'') and regexp_like(process, ''.*[^a-z]-quiet[^a-z].*'',
+  ''i'')) or (regexp_like(process, ''.*[^a-z]SYSTEMSTATEBACKUP.*'', ''i'') ))) OR
+  (regexp_like(process, ''.*Get-WmiObject.*'', ''i'') and regexp_like(process, ''.*Win32_Shadowcopy.*'',
+  ''i'') and regexp_like(process, ''.*delete.*'', ''i'')) OR (regexp_like(process,
+  ''.*del\\\s.*'', ''i'') and regexp_like(process, ''.*(\\\.(bac|bak|wbcat|bkf|set|win|dsk)|backup).*'',
+  ''i''))) '
+techniques:
+- impact:inhibit system recovery
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://www.crowdstrike.com/blog/big-game-hunting-the-evolution-of-indrik-spider-from-dridex-wire-fraud-to-bitpaymer-targeted-ransomware/

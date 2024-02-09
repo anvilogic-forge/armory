@@ -1,0 +1,21 @@
+id: '6212.6838'
+title: Azure Create Modify Virtual Machine
+description: 'Monitoring your Microsoft Azure account for "Create or Update Virtual
+  Machine" events can give you insights into the changes made within your cloud environment
+  regarding Azure virtual machines (VMs) and can help reduce the time it takes to
+  detect unauthorized activity -- Threat Actor Association: Storm-1283'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "Microsoft.Compute/virtualMachines/write"
+  TERM(Succeeded) | table _time, host, user,account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- defense-evasion:modify cloud compute infrastructure:create cloud instance
+- persistence:account manipulation
+technique_id:
+- T1578.002
+data_category:
+- Azure activity logs
+references:
+- https://www.cloudconformity.com/knowledge-base/azure/ActivityLog/create-update-virtual-machine.html#

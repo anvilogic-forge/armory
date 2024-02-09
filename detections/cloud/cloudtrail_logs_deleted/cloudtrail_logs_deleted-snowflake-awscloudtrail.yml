@@ -1,0 +1,15 @@
+id: '5388.13712'
+title: CloudTrail Logs Deleted
+description: 'An adversary may delete trails in an attempt to evade defenses. -- Threat
+  Actor Association: LUCR-3'
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_type = 'AwsApiCall' and event_name = 'DeleteTrail'
+techniques:
+- defense-evasion:impair defenses:disable cloud logs
+technique_id:
+- T1562.008
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_DeleteTrail.html

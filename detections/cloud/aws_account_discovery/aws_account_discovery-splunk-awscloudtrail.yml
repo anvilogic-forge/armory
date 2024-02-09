@@ -1,0 +1,22 @@
+id: '8276.10235'
+title: AWS Account Discovery
+description: 'Adversaries may attempt to get a listing of cloud accounts. Cloud accounts
+  are those created and configured by an organization for use by users, remote support,
+  services, or for administration of resources within a cloud service provider or
+  SaaS application. -- Threat Actor Association: GUI-vil'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` eventName IN("ListAccounts", "ListAccountAliases",
+  "ListAccountSettings") | table _time, host, user, account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id, dest_* | bin span=1s | stats values(*) as * by _time, user | lookup dnslookup
+  clientip as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip|
+  rename src_Country as src_country '
+techniques:
+- discovery:account discovery:cloud account
+technique_id:
+- T1087.004
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/cli/latest/reference/organizations/list-accounts.html

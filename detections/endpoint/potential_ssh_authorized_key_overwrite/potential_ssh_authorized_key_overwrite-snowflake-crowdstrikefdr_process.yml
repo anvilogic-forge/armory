@@ -1,0 +1,17 @@
+id: '11426.16131'
+title: Potential SSH Authorized Key Overwrite
+description: 'Potential overwrites of authorized_keys file for ssh. -- Threat Actor
+  Association: TeamTNT'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*((vi|visudo|vim|nano|(echo|cat)\\\s+.*>>?|cp|mv|cd)\\\s+.*?(authorized_keys|\\\.ssh)).*'',
+  ''i'') '
+techniques:
+- persistence:account manipulation:ssh authorized keys
+technique_id:
+- T1098.004
+data_category:
+- EDR Logs
+references:
+- https://www.ssh.com/academy/ssh/authorized-keys-file

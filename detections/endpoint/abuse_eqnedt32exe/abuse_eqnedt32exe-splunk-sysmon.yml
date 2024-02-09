@@ -1,0 +1,18 @@
+id: '1074.1119'
+title: Abuse EQNEDT32.EXE
+description: 'Detects potential malicious Microsoft Office payload (CVE-2017-11882
+  or CVE-2018-0798) on host. Equation Editor. -- Threat Actor Association: Bitter
+  APT, Lotus Blossom, SideWinder, TA428, Tonto Team - Software Association: Soul'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` "EQNEDT32.EXE" | table _time,
+  host, user _time, host, session_id, process, signature_id, parent_process_name,
+  process_name, user| bin span=300s | stats values(*) as * by _time, host |where match(parent_process_name,
+  "(?i)EQNEDT32.EXE") | table _time, host, user session_id, process, signature_id,
+  parent_process_name `hec_collect`'
+techniques:
+- execution:exploitation for client execution
+technique_id: null
+data_category:
+- Windows Sysmon
+references:
+- https://www.fireeye.com/blog/threat-research/2017/12/targeted-attack-in-middle-east-by-apt34.html

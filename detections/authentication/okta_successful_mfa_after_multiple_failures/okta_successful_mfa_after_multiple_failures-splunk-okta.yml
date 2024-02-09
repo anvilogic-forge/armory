@@ -1,0 +1,22 @@
+id: '21226.37693'
+title: Okta Successful MFA After Multiple Failures
+description: 'Detection for a potential brute-force attack with Okta MFA. This use
+  case looks for instances where a account experiences multiple MFA push authentication
+  failures followed by successful logins, which could indicate potential unauthorized
+  access attempts. -- Threat Actor Association: LUCR-3, Scattered Spider (aka. Muddled
+  Libra, Scatter Swine, Starfraud, UNC3944)'
+logic_format: Splunk
+logic: '`get_authentication_data` eventType="system.push.send_factor_verify_push"
+  OR eventType="user.authentication.auth_via_mfa" | table _time, host, user session_id,
+  event_type, action, user, src_ip, http_user_agent| eventstats sum(eval(if(event_type="system.push.send_factor_verify_push",1,0)))
+  as total_pushes sum(eval(if(event_type="user.authentication.auth_via_mfa" AND ''action''="SUCCESS",1,0)))
+  as total_successes sum(eval(if(event_type="user.authentication.auth_via_mfa" AND
+  ''action''="FAILURE",1,0))) as total_rejected by user| where total_pushes > 4 and
+  total_rejected > 3 and total_successes > 0`group_events(user, 900)` '
+techniques:
+- credential-access:brute force
+technique_id: null
+data_category:
+- Authentication logs
+references:
+- https://sec.okta.com/shareddetections

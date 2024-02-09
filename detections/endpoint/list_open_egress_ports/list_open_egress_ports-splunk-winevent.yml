@@ -1,0 +1,22 @@
+id: '8513.10738'
+title: List Open Egress Ports
+description: 'Each port allowed outbound from a network creates an additional exit
+  point for attackers to utilize. This use case looks for outbound port scans of the
+  top 128 ports in use on the Internet as defined by the Nmap project. -- Software
+  Association: IcedID, Nokoyawa -- Atomics T1016 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5156) OR
+  "EventID>5156<") TERM(outbound) Destination_Port IN(80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900,1025,587,8888,199,1720,465,548,113,81,6001,10000,514,5060,179,1026,2000,8443,8000,32768,554,26,1433,49152,2001,515,8008,49154,1027,5666,646,5000,5631,631,49153,8081,2049,88,79,5800,106,2121,1110,49155,6000,513,990,5357,427,49156,543,544,5101,144,7,389,8009,3128,444,9999,5009,7070,5190,3000,5432,3986,13,1029,9,6646,49157,1028,873,1755,2717,4899,9100,119,37,1000,3001,5001,82,10010,1030,9090,2107,1024,2103,6004,1801,19,8031,1041,255,3703,17,808,3689,1031,1071,5901,9102,9000,2105,636,1038,2601,7000)
+  NOT Destination_Address IN(10.0.0.0/8, 172.16.0.0/12, 192.168.16.0/16, 127.0.0.0/8,
+  ::1, FE80::/10, FF00::/8) | table _time, host, user, signature_id, process, process_*,
+  parent_process_*, src_ip, dest_ip, dest_port `group_events("host, process_path",
+  10)`| eventstats dc(dest_port) as dc_dest_port by host, src_ip, _time| where dc_dest_port
+  > 5 and event_count > 5 '
+techniques:
+- discovery:system network connections discovery
+- discovery:network service discovery
+technique_id: null
+data_category:
+- Windows event logs
+references:
+- https://www.blackhillsinfosec.com/poking-holes-in-the-firewall-egress-testing-with-allports-exposed/

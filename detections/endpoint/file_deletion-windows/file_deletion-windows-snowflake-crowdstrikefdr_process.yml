@@ -1,0 +1,25 @@
+id: '16378.25223'
+title: File Deletion - Windows
+description: 'Adversaries may delete files left behind by the actions of their intrusion
+  activity. Malware, tools, or other non-native files dropped or created on a system
+  by an adversary may leave traces to indicate to what was done within a network and
+  how. Removal of these files can occur during an intrusion, or as part of a post-intrusion
+  process to minimize the adversary''s footprint. Atomics T1070.004 Test #4 Atomics
+  T1070.004 Test #5 Atomics T1070.004 Test #6 Atomics T1070.004 Test #7 Atomics T1070.004
+  Test #9 Atomics T1070.004 Test #10 Atomics T1070.003 Test #11'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
+  event_platform = ''Win'' and regexp_like(process, ''.*(Remove-Item|del|rmdir)\\\s.*'',
+  ''i'') '
+techniques:
+- defense-evasion:indicator removal:file deletion
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+- T1070.004
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1070.004/T1070.004.md#atomic-test-6---delete-a-single-file---windows-powershell
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1070.004/T1070.004.md#atomic-test-7---delete-an-entire-folder---windows-powershell

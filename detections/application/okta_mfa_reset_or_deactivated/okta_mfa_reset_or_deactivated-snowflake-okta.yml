@@ -1,0 +1,18 @@
+id: '9052.16112'
+title: 'Okta: MFA Reset or Deactivated'
+description: 'This use case looks for when OKTA user MFA has been deactivated or reset
+  -- Threat Actor Association: LUCR-3, Lapsus$, Scattered Spider (aka. 0ktapus, UNC3944)'
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and (event_type
+  ilike ''user.mfa.factor.deactivate'' or event_type ilike ''user.mfa.factor.reset_all''
+  or event_type ilike ''system.mfa.factor.deactivate'') '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: null
+data_category:
+- Application logs
+references:
+- https://developer.okta.com/docs/reference/api/event-types/#catalog
+- https://www.microsoft.com/security/blog/2022/03/22/dev-0537-criminal-actor-targeting-organizations-for-data-exfiltration-and-destruction/

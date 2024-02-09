@@ -1,0 +1,18 @@
+id: '9872.13240'
+title: 'Okta: User impersonation'
+description: User.session.impersonation events are normally triggered when an Okta
+  Support person requests admin access.
+logic_format: Splunk
+logic: '`get_authentication_data` eventType IN("user.session.impersonation.initiate",
+  "user.session.impersonation.grant", "user.session.impersonation.extend", "user.session.impersonation.end",
+  "user.session.impersonation.revoke") | eval dest_user=''target{}.alternateId'' |
+  table _time, host, user, action, dest_host, src_ip, src_user, signature, dest_user
+  | bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- lateral-movement:use alternate authentication material
+- defense-evasion:use alternate authentication material
+technique_id: null
+data_category:
+- Authentication logs
+references:
+- https://www.microsoft.com/security/blog/2022/03/22/dev-0537-criminal-actor-targeting-organizations-for-data-exfiltration-and-destruction/
