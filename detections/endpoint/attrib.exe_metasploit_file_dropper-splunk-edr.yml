@@ -12,7 +12,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc
   host `hec_collect`'
 techniques:
 - defense-evasion:hide artifacts
-technique_id: null
+technique_id: 
+- T1564
 data_category:
 - Process command-line parameters
 - EDR Logs
