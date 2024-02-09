@@ -24,6 +24,7 @@ techniques:
 - exfiltration:scheduled transfer
 technique_id:
 - T1053.005
+- T1029
 data_category:
 - Windows event logs
 references: null
