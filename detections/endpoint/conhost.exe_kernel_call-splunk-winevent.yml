@@ -15,7 +15,10 @@ techniques:
 - defense-evasion:indirect command execution
 - execution:command and scripting interpreter
 - defense-evasion:exploitation for defense evasion
-technique_id: null
+technique_id: 
+- T1202
+- T1059
+- T1211
 data_category:
 - Windows event logs
 references:
