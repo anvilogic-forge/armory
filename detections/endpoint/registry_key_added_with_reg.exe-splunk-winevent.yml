@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   process_*, parent_* | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - defense-evasion:modify registry
-technique_id: null
+technique_id: 
+- T1112
 data_category:
 - Process command-line parameters
 - Windows event logs
