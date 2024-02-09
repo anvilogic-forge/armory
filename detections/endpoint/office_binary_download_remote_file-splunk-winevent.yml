@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   * by _time, host | where match(process, "(?i)\w?\wtps?\:(\/\/|\x5c\x5c)") '
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - Process command-line parameters
 - Windows event logs
