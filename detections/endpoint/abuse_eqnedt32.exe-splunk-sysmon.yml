@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` "EQNEDT32.EXE" | table _t
   parent_process_name `hec_collect`'
 techniques:
 - execution:exploitation for client execution
-technique_id: null
+technique_id: 
+- T1203
 data_category:
 - Windows Sysmon
 references:
