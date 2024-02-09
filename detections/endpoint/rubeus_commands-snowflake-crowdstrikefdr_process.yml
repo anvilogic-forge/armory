@@ -14,6 +14,7 @@ techniques:
 - credential-access:steal or forge kerberos tickets:silver ticket
 - credential-access:steal or forge kerberos tickets:kerberoasting
 technique_id:
+- T1558
 - T1558.003
 - T1558.002
 - T1558.001
