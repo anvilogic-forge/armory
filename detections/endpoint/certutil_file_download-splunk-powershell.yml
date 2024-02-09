@@ -19,7 +19,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` ((TERM(certutil) AND 
 techniques:
 - command-and-control:ingress tool transfer
 - defense-evasion:obfuscated files or information
-technique_id: null
+technique_id: 
+- T1105
+- T1027
 data_category:
 - PowerShell logs
 - Process command-line parameters
