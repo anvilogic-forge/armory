@@ -19,6 +19,7 @@ techniques:
 - collection:archive collected data
 technique_id:
 - T1074.001
+- T1560
 data_category:
 - Windows Sysmon
 references:
