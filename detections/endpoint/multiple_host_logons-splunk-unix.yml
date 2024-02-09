@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` type IN(user_auth, user_log
   | eventstats dc(host) as dc_host by user, _time | where dc_host > 1 '
 techniques:
 - defense-evasion:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Linux audit logs
 references:
