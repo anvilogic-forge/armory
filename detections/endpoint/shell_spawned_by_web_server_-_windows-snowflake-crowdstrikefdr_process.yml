@@ -17,6 +17,7 @@ techniques:
 technique_id:
 - T1505.004
 - T1505.003
+- T1218
 data_category:
 - EDR Logs
 references:
