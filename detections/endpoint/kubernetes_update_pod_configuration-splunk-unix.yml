@@ -9,7 +9,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` (TERM(kubectl) (TERM(edit) 
 techniques:
 - defense-evasion:deploy container
 - execution:deploy container
-technique_id: null
+technique_id: 
+- T1610
 data_category:
 - Process command-line parameters
 - Linux audit logs
