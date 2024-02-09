@@ -14,6 +14,7 @@ techniques:
 - credential-access:os credential dumping
 - credential-access:os credential dumping:lsass memory
 technique_id:
+- T1003
 - T1003.001
 data_category:
 - EDR Logs
