@@ -12,7 +12,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ("EventCode=1" OR "<Event
 techniques:
 - defense-evasion:indirect command execution
 - privilege-escalation:abuse elevation control mechanism
-technique_id: null
+technique_id: 
+- T1202
+- T1548
 data_category:
 - Windows Sysmon
 references:
