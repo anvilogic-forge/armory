@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103)
   file | bin span=1s | stats values(*) as * by _time, host | where isnotnull(file) '
 techniques:
 - credential-access:os credential dumping
-technique_id: null
+technique_id: 
+- T1003
 data_category:
 - PowerShell logs
 - Process command-line parameters
