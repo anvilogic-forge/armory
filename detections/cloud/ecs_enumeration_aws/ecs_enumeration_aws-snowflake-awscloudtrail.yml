@@ -11,7 +11,8 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
   or event_name = 'ListTaskDefinitions' )
 techniques:
 - discovery:container and resource discovery
-technique_id: null
+technique_id: 
+- T1613
 data_category:
 - AWS CloudTrail logs
 references:

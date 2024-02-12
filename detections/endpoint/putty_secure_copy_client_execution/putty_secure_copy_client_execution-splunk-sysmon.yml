@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ((TERM(EventCode=1) OR "E
   host '
 techniques:
 - exfiltration:exfiltration over alternative protocol
-technique_id: null
+technique_id: 
+- T1048
 data_category:
 - Windows Sysmon
 references:

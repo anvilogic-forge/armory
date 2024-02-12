@@ -19,7 +19,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103)
   values(*) as * by _time, host '
 techniques:
 - privilege-escalation:process injection
-technique_id: null
+technique_id: 
+- T1055
 data_category:
 - PowerShell logs
 references: null

@@ -19,6 +19,7 @@ techniques:
 - persistence:create or modify system process
 technique_id:
 - T1569.002
+- T1543
 data_category:
 - Process command-line parameters
 - Windows event logs

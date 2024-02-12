@@ -15,6 +15,7 @@ techniques:
 - persistence:account manipulation
 technique_id:
 - T1578.002
+- T1098
 data_category:
 - Azure activity logs
 references:

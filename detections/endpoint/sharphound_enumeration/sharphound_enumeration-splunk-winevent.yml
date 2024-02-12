@@ -27,10 +27,13 @@ techniques:
 - discovery:password policy discovery
 - discovery:permission groups discovery:local groups
 technique_id:
-- T1087.001
 - T1087.002
 - T1069.002
+- T1087.001
+- T1082
 - T1059.003
+- T1482
+- T1201
 - T1069.001
 data_category:
 - Windows event logs

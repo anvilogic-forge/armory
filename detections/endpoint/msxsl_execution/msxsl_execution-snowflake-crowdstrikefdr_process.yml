@@ -13,7 +13,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   regexp_like(process, ''.*(\\\S+\\\.x[sm]l\\\s+.*\\\.xsl).*'', ''i'')) '
 techniques:
 - defense-evasion:xsl script processing
-technique_id: null
+technique_id: 
+- T1220
 data_category:
 - EDR Logs
 references:

@@ -12,6 +12,7 @@ techniques:
 - collection:email collection
 - collection:email collection:email forwarding rule
 technique_id:
+- T1114
 - T1114.003
 data_category:
 - Office 365 audit logs

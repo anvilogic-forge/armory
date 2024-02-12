@@ -26,7 +26,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` (type=SYSCALL comm="sshd" e
   "%warning: can''t get client address: Connection reset by peer%") `hec_collect`'
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - Process command-line parameters
 - Linux audit logs

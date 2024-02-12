@@ -18,7 +18,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` TERM(EventCode=6416) OR
 techniques:
 - collection:data from removable media
 - lateral-movement:replication through removable media
-technique_id: null
+technique_id: 
+- T1025
+- T1091
 data_category:
 - Windows event logs
 references:

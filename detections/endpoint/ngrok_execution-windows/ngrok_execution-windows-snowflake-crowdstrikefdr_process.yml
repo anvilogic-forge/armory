@@ -14,7 +14,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   ''%--config%'' and process ilike ''%.yml%'') or process_path ilike ''%ngrok.exe'') '
 techniques:
 - command-and-control:protocol tunneling
-technique_id: null
+technique_id: 
+- T1572
 data_category:
 - EDR Logs
 references:

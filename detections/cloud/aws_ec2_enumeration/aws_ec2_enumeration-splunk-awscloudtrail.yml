@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_aws` TERM(GetConsoleScreenshot) OR TERM
   | rename src_Country as src_country '
 techniques:
 - discovery:cloud infrastructure discovery
-technique_id: null
+technique_id: 
+- T1580
 data_category:
 - AWS CloudTrail logs
 references:

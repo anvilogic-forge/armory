@@ -12,7 +12,9 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
 techniques:
 - defense-evasion:indirect command execution
 - defense-evasion:exploitation for defense evasion
-technique_id: null
+technique_id: 
+- T1202
+- T1211
 data_category:
 - EDR Logs
 references:

@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   "(?i)ping") '
 techniques:
 - discovery:remote system discovery
-technique_id: null
+technique_id: 
+- T1018
 data_category:
 - Windows event logs
 - Process command-line parameters

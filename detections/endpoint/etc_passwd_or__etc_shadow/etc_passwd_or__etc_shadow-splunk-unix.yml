@@ -15,6 +15,7 @@ techniques:
 - credential-access:os credential dumping
 technique_id:
 - T1003.008
+- T1003
 data_category:
 - Linux audit logs
 - Process command-line parameters

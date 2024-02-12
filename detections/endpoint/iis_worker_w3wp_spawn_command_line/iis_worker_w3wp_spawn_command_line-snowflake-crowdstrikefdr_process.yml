@@ -14,6 +14,7 @@ techniques:
 - defense-evasion:system binary proxy execution
 technique_id:
 - T1505.004
+- T1218
 data_category:
 - EDR Logs
 references:

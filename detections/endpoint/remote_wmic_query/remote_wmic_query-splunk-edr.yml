@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(wmic) OR "wmic.exe") O
   parent_* | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - execution:windows management instrumentation
-technique_id: null
+technique_id: 
+- T1047
 data_category:
 - EDR Logs
 references:

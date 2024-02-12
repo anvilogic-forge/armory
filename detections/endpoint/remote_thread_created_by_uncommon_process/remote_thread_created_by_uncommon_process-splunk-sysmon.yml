@@ -32,7 +32,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=8) OR "<E
 techniques:
 - defense-evasion:process injection
 - privilege-escalation:process injection
-technique_id: null
+technique_id: 
+- T1055
 data_category:
 - Windows Sysmon
 references:

@@ -27,7 +27,8 @@ logic: '`get_cloud_data` `get_cloud_data_azure` ("Add service principal credenti
   user '
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category:
 - Azure activity logs
 references:

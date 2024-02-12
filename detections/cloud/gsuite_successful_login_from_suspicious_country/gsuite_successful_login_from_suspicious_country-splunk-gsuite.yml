@@ -11,7 +11,8 @@ logic: '`get_cloud_data` `get_cloud_data_gsuite` "login_success" | table _time, 
   as src_country '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Application logs
 - GCP audit logs

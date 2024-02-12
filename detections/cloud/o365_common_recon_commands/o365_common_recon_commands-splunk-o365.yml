@@ -16,7 +16,9 @@ logic: '`get_cloud_data` `get_cloud_data_o365` (TERM(Get-AcceptedDomain) OR TERM
 techniques:
 - discovery:account discovery
 - discovery:cloud service discovery
-technique_id: null
+technique_id: 
+- T1087
+- T1526
 data_category:
 - Office 365 audit logs
 references: null

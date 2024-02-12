@@ -12,6 +12,7 @@ techniques:
 - initial-access:valid accounts
 technique_id:
 - T1078.004
+- T1078
 data_category:
 - Application logs
 references: null

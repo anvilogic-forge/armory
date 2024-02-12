@@ -8,7 +8,8 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and e
   ilike ''user.mfa.okta_verify.deny_push'' '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Application logs
 references: null

@@ -12,7 +12,9 @@ techniques:
 - command-and-control:protocol tunneling
 - defense-evasion:process injection
 - privilege-escalation:process injection
-technique_id: null
+technique_id: 
+- T1572
+- T1055
 data_category:
 - Windows Sysmon
 references:

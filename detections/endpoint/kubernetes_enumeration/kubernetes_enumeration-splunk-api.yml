@@ -10,7 +10,8 @@ logic: '`get_application_data` `get_application_data_api` verb=TERM(list) | rege
   | where dc_uri > 0 OR match(uri, "(?i)default") '
 techniques:
 - discovery:container and resource discovery
-technique_id: null
+technique_id: 
+- T1613
 data_category:
 - API monitoring
 references:

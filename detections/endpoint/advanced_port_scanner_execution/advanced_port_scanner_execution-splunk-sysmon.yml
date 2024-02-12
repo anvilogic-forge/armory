@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
   stats values(*) as * by _time, host '
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - Windows Sysmon
 references:

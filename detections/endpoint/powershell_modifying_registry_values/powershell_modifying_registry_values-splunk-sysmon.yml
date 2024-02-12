@@ -15,6 +15,7 @@ techniques:
 - defense-evasion:modify registry
 - execution:command and scripting interpreter:powershell
 technique_id:
+- T1112
 - T1059.001
 data_category:
 - Windows Sysmon

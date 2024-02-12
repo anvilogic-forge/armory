@@ -19,7 +19,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
   stats values(*) as * by _time, host | where match(parent_process_name,"(?i)java\.exe") '
 techniques:
 - execution:exploitation for client execution
-technique_id: null
+technique_id: 
+- T1203
 data_category:
 - Windows event logs
 references:

@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_iam` eventName IN ("ListUsers", "ListRo
   as src_dns | iplocation prefix="src_" src_ip| rename src_Country as src_country '
 techniques:
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1530
 data_category:
 - AWS CloudTrail logs
 references:

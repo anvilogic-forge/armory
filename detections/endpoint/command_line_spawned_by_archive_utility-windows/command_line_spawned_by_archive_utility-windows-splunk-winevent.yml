@@ -16,6 +16,7 @@ techniques:
 - execution:command and scripting interpreter
 - execution:user execution:malicious file
 technique_id:
+- T1059
 - T1204.002
 data_category:
 - Windows event logs

@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
 techniques:
 - execution:software deployment tools
 - lateral-movement:software deployment tools
-technique_id: null
+technique_id: 
+- T1072
 data_category:
 - Windows Sysmon
 references:

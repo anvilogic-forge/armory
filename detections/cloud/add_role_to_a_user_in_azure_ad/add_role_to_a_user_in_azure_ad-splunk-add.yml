@@ -10,7 +10,8 @@ logic: '`get_cloud_data` "Add-AzureADDirectoryRoleMember" OR "AssignPermanentEli
   span=1s | stats values(*) as * by _time, identity '
 techniques:
 - privilege-escalation:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Azure activity logs
 references: null

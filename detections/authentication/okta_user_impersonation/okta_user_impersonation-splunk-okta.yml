@@ -11,7 +11,8 @@ logic: '`get_authentication_data` eventType IN("user.session.impersonation.initi
 techniques:
 - lateral-movement:use alternate authentication material
 - defense-evasion:use alternate authentication material
-technique_id: null
+technique_id: 
+- T1550
 data_category:
 - Authentication logs
 references:

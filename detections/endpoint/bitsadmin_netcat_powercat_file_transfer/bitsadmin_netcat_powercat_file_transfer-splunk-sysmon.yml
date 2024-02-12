@@ -21,6 +21,7 @@ techniques:
 - defense-evasion:bits jobs
 technique_id:
 - T1071.002
+- T1197
 data_category:
 - Windows Sysmon
 references: null

@@ -13,7 +13,9 @@ logic: '`get_web_data` ("/tomcat/webapps/usersfiles" OR "\\tomcat\\webapps\\user
 techniques:
 - command-and-control:ingress tool transfer
 - lateral-movement:lateral tool transfer
-technique_id: null
+technique_id: 
+- T1105
+- T1570
 data_category:
 - Web proxy
 references:

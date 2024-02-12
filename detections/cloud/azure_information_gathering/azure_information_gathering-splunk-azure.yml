@@ -23,7 +23,9 @@ techniques:
 - discovery:account discovery:cloud account
 - discovery:cloud service discovery
 technique_id:
+- T1580
 - T1087.004
+- T1526
 data_category:
 - Azure activity logs
 references: null

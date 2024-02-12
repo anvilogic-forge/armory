@@ -16,7 +16,9 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
 techniques:
 - command-and-control:ingress tool transfer
 - defense-evasion:obfuscated files or information
-technique_id: null
+technique_id: 
+- T1105
+- T1027
 data_category:
 - EDR Logs
 references:

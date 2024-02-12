@@ -11,7 +11,9 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
 techniques:
 - discovery:cloud service discovery
 - discovery:cloud storage object discovery
-technique_id: null
+technique_id: 
+- T1526
+- T1619
 data_category:
 - AWS CloudTrail logs
 references:

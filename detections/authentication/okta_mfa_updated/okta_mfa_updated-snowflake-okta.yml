@@ -8,7 +8,8 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and e
 techniques:
 - lateral-movement:use alternate authentication material
 - defense-evasion:use alternate authentication material
-technique_id: null
+technique_id: 
+- T1550
 data_category:
 - Authentication logs
 references:

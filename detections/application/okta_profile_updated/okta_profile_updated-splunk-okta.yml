@@ -10,7 +10,8 @@ techniques:
 - persistence:valid accounts
 - privilege-escalation:valid accounts
 - defense-evasion:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Application logs
 references: null

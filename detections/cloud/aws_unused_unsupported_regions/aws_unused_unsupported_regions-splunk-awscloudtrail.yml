@@ -13,7 +13,8 @@ logic: '`get_cloud_data` awsRegion=* | table _time, host, user, account, region,
   prefix="src_" src_ip| rename src_Country as src_country '
 techniques:
 - defense-evasion:unused/unsupported cloud regions
-technique_id: null
+technique_id: 
+- T1535
 data_category:
 - AWS CloudTrail logs
 references:

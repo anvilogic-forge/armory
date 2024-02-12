@@ -14,7 +14,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - collection:data staged
 - execution:command and scripting interpreter
-technique_id: null
+technique_id: 
+- T1074
+- T1059
 data_category:
 - Windows event logs
 - Process command-line parameters

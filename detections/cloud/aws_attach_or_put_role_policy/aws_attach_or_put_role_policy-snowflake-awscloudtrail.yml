@@ -8,7 +8,9 @@ logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate(
 techniques:
 - persistence:account manipulation
 - privilege-escalation:domain policy modification
-technique_id: null
+technique_id: 
+- T1098
+- T1484
 data_category:
 - AWS CloudTrail logs
 references: null

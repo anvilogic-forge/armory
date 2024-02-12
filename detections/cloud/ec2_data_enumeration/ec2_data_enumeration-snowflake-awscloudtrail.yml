@@ -19,7 +19,10 @@ techniques:
 - discovery:software discovery:security software discovery
 - discovery:cloud service discovery
 technique_id:
+- T1580
+- T1614
 - T1518.001
+- T1526
 data_category:
 - AWS CloudTrail logs
 references: null

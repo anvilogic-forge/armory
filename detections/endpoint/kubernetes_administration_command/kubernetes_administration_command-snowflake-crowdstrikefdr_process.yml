@@ -10,7 +10,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   ''.*kubectl\\\s+.*(exec|attach).*'', ''i'') '
 techniques:
 - execution:container administration command
-technique_id: null
+technique_id: 
+- T1609
 data_category:
 - EDR Logs
 references:

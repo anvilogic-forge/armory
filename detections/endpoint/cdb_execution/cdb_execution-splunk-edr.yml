@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` ("cdb.exe" ("-cf" OR "-cfr" 
   | stats values(*) as * by _time, host '
 techniques:
 - defense-evasion:trusted developer utilities proxy execution
-technique_id: null
+technique_id: 
+- T1127
 data_category:
 - Process command-line parameters
 - EDR Logs

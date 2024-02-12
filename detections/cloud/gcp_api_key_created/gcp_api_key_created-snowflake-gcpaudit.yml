@@ -6,7 +6,8 @@ logic: select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) an
   event_name ilike 'google.api.apikeys.v1.ApiKeys.CreateApiKey'
 techniques:
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1530
 data_category:
 - GCP audit logs
 references: null

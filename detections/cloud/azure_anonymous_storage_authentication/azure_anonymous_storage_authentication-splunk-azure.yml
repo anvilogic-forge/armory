@@ -12,7 +12,8 @@ logic: '`get_cloud_data` `get_cloud_data_storage` identity.type=Anonymous | rex 
   as * by _time, src_ip '
 techniques:
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1530
 data_category:
 - Azure activity logs
 references:

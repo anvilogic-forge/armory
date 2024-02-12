@@ -29,6 +29,8 @@ techniques:
 - defense-evasion:system binary proxy execution:rundll32
 - execution:command and scripting interpreter:javascript
 technique_id:
+- T1059
+- T1204
 - T1059.007
 - T1218.011
 - T1059.005

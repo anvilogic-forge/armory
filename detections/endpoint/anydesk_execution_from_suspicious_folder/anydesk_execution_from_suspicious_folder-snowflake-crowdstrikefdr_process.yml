@@ -17,7 +17,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   ''i'')) '
 techniques:
 - command-and-control:remote access software
-technique_id: null
+technique_id: 
+- T1219
 data_category:
 - EDR Logs
 references:

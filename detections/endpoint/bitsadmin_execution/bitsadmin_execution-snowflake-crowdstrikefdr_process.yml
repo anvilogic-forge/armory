@@ -18,7 +18,10 @@ techniques:
 - exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
   non-c2 protocol
 technique_id:
+- T1197
 - T1048.003
+- T1570
+- T1105
 data_category:
 - EDR Logs
 references:

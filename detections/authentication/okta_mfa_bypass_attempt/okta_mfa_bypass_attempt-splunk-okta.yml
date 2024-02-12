@@ -10,7 +10,9 @@ logic: '`get_authentication_data` eventType="user.mfa.attempt_bypass" | eval des
 techniques:
 - persistence:account manipulation
 - defense-evasion:use alternate authentication material
-technique_id: null
+technique_id: 
+- T1098
+- T1550
 data_category:
 - Authentication logs
 references:

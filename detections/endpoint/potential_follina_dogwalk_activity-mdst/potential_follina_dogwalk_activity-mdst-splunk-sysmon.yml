@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=7) OR "<E
   host '
 techniques:
 - execution:exploitation for client execution
-technique_id: null
+technique_id: 
+- T1203
 data_category:
 - Windows Sysmon
 references:

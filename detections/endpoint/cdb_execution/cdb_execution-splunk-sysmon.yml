@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
   by _time, host '
 techniques:
 - defense-evasion:trusted developer utilities proxy execution
-technique_id: null
+technique_id: 
+- T1127
 data_category:
 - Windows Sysmon
 references:

@@ -19,6 +19,7 @@ techniques:
 - persistence:boot or logon autostart execution:port monitors
 - privilege-escalation:boot or logon autostart execution:port monitors
 technique_id:
+- T1547
 - T1547.010
 data_category:
 - Windows event logs

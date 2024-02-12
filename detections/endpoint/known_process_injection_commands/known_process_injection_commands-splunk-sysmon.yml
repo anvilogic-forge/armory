@@ -18,7 +18,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
   values(*) as * by _time, host '
 techniques:
 - privilege-escalation:process injection
-technique_id: null
+technique_id: 
+- T1055
 data_category:
 - Windows Sysmon
 - Process command-line parameters

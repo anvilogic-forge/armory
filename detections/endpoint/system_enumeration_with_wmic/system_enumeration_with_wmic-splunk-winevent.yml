@@ -16,7 +16,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - discovery:system information discovery
 - execution:windows management instrumentation
-technique_id: null
+technique_id: 
+- T1082
+- T1047
 data_category:
 - Windows event logs
 references:

@@ -13,7 +13,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - defense-evasion:indirect command execution
 - privilege-escalation:abuse elevation control mechanism
-technique_id: null
+technique_id: 
+- T1202
+- T1548
 data_category:
 - Windows event logs
 references:

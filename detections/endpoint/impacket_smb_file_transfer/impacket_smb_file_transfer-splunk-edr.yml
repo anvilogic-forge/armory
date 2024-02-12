@@ -17,7 +17,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` (("python" ":" "@") OR (TER
   host, user process, dest_ip, process_name `hec_collect`'
 techniques:
 - lateral-movement:lateral tool transfer
-technique_id: null
+technique_id: 
+- T1570
 data_category:
 - Process command-line parameters
 - EDR Logs

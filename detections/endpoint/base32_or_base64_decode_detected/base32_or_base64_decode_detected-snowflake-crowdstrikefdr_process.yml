@@ -15,7 +15,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   and regexp_like(process, ''.*(base64|base32|basenc|base58|basez).*'', ''i'') '
 techniques:
 - defense-evasion:deobfuscate/decode files or information
-technique_id: null
+technique_id: 
+- T1027
 data_category:
 - EDR Logs
 references:

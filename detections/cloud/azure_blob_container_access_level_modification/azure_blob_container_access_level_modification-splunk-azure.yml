@@ -10,7 +10,9 @@ logic: '`get_cloud_data` `get_cloud_data_azure` "MICROSOFT.STORAGE/STORAGEACCOUN
 techniques:
 - persistence:account manipulation
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1098
+- T1530
 data_category:
 - Azure activity logs
 references: null

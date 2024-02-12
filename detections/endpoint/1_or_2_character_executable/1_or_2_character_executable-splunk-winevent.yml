@@ -12,7 +12,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - execution:command and scripting interpreter
 - defense-evasion:masquerading
-technique_id: null
+technique_id: 
+- T1059
+- T1036
 data_category:
 - Windows event logs
 references:

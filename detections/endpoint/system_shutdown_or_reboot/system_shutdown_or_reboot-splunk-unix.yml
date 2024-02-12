@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_unix` ("shutdown" OR "reboot" OR 
   OR match(type,"(?i)resp_halt|system_shutdown")) AND NOT match(process, "(?i)((shutdown|reboot|poweroff|halt)\.|\_)|(^(awk|ls|e?grep|id))") '
 techniques:
 - impact:system shutdown/reboot
-technique_id: null
+technique_id: 
+- T1529
 data_category:
 - Linux audit logs
 - Process command-line parameters

@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ((EventCode=11 OR "<Event
   "11") and match(signature_id, "23") '
 techniques:
 - persistence:boot or logon autostart execution
-technique_id: null
+technique_id: 
+- T1547
 data_category:
 - Windows Sysmon
 references:

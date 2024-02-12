@@ -25,7 +25,9 @@ logic: '`get_web_data` `get_web_data_waf` "Docker" AND (dest_port=2375 OR dest_p
 techniques:
 - discovery:container and resource discovery
 - persistence:external remote services
-technique_id: null
+technique_id: 
+- T1613
+- T1133
 data_category:
 - Web application firewall logs
 references:

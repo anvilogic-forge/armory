@@ -12,7 +12,8 @@ logic: '`get_cloud_data` `get_cloud_data_o365` TERM(Set-CASMailbox) | table _tim
   span=1s | stats values(*) as * by _time, user '
 techniques:
 - persistence:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Office 365 audit logs
 references: null

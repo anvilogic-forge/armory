@@ -20,6 +20,7 @@ techniques:
 - defense-evasion:obfuscated files or information
 - execution:command and scripting interpreter:powershell
 technique_id:
+- T1027
 - T1059.001
 data_category:
 - EDR Logs

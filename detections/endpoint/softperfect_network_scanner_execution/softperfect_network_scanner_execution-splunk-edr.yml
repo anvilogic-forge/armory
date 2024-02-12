@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` "netscan" | where match(proc
   user | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - EDR Logs
 references:

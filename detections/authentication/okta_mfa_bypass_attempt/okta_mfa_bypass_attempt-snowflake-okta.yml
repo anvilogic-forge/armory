@@ -9,7 +9,9 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and e
 techniques:
 - persistence:account manipulation
 - defense-evasion:use alternate authentication material
-technique_id: null
+technique_id: 
+- T1098
+- T1550
 data_category:
 - Authentication logs
 - Third-party application logs

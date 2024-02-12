@@ -13,7 +13,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` (TERM(ProcessRollup2) OR Ty
   "(?i)\w?\wtps?\:(\/\/|\x5c\x5c)") `hec_collect`'
 techniques:
 - command-and-control:ingress tool transfer
-technique_id: null
+technique_id: 
+- T1105
 data_category:
 - EDR Logs
 - Process command-line parameters

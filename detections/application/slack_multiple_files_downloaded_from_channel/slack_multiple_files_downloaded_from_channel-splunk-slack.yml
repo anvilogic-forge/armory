@@ -11,7 +11,9 @@ logic: ' `get_application_data` "file_downloaded" | table _time, host, user, act
 techniques:
 - initial-access:valid accounts
 - collection:data from information repositories
-technique_id: null
+technique_id: 
+- T1078
+- T1213
 data_category:
 - Application logs
 references: null

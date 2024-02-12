@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - execution:software deployment tools
 - lateral-movement:software deployment tools
-technique_id: null
+technique_id: 
+- T1072
 data_category:
 - Windows event logs
 - Process command-line parameters

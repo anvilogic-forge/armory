@@ -12,7 +12,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103)
   * by _time, host '
 techniques:
 - discovery:system network connections discovery
-technique_id: null
+technique_id: 
+- T1049
 data_category:
 - PowerShell logs
 references:

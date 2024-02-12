@@ -14,6 +14,7 @@ techniques:
 - collection:data from network shared drive
 technique_id:
 - T1021.002
+- T1039
 data_category:
 - EDR Logs
 references:

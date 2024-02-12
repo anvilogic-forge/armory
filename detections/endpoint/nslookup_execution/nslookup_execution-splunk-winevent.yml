@@ -13,7 +13,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - defense-evasion:system binary proxy execution
 - discovery:system network configuration discovery
-technique_id: null
+technique_id: 
+- T1218
+- T1016
 data_category:
 - Windows event logs
 references:

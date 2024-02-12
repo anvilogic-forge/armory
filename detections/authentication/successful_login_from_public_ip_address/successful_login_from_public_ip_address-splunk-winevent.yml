@@ -19,8 +19,10 @@ techniques:
 - initial-access:valid accounts
 technique_id:
 - T1021.001
-- T1078.002
 - T1078.001
+- T1133
+- T1078.002
+- T1078
 data_category:
 - Authentication logs
 - Windows event logs

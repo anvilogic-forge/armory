@@ -13,7 +13,8 @@ logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
   '.*(reg.*?query).*', 'i')
 techniques:
 - discovery:query registry
-technique_id: null
+technique_id: 
+- T1012
 data_category:
 - EDR Logs
 references:

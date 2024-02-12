@@ -11,7 +11,9 @@ logic: '`get_cloud_data` `get_cloud_data_azure` "MICROSOFT.COMPUTE/VIRTUALMACHIN
 techniques:
 - defense-evasion:modify cloud compute infrastructure
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1578
+- T1530
 data_category:
 - Azure activity logs
 references:

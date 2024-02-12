@@ -12,7 +12,9 @@ logic: '`get_web_data` (TERM(/manager/html/upload) AND status=200 AND TERM(*.war
 techniques:
 - command-and-control:ingress tool transfer
 - lateral-movement:lateral tool transfer
-technique_id: null
+technique_id: 
+- T1105
+- T1570
 data_category:
 - Web proxy
 references:

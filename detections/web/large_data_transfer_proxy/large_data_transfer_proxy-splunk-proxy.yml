@@ -22,7 +22,11 @@ techniques:
 - exfiltration:data transfer size limits
 - exfiltration:exfiltration over c2 channel
 - exfiltration:exfiltration over web service
-technique_id: null
+technique_id: 
+- T1020
+- T1030
+- T1041
+- T1567
 data_category:
 - Web proxy
 references: null

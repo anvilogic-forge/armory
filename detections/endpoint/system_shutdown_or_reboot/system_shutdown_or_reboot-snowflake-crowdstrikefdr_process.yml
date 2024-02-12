@@ -10,7 +10,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   ''.*(shutdown|reboot|halt|poweroff).*'', ''i'') '
 techniques:
 - impact:system shutdown/reboot
-technique_id: null
+technique_id: 
+- T1529
 data_category:
 - EDR Logs
 references:

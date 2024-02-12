@@ -8,7 +8,8 @@ logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and e
   ilike ''user.session.start'' '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Authentication logs
 - Third-party application logs

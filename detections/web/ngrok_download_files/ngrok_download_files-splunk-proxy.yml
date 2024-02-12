@@ -18,7 +18,9 @@ logic: '`get_web_data` `get_web_data_proxy` (".ngrok.io" OR (".ngrok.io" AND cur
 techniques:
 - command-and-control:ingress tool transfer
 - command-and-control:web service
-technique_id: null
+technique_id: 
+- T1105
+- T1102
 data_category:
 - Web proxy
 references:

@@ -22,6 +22,8 @@ techniques:
 technique_id:
 - T1078.004
 - T1069.003
+- T1578
+- T1069
 data_category:
 - AWS CloudTrail logs
 references: null

@@ -18,7 +18,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4697) O
 techniques:
 - execution:system services
 - persistence:create or modify system process
-technique_id: null
+technique_id: 
+- T1569
+- T1543
 data_category:
 - Windows event logs
 references:

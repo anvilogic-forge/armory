@@ -10,7 +10,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
   or regexp_like(process, ''.*SyncAppvPublishingServer.vbs[^a-z].*'', ''i'')) '
 techniques:
 - defense-evasion:system binary proxy execution
-technique_id: null
+technique_id: 
+- T1218
 data_category:
 - EDR Logs
 references:

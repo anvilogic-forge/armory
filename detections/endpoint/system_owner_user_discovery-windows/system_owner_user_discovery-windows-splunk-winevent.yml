@@ -17,7 +17,8 @@ logic: ' `get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) 
   by _time, host | where dc_process_name>2 '
 techniques:
 - discovery:system owner/user discovery
-technique_id: null
+technique_id: 
+- T1033
 data_category:
 - Windows event logs
 - Process command-line parameters

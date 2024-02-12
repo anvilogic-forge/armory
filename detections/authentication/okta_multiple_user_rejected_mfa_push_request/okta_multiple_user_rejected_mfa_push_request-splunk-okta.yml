@@ -10,7 +10,8 @@ logic: '`get_authentication_data` eventType="user.mfa.okta_verify.deny_push" or 
   values(*) as * by _time, user | where event_count > 1 '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Authentication logs
 references: null

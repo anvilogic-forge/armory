@@ -19,7 +19,10 @@ techniques:
 - collection:data from local system
 - execution:command and scripting interpreter
 - collection:data from network shared drive
-technique_id: null
+technique_id: 
+- T1005
+- T1059
+- T1039
 data_category:
 - PowerShell logs
 - Process command-line parameters

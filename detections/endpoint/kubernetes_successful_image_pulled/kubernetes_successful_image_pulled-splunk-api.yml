@@ -16,7 +16,8 @@ logic: '`get_application_data` `get_application_data_api` TERM(create) "Successf
 techniques:
 - defense-evasion:deploy container
 - execution:deploy container
-technique_id: null
+technique_id: 
+- T1610
 data_category:
 - API monitoring
 references:

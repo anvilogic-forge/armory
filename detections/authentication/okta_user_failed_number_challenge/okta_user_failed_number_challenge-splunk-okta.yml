@@ -11,7 +11,9 @@ logic: '`get_authentication_data` eventType="user.authentication.auth_via_mfa" "
 techniques:
 - credential-access:forced authentication
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1187
+- T1078
 data_category:
 - Authentication logs
 references: null

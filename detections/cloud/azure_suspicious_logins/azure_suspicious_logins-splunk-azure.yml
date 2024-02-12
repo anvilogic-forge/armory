@@ -15,7 +15,9 @@ logic: '`get_cloud_data` `get_cloud_data_azure` (TERM(SignInLogs) OR TERM(NonInt
 techniques:
 - credential-access:brute force
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1110
+- T1078
 data_category:
 - Azure activity logs
 references:

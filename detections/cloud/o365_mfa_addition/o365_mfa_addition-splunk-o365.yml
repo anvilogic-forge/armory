@@ -19,6 +19,7 @@ techniques:
 - defense-evasion:valid accounts
 - initial-access:valid accounts
 technique_id:
+- T1078
 - T1078.004
 data_category:
 - Office 365 audit logs

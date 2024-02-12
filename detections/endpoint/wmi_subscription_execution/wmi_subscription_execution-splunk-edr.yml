@@ -19,6 +19,7 @@ techniques:
   event subscription
 technique_id:
 - T1546.003
+- T1047
 data_category:
 - EDR Logs
 - Process command-line parameters

@@ -11,7 +11,8 @@ logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2
 techniques:
 - execution:software deployment tools
 - lateral-movement:software deployment tools
-technique_id: null
+technique_id: 
+- T1072
 data_category:
 - EDR Logs
 references:

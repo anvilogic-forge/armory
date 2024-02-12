@@ -11,7 +11,9 @@ logic: ' `get_endpoint_data` `get_endpoint_data_edr` ("nslookup" OR "nslookup.ex
 techniques:
 - discovery:system network configuration discovery
 - discovery:remote system discovery
-technique_id: null
+technique_id: 
+- T1016
+- T1018
 data_category:
 - EDR Logs
 references:

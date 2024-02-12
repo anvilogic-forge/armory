@@ -19,7 +19,8 @@ logic: '`get_web_data` `get_web_data_waf` "/nice%20ports%2C/Trinity.txt.bak" OR 
   dest_ip, dest_port, src_ip, src_port, protocol, http_method `hec_collect`'
 techniques:
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1046
 data_category:
 - Web application firewall logs
 references:

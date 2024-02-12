@@ -11,7 +11,8 @@ logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
 techniques:
 - persistence:event triggered execution
 - privilege-escalation:event triggered execution
-technique_id: null
+technique_id: 
+- T1546
 data_category:
 - EDR Logs
 references:

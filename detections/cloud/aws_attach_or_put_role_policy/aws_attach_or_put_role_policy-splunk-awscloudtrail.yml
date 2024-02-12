@@ -13,7 +13,9 @@ logic: '`get_cloud_data` `get_cloud_data_iam` (eventName="AttachRolePolicy" OR e
 techniques:
 - persistence:account manipulation
 - privilege-escalation:domain policy modification
-technique_id: null
+technique_id: 
+- T1098
+- T1484
 data_category:
 - AWS CloudTrail logs
 references: null

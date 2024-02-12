@@ -36,7 +36,12 @@ techniques:
 - execution:command and scripting interpreter:unix shell
 - execution:command and scripting interpreter:windows command shell
 technique_id:
+- T1033
+- T1059
 - T1087.001
+- T1057
+- T1082
+- T1007
 - T1059.003
 - T1059.004
 data_category:

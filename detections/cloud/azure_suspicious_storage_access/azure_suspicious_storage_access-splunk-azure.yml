@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_azure` "List Storage Account Keys" | re
   > 0 OR dc_bucket_name > 1 '
 techniques:
 - collection:data from cloud storage
-technique_id: null
+technique_id: 
+- T1530
 data_category:
 - Azure activity logs
 references:

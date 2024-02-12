@@ -7,7 +7,8 @@ logic: '`get_application_data` eventType="user.lifecycle.create" | eval dest_use
   City, Region, Country | bin span=1s | stats values(*) as * by _time, src_ip '
 techniques:
 - persistence:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Application logs
 references: null

@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_aws` TERM(AuthorizeSecurityGroupEgress)
   as src_country '
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category:
 - AWS CloudTrail logs
 references:

@@ -14,7 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ("EventCode=1" OR "<Event
   as * by _time, host | where match(process, "(?i)cab|diagcab") '
 techniques:
 - execution:user execution
-technique_id: null
+technique_id: 
+- T1204
 data_category:
 - Windows Sysmon
 references:

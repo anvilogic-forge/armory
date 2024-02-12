@@ -9,7 +9,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104)
   parent_* | bin span=60s | stats values(*) as * by _time, host '
 techniques:
 - exfiltration:exfiltration over alternative protocol
-technique_id: null
+technique_id: 
+- T1048
 data_category:
 - PowerShell logs
 references:

@@ -12,6 +12,7 @@ techniques:
 - credential-access:steal web session cookie
 technique_id:
 - T1550.004
+- T1539
 data_category:
 - Authentication logs
 references: null

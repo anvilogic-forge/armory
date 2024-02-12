@@ -16,6 +16,8 @@ techniques:
 - initial-access:supply chain compromise
 - execution:user execution:malicious file
 technique_id:
+- T1218
+- T1195
 - T1204.002
 data_category:
 - Windows Sysmon

@@ -22,7 +22,8 @@ logic: '`get_cloud_data` `get_cloud_data_aws` userIdentity.type=IAMUser eventTyp
   prefix="src_" src_ip | rename src_Country as src_country '
 techniques:
 - discovery:permission groups discovery
-technique_id: null
+technique_id: 
+- T1069
 data_category:
 - AWS CloudTrail logs
 references:

@@ -14,7 +14,8 @@ logic: '`get_cloud_data` `get_cloud_data_azure` "Microsoft.Compute/virtualMachin
   _time, user '
 techniques:
 - defense-evasion:modify cloud compute infrastructure
-technique_id: null
+technique_id: 
+- T1578
 data_category:
 - Azure activity logs
 references:

@@ -18,7 +18,8 @@ logic: ' `get_cloud_data` `get_cloud_data_aws` eventType="AwsApiCall" eventSourc
 techniques:
 - defense-evasion:deploy container
 - execution:deploy container
-technique_id: null
+technique_id: 
+- T1610
 data_category:
 - AWS CloudTrail logs
 references:

@@ -23,6 +23,7 @@ techniques:
 - initial-access:external remote services
 - lateral-movement:remote service session hijacking:rdp hijacking
 technique_id:
+- T1133
 - T1563.002
 data_category:
 - Windows event logs

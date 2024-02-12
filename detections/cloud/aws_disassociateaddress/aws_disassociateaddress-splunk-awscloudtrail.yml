@@ -14,7 +14,9 @@ logic: '`get_cloud_data` `get_cloud_data_aws` TERM(DisassociateAddress) | table 
 techniques:
 - persistence:account manipulation
 - defense-evasion:impair defenses
-technique_id: null
+technique_id: 
+- T1098
+- T1562
 data_category:
 - AWS CloudTrail logs
 references:

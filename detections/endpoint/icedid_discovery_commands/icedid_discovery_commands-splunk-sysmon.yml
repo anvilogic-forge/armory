@@ -19,6 +19,10 @@ techniques:
 - collection:automated collection
 technique_id:
 - T1069.002
+- T1135
+- T1087
+- T1082
+- T1119
 data_category:
 - Windows Sysmon
 references:

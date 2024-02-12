@@ -15,6 +15,7 @@ techniques:
 - initial-access:external remote services
 technique_id:
 - T1021.001
+- T1133
 data_category:
 - Windows event logs
 references:

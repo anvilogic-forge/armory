@@ -32,8 +32,11 @@ techniques:
 technique_id:
 - T1087.001
 - T1087.002
+- T1482
+- T1201
 - T1069.002
 - T1069.001
+- T1082
 data_category:
 - PowerShell logs
 - Process command-line parameters

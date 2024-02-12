@@ -14,6 +14,7 @@ techniques:
 - persistence:account manipulation
 - privilege-escalation:valid accounts:cloud accounts
 technique_id:
+- T1098
 - T1078.004
 data_category:
 - AWS CloudTrail logs

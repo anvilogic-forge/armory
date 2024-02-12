@@ -15,7 +15,8 @@ logic: '`get_cloud_data` `get_cloud_data_o365` (UserLoginFailed OR PasswordLogon
   where c_logins > 0 AND c_failures > 0 AND dc_login_id = 2 and event_count > 10 '
 techniques:
 - credential-access:brute force
-technique_id: null
+technique_id: 
+- T1110
 data_category:
 - Office 365 audit logs
 references:

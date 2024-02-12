@@ -18,6 +18,7 @@ techniques:
 - privilege-escalation:process injection:dynamic-link library injection
 technique_id:
 - T1056.004
+- T1218
 - T1055.001
 data_category:
 - Process command-line parameters

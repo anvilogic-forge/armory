@@ -15,7 +15,9 @@ logic: '`get_cloud_data` `get_cloud_data_aws` TERM(DescribeCarrierGateways) OR T
 techniques:
 - discovery:system network connections discovery
 - discovery:network service discovery
-technique_id: null
+technique_id: 
+- T1049
+- T1046
 data_category:
 - AWS CloudTrail logs
 references:

@@ -9,7 +9,9 @@ logic: '`get_application_data` eventType="device.enrollment.create" `group_event
 techniques:
 - persistence:account manipulation
 - defense-evasion:valid accounts
-technique_id: null
+technique_id: 
+- T1098
+- T1078
 data_category:
 - Application logs
 references: null

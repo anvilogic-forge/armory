@@ -8,7 +8,8 @@ logic: 'select * from gsuite where event_time > dateadd(hour, -2, sysdate()) and
   = ''google.login.LoginService.loginSuccess'' '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Application logs
 - GCP audit logs

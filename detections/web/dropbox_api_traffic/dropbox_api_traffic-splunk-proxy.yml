@@ -14,6 +14,7 @@ techniques:
 - command-and-control:application layer protocol
 - exfiltration:exfiltration over web service:exfiltration to cloud storage
 technique_id:
+- T1071
 - T1567.002
 data_category:
 - Web proxy

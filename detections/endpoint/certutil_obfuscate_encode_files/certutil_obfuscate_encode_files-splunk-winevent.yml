@@ -12,7 +12,9 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) O
 techniques:
 - command-and-control:data encoding
 - defense-evasion:obfuscated files or information
-technique_id: null
+technique_id: 
+- T1027
+- T1132
 data_category:
 - Windows event logs
 - Process command-line parameters

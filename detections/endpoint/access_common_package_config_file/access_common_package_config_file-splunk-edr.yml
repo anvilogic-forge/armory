@@ -15,7 +15,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc"
 techniques:
 - persistence:event triggered execution
 - privilege-escalation:event triggered execution
-technique_id: null
+technique_id: 
+- T1546
 data_category:
 - Process command-line parameters
 - EDR Logs

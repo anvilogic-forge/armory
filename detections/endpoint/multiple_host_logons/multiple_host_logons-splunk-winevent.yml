@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4624) O
   where dc_host > 2 '
 techniques:
 - defense-evasion:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Windows event logs
 references:

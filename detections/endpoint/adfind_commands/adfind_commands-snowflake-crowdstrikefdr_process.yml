@@ -21,6 +21,9 @@ techniques:
 technique_id:
 - T1087.002
 - T1069.002
+- T1482
+- T1016
+- T1018
 data_category:
 - EDR Logs
 references:

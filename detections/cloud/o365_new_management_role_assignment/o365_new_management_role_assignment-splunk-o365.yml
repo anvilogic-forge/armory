@@ -11,7 +11,8 @@ logic: '`get_cloud_data` `get_cloud_data_o365` New-ManagementRoleAssignment | ta
   span=1s | stats values(*) as * by _time, user '
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category:
 - Office 365 audit logs
 references:

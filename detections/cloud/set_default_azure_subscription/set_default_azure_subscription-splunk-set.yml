@@ -10,6 +10,7 @@ logic: '`get_cloud_data` ("Set-AzContext") | table _time, host, user,account, re
   _time, identity '
 techniques:
 - persistence:account manipulation
-technique_id: null
+technique_id: 
+- T1098
 data_category: null
 references: null

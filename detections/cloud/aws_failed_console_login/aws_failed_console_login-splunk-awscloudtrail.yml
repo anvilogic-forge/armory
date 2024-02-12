@@ -12,7 +12,8 @@ logic: '`get_cloud_data` `get_cloud_data_aws` TERM(ConsoleLogin) "Failure" | whe
   prefix="src_" src_ip | rename src_Country as src_country '
 techniques:
 - credential-access:brute force
-technique_id: null
+technique_id: 
+- T1110
 data_category:
 - AWS CloudTrail logs
 references:

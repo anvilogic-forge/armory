@@ -14,6 +14,7 @@ techniques:
 - command-and-control:ingress tool transfer
 - command-and-control:application layer protocol:web protocols
 technique_id:
+- T1105
 - T1071.001
 data_category:
 - Windows Sysmon

@@ -13,7 +13,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<E
   | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - defense-evasion:modify registry
-technique_id: null
+technique_id: 
+- T1112
 data_category:
 - Windows Sysmon
 - Process command-line parameters

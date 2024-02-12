@@ -8,7 +8,8 @@ logic: '`get_authentication_data` eventType="user.session.start" | table _time, 
   user, action, src_ip, src_user, signature, City, Region, Country '
 techniques:
 - initial-access:valid accounts
-technique_id: null
+technique_id: 
+- T1078
 data_category:
 - Authentication logs
 - Third-party application logs

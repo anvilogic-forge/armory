@@ -10,7 +10,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_winevent` ("EventCode=4688" OR "<
   parent_process_* | bin span=1s | stats values(*) as * by _time, host '
 techniques:
 - defense-evasion:system binary proxy execution
-technique_id: null
+technique_id: 
+- T1218
 data_category:
 - Windows event logs
 - Process command-line parameters

@@ -22,8 +22,9 @@ techniques:
 - exfiltration:exfiltration over alternative protocol:exfiltration over unencrypted
   non-c2 protocol
 technique_id:
-- T1048.003
 - T1567.002
+- T1030
+- T1048.003
 data_category:
 - Windows event logs
 - Process command-line parameters

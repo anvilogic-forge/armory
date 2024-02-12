@@ -11,7 +11,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_powershell` ("EventCode=4104" OR 
   values(*) as * by _time, host '
 techniques:
 - defense-evasion:system binary proxy execution
-technique_id: null
+technique_id: 
+- T1218
 data_category:
 - PowerShell logs
 references:

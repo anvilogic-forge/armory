@@ -15,7 +15,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(base32) OR TERM(base64
   match(process, "(?i)(--decode|-d)\s+") '
 techniques:
 - defense-evasion:deobfuscate/decode files or information
-technique_id: null
+technique_id: 
+- T1027
 data_category:
 - EDR Logs
 references:
