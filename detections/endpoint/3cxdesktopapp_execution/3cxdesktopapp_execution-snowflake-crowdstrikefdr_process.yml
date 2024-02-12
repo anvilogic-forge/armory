@@ -8,8 +8,9 @@ description: 'Malicious activity has been detected on March 29, 2023, originatin
   - Threat Actor Association: Lazarus Group (aka Labyrinth Chollima)'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and (event_platform = ''Win'' or event_platform = ''Mac'') and (process_path
-  ilike ''%3CXDesktopApp.exe'' or process_path ilike ''%3CX Desktop App%'') '
+  sysdate()) and
+  (event_platform = ''Win'' or event_platform = ''Mac'') and (process_path ilike ''%3CXDesktopApp.exe''
+  or process_path ilike ''%3CX Desktop App%'') '
 techniques:
 - defense-evasion:system binary proxy execution
 - initial-access:supply chain compromise
