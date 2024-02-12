@@ -5,8 +5,7 @@ description: Adversaries may request organization description during discovery a
   master account email address associated with the account.
 logic_format: snowflake
 logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
-  = 'DescribeOrganization'
+  and event_name = 'DescribeOrganization'
 techniques:
 - discovery:system information discovery
 technique_id: null

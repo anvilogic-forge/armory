@@ -7,8 +7,8 @@ description: This use case detects when a domain-wide delegation of authority is
   This activity on its own does not indicate malicious activity, but should be validated
   due to its wide-reaching access.
 logic_format: snowflake
-logic: select * from gsuite where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
-  event_time)) < $latest$ and event_name = 'google.admin.AdminService.authorizeApiClientAccess'
+logic: select * from gsuite where event_time > dateadd(hour, -2, sysdate()) and event_name
+  = 'google.admin.AdminService.authorizeApiClientAccess'
 techniques:
 - initial-access:valid accounts:cloud accounts
 - privilege-escalation:valid accounts:cloud accounts

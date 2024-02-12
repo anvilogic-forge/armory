@@ -20,8 +20,7 @@ description: 'This use case detects any service stop commands on Windows endpoin
   T1489 Test #1 Atomics T1489 Test #2 Atomics T1489 Test #3'
 logic_format: snowflake
 logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_platform
-  ilike '%Win%' and (regexp_like(process, '.*taskkill(\\\.exe)?(\\\"?).*\\\/(IM|PID|T|F)+.*',
+  and event_platform ilike '%Win%' and (regexp_like(process, '.*taskkill(\\\.exe)?(\\\"?).*\\\/(IM|PID|T|F)+.*',
   'i') or regexp_like(process, '.*(net|sc)(\\\.exe)?(\\\")?\\\s+stop\\\s+.*', 'i')
   or regexp_like(process, '.*sc(\\\.exe)?(\\\")?\\\s+.*config.*start=.*disabled.*',
   'i'))

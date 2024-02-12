@@ -8,8 +8,7 @@ description: 'Adversaries may abuse double extensions to attempt to conceal dang
   APT28, APT40, Sandworm Team, UAC-0057 (GhostWriter)'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*((\\\s{3,}|_{3,})|(\\\.(pdf|jpg|jpeg|gif|ico|doc|xls|docx|xlsx|png|xml|csv|ppt|pptx|rtf|txt)(\\\s+)?))\\\.(cmd|bat|ps1|vbs|js|py|exe|msi|vbe|lnk|scr).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*((\\\s{3,}|_{3,})|(\\\.(pdf|jpg|jpeg|gif|ico|doc|xls|docx|xlsx|png|xml|csv|ppt|pptx|rtf|txt)(\\\s+)?))\\\.(cmd|bat|ps1|vbs|js|py|exe|msi|vbe|lnk|scr).*'',
   ''i'') '
 techniques:
 - defense-evasion:masquerading:double file extension

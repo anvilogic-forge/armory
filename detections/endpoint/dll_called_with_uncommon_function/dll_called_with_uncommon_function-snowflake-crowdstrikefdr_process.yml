@@ -10,8 +10,7 @@ description: DLLs can invoke a variety of functions when executed. While these f
   and Scripts (LOLBAS) (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\,(RS32|VirtualAllocEx|NtUnmapViewOfSection|CreateRemoteThread|RtlCreateUserThread|DeviceIoControl|WriteProcessMemory|CryptEncrypt|CryptDecrypt|RegSetValueEx|SetWindowsHookEx|DLLRegisterServer).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\,(RS32|VirtualAllocEx|NtUnmapViewOfSection|CreateRemoteThread|RtlCreateUserThread|DeviceIoControl|WriteProcessMemory|CryptEncrypt|CryptDecrypt|RegSetValueEx|SetWindowsHookEx|DLLRegisterServer).*'',
   ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:rundll32

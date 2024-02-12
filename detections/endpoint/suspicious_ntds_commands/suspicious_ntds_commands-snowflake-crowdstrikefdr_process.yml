@@ -8,8 +8,7 @@ description: 'Adversaries may attempt to access or create a copy of the Active D
   Atomics T1003.003 Test #3'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*(ac\\\s+i\\\s+ntds.+create\\\s+full)|(copy\\\s+.+?ntds\\\.dit)|(activate\\\s+instance\\\s+ntds.*create\\\s+full).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(ac\\\s+i\\\s+ntds.+create\\\s+full)|(copy\\\s+.+?ntds\\\.dit)|(activate\\\s+instance\\\s+ntds.*create\\\s+full).*'',
   ''i'') '
 techniques:
 - credential-access:os credential dumping:ntds

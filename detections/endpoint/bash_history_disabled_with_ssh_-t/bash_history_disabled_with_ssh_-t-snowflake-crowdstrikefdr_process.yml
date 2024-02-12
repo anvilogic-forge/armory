@@ -8,8 +8,7 @@ description: 'In addition to clearing system logs, an adversary may clear the co
   Atomics T1070.003 Test #9'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Lin'' and regexp_like(process, ''.*ssh\\\s+.+@.+\\\s+-.+?[T].+?\\\s+.*'',
+  sysdate()) and event_platform = ''Lin'' and regexp_like(process, ''.*ssh\\\s+.+@.+\\\s+-.+?[T].+?\\\s+.*'',
   ''i'') '
 techniques:
 - defense-evasion:indicator removal:clear command history

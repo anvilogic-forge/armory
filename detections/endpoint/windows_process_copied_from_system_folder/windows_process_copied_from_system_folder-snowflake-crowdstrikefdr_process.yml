@@ -12,8 +12,7 @@ description: 'Adversaries may attempt to manipulate features of their artifacts 
   DarkGate, XWorm -- Atomics T1036 Test #1 Atomics T1546.008 Test #2'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(copy-item|copy|xcopy|cp|cpi|robocopy)\\\s+.+(\\\x5c(system32|syswow64)\\\x5c).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(copy-item|copy|xcopy|cp|cpi|robocopy)\\\s+.+(\\\x5c(system32|syswow64)\\\x5c).*'',
   ''i'') and regexp_like(parent_process_name, ''.*(powershell|cmd).*'', ''i'') '
 techniques:
 - defense-evasion:masquerading

@@ -9,10 +9,9 @@ description: 'There are attack scenarios in which attackers download different t
   Babuk, Bazar, Conti -- Atomics T1027 Test #8'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and (process_path ilike ''%certutil.exe'' or (regexp_like(process,
-  ''.*[^a-z0-9]-urlcache[^a-z0-9].*'', ''i'') and regexp_like(process, ''.*[^a-z0-9]-f[^a-z0-9].*'',
-  ''i''))) and (regexp_like(process, ''.*(\\\w?\\\wtps?\\\:(\\\/\\\/|\x5c\x5c))|(\\\:\\\/\\\/).*'',
+  sysdate()) and event_platform = ''Win'' and (process_path ilike ''%certutil.exe''
+  or (regexp_like(process, ''.*[^a-z0-9]-urlcache[^a-z0-9].*'', ''i'') and regexp_like(process,
+  ''.*[^a-z0-9]-f[^a-z0-9].*'', ''i''))) and (regexp_like(process, ''.*(\\\w?\\\wtps?\\\:(\\\/\\\/|\x5c\x5c))|(\\\:\\\/\\\/).*'',
   ''i'') or regexp_like(process, ''.*(u.*?r.*?l.*?c.*?a.*?c.*?h.*?e).*'', ''i'')) '
 techniques:
 - command-and-control:ingress tool transfer

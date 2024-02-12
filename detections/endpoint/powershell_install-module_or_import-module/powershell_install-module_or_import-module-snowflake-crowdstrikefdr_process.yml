@@ -8,8 +8,7 @@ description: 'The PowerShell cmdlet Install-Module gets one or more modules that
   Test #18 Atomics T1070.006 Test #8'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(Install|Import)-Module.*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(Install|Import)-Module.*'',
   ''i'') '
 techniques:
 - execution:command and scripting interpreter:powershell

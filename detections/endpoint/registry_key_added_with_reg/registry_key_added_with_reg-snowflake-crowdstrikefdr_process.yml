@@ -9,10 +9,9 @@ description: 'Reg is a Windows utility used to interact with the Windows Registr
   Test #4 Atomics T1546.010 Test #1'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%reg.EXE'' and (regexp_like(process,
-  ''.*[^a-z]add[^a-z].*'', ''i'') or regexp_like(process, ''.*[^a-z]import[^a-z].*'',
-  ''i'')) '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%reg.EXE''
+  and (regexp_like(process, ''.*[^a-z]add[^a-z].*'', ''i'') or regexp_like(process,
+  ''.*[^a-z]import[^a-z].*'', ''i'')) '
 techniques:
 - defense-evasion:modify registry
 technique_id: null

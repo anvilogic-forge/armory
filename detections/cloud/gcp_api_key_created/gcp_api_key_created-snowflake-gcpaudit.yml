@@ -3,8 +3,7 @@ title: 'GCP: API Key Created'
 description: This use case detects when an API key has been created for a GCP project.
 logic_format: snowflake
 logic: select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
-  to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name ilike
-  'google.api.apikeys.v1.ApiKeys.CreateApiKey'
+  event_name ilike 'google.api.apikeys.v1.ApiKeys.CreateApiKey'
 techniques:
 - collection:data from cloud storage
 technique_id: null

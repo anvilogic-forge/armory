@@ -9,8 +9,7 @@ description: 'ssh.exe is a legitimate SSH client included in Windows systems,pro
   the Land Binary and Scripts (LOLBAS) (LOLBIN)'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%ssh.exe'' '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%ssh.exe'' '
 techniques:
 - defense-evasion:indirect command execution
 - command-and-control:protocol tunneling

@@ -9,8 +9,7 @@ description: 'Ngrok is a legitimate reverse proxy tool that can create a secure 
   Libra, Scatter Swine, Starfraud, UNC3944)'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and (regexp_like(process, ''.*(tcp\\\s+(139|445|3389|5985|5986))|(\\\.exe\s+|(authtoken\\\s|start\\\s+--all)).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and (regexp_like(process, ''.*(tcp\\\s+(139|445|3389|5985|5986))|(\\\.exe\s+|(authtoken\\\s|start\\\s+--all)).*'',
   ''i'') or (process ilike ''%start%'' and process ilike ''%--all%'' and process ilike
   ''%--config%'' and process ilike ''%.yml%'') or process_path ilike ''%ngrok.exe'') '
 techniques:

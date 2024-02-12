@@ -14,9 +14,8 @@ description: 'Adversaries can gain persistence by executing malicious commands v
   Test #4 Atomics T1546.004 Test #5 Atomics T1546.004 Test #6'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'') and regexp_like(process,
-  ''.*(echo|vi|visudo|vim|nano).*(\\\.(bashrc|bash_profile|profile|bash_logout)|bash_completion\\\.sh|/etc/profile).*'',
+  sysdate()) and (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'')
+  and regexp_like(process, ''.*(echo|vi|visudo|vim|nano).*(\\\.(bashrc|bash_profile|profile|bash_logout)|bash_completion\\\.sh|/etc/profile).*'',
   ''i'') '
 techniques:
 - persistence:event triggered execution:unix shell configuration modification

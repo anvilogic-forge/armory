@@ -8,9 +8,9 @@ description: Adversaries may abuse regsvr32.exe to proxy execution of malicious 
   using the full file path. LOLBAS/LOLBINS
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%regsvr32.exe'' and regexp_like(process,
-  ''.*\\\x5c(Temp|Appdata\\\x5cLocal|Users\\\x5cPublic).*'', ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%regsvr32.exe''
+  and regexp_like(process, ''.*\\\x5c(Temp|Appdata\\\x5cLocal|Users\\\x5cPublic).*'',
+  ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:regsvr32
 technique_id:

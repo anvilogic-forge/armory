@@ -8,8 +8,7 @@ description: 'Adversaries may attempt to find local system groups and permission
   Test #5 Atomics T1069.001 Test #6'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(((wmic(\\\.exe)?|Get-WMIObject)\\\s+.+?group)|(Get-LocalGroup)).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(((wmic(\\\.exe)?|Get-WMIObject)\\\s+.+?group)|(Get-LocalGroup)).*'',
   ''i'') '
 techniques:
 - discovery:permission groups discovery

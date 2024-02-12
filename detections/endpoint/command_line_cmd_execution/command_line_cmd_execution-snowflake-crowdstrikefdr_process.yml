@@ -12,8 +12,7 @@ description: 'Adversaries may attempt to manipulate features of their artifacts 
   Typhoon -- Atomics T1036 Test #2 Atomics T1059.003 Test #5'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*cmd(\\\.exe)?(\\\")?\\\s+/c\\\s+.*?\\\w+\\\.cmd.*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*cmd(\\\.exe)?(\\\")?\\\s+/c\\\s+.*?\\\w+\\\.cmd.*'',
   ''i'') '
 techniques:
 - execution:command and scripting interpreter:windows command shell

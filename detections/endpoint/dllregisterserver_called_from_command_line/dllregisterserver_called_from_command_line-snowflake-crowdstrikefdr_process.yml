@@ -9,8 +9,7 @@ description: Threat actors including SocGhoulish may use explicit calls to DLLRe
   investigated.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\\\"?,DLLRegisterServer.*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\\\"?,DLLRegisterServer.*'',
   ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:rundll32

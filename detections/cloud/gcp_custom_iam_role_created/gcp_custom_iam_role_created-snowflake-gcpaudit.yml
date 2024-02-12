@@ -6,7 +6,7 @@ description: 'Custom roles are created by the user and allow for multiple permis
   investigated. '
 logic_format: snowflake
 logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
-  to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name = ''createRole'' '
+  event_name = ''createRole'' '
 techniques:
 - privilege-escalation:valid accounts:cloud accounts
 technique_id:

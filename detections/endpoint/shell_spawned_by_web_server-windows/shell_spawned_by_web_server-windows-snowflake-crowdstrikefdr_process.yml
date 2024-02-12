@@ -6,10 +6,9 @@ description: 'This use case detects web server processes with child processes wh
   ALPHV/BlackCat, Clop'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(parent_process_name, ''(w3wp|httpd|nginx|php-cgi|tomcat|UMWorkerProcess)\\\.exe'',
-  ''i'') and regexp_like(process_path, ''.*(cmd|powershell|pwsh|csc|sh|bash|bitsadmin).*'',
-  ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(parent_process_name,
+  ''(w3wp|httpd|nginx|php-cgi|tomcat|UMWorkerProcess)\\\.exe'', ''i'') and regexp_like(process_path,
+  ''.*(cmd|powershell|pwsh|csc|sh|bash|bitsadmin).*'', ''i'') '
 techniques:
 - persistence:server software component:iis components
 - persistence:server software component:web shell

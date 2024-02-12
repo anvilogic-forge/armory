@@ -10,8 +10,7 @@ description: 'May be used to perform privileged reads or disclose files outside 
   Atomics T1140 Test #7'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform = ''Lin'' or event_platform = ''Mac'') and (regexp_like(process,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and (regexp_like(process,
   ''.*(--decode\\\s+).*'',''i'') or regexp_like(process, ''.*(-d\\\s+).*'', ''i''))
   and regexp_like(process, ''.*(base64|base32|basenc|base58|basez).*'', ''i'') '
 techniques:

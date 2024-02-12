@@ -11,8 +11,7 @@ description: 'Adversaries use internal proxies to manage command and control com
   Test #3'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(portproxy\\\s+add\s).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(portproxy\\\s+add\s).*'',
   ''i'') '
 techniques:
 - command-and-control:proxy:internal proxy

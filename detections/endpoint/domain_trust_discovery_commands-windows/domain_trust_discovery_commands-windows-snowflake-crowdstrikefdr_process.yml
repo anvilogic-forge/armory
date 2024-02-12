@@ -8,8 +8,7 @@ description: 'Adversaries may attempt to gather information on domain trust rela
   T1482 Test #2'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\/(trusted_domains|domain_trusts).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\/(trusted_domains|domain_trusts).*'',
   ''i'') '
 techniques:
 - discovery:domain trust discovery

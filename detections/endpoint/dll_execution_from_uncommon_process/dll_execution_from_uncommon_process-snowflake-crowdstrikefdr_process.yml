@@ -7,9 +7,8 @@ description: During an attack using Ursnif malware, threat actors were observed 
   (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path not ilike ''%rundll32.exe'' and
-  regexp_like(process, ''.*,(DllRegisterServer|DllMain|DllUnregisterServer|DllInstall|DllCanUnloadNow).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and process_path not ilike ''%rundll32.exe''
+  and regexp_like(process, ''.*,(DllRegisterServer|DllMain|DllUnregisterServer|DllInstall|DllCanUnloadNow).*'',
   ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:rundll32

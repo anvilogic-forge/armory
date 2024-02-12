@@ -8,9 +8,8 @@ description: 'For most users, normal AnyDesk activity is executed via the GUI. T
   AvosLocker, BianLian, BlackByte, BumbleBee, Clop, Conti, Diavol, Rhysida, Royal'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and (regexp_like(process, ''.*(anydesk.exe).*'', ''i'')
-  and not regexp_like(process, ''.*install.*'', ''i'')) '
+  sysdate()) and event_platform = ''Win'' and (regexp_like(process, ''.*(anydesk.exe).*'',
+  ''i'') and not regexp_like(process, ''.*install.*'', ''i'')) '
 techniques:
 - command-and-control:remote access software
 technique_id: null

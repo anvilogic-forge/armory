@@ -8,9 +8,8 @@ description: 'SoftPerfect Network Scanner is a free port scanner that can be run
   unauthorized discovery activity. -- Software Association: Akira'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and (process_path ilike ''%netscan_portable%'' or
-  regexp_like(process_path, ''.*netscan(32|64)\\\.exe.*'', ''i'')) '
+  sysdate()) and event_platform ilike ''%Win%'' and (process_path ilike ''%netscan_portable%''
+  or regexp_like(process_path, ''.*netscan(32|64)\\\.exe.*'', ''i'')) '
 techniques:
 - discovery:network service discovery
 technique_id: null

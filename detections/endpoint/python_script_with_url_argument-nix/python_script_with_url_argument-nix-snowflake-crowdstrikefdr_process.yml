@@ -5,10 +5,10 @@ description: This use case detects when a URL is supplied to an argument to a Py
   the command line.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform ilike ''%Mac%'' or event_platform ilike ''%Lin%'') and regexp_like(process_path,
-  ''.*(zsh|bash|sh|tcsh|csh|ksh).*'', ''i'') and regexp_like(process, ''.*python.*tps?://.*'',
-  ''i'') and regexp_like(process, ''.*/(Users|(/(var|private)/)?tmp)/.*'', ''i'') '
+  sysdate()) and (event_platform ilike ''%Mac%'' or event_platform ilike ''%Lin%'')
+  and regexp_like(process_path, ''.*(zsh|bash|sh|tcsh|csh|ksh).*'', ''i'') and regexp_like(process,
+  ''.*python.*tps?://.*'', ''i'') and regexp_like(process, ''.*/(Users|(/(var|private)/)?tmp)/.*'',
+  ''i'') '
 techniques:
 - execution:command and scripting interpreter:python
 - execution:command and scripting interpreter

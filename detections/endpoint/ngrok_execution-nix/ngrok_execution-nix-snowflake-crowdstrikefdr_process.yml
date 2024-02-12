@@ -6,9 +6,8 @@ description: Ngrok is a legitimate reverse proxy tool that can create a secure t
   for lateral movement and data exfiltration.
 logic_format: snowflake
 logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (event_platform
-  ilike '%Lin%' or event_platform ilike '%Mac%') and (process_path ilike '%ngrok%'
-  or regexp_like(process, '.*(tcp\\\s+(139|445|3389|5985|5986))|(authtoken\\\s|start\\\s+--all).*',
+  and (event_platform ilike '%Lin%' or event_platform ilike '%Mac%') and (process_path
+  ilike '%ngrok%' or regexp_like(process, '.*(tcp\\\s+(139|445|3389|5985|5986))|(authtoken\\\s|start\\\s+--all).*',
   'i') or (process ilike '%start%' and process ilike '%--all%' and process ilike '%--config%'
   and process ilike '%.yml%'))
 techniques:

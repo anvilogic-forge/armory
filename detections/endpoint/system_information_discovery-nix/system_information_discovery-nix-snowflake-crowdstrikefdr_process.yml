@@ -10,8 +10,7 @@ description: 'An adversary may attempt to get detailed information about the ope
   Test #11 Atomics T1082 Test #12'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform = ''Lin'' or event_platform = ''Mac'') and (regexp_like(process,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and (regexp_like(process,
   ''.*((^|\\\s+)(csrutil|systemsetup)(\\\s+|$)|^(env|hostname|uname|system_profiler|ls\\\s+.*Applications)$).*'',
   ''i'') and regexp_like(parent_process_name, ''.*^(bash|zsh|sh|csh|ksh|tcsh)$.*'',
   ''i'')) '

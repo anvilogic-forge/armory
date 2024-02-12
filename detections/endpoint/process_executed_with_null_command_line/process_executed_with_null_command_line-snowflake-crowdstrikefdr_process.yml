@@ -10,8 +10,7 @@ description: Adversaries may inject code into processes in order to evade proces
   null command line is not expected activity and may be an indication of process injection.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*backgroundtaskhost|svchost|dllhost|werfault|searchprotocolhost|wuauclt|spoolsv|rundll32|regasm|regsvr32|regsvcs\\\.exe\\\"?.*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*backgroundtaskhost|svchost|dllhost|werfault|searchprotocolhost|wuauclt|spoolsv|rundll32|regasm|regsvr32|regsvcs\\\.exe\\\"?.*'',
   ''i'') '
 techniques:
 - defense-evasion:process injection

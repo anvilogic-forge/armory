@@ -9,8 +9,7 @@ description: 'Adversaries may delete files left behind by the actions of their i
   Test #9 Atomics T1070.004 Test #10 Atomics T1070.003 Test #11'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(Remove-Item|del|rmdir)\\\s.*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(Remove-Item|del|rmdir)\\\s.*'',
   ''i'') '
 techniques:
 - defense-evasion:indicator removal:file deletion

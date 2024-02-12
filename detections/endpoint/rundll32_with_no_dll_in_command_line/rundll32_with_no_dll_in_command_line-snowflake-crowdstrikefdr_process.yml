@@ -9,9 +9,8 @@ description: rundll32.exe is a legitimate Windows utility used to run functions 
   out. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe'' and not
-  regexp_like(process, ''.*((^\\\"C:\\\x5cWindows\\\x5csystem32\\\x5crundll32\\\.exe\\\"$)|(\\\.dll)).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe''
+  and not regexp_like(process, ''.*((^\\\"C:\\\x5cWindows\\\x5csystem32\\\x5crundll32\\\.exe\\\"$)|(\\\.dll)).*'',
   ''i'') and not (parent_process_name ilike ''%iexplore.exe'' and not regexp_like(process,
   ''.*InetCpl\\\.cpl\\\,ClearMyTracksByProcess.*'', ''i'')) '
 techniques:

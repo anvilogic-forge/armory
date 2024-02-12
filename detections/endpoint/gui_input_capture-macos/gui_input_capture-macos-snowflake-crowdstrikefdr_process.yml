@@ -10,9 +10,9 @@ description: 'Adversaries may mimic common operating system GUI components to pr
   access or a fake malware removal suite. Atomics T1056.002 Test #1'
 logic_format: snowflake
 logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and (event_platform
-  = 'Mac') and regexp_like(process, '.*osascript.*', 'i') and regexp_like(process,
-  '.*display\\\s+dialog.*', 'i') and regexp_like(process, '.*password.*', 'i')
+  and (event_platform = 'Mac') and regexp_like(process, '.*osascript.*', 'i') and
+  regexp_like(process, '.*display\\\s+dialog.*', 'i') and regexp_like(process, '.*password.*',
+  'i')
 techniques:
 - collection:input capture:gui input capture
 - credential-access:input capture:gui input capture

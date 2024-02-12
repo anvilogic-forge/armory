@@ -10,8 +10,7 @@ description: 'Adversaries may downgrade or use a version of system features that
   than 7. -- Threat Actor Association: Earth Estries -- Atomics T1059.001 Test #12'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*powershell\\\.exe\\\s+-version\\\s+[123456].*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*powershell\\\.exe\\\s+-version\\\s+[123456].*'',
   ''i'') '
 techniques:
 - execution:command and scripting interpreter:powershell

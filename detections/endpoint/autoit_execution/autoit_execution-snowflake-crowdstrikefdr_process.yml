@@ -7,8 +7,7 @@ description: 'AutoIt is a freeware scripting utility that can automate Windows G
   files. -- Software Association: DarkGate'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and (regexp_like(process_path, ''.*autoit(2|3)?\\\.exe.*'',
+  sysdate()) and event_platform ilike ''%Win%'' and (regexp_like(process_path, ''.*autoit(2|3)?\\\.exe.*'',
   ''i'') or regexp_like(process, ''.*\\\S+\\\.exe.+\\\.au3.*'', ''i'')) '
 techniques:
 - execution:command and scripting interpreter

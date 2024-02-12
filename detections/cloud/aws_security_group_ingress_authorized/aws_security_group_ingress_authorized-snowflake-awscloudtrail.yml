@@ -6,8 +6,7 @@ description: Detects when an ingress rule has been added to a security group. An
   security groups.
 logic_format: snowflake
 logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
-  = 'AuthorizeSecurityGroupIngress'
+  and event_name = 'AuthorizeSecurityGroupIngress'
 techniques:
 - persistence:account manipulation
 technique_id: null

@@ -10,8 +10,7 @@ description: 'Adversaries may attempt to find domain-level groups and permission
   #3 Atomics T1069.002 Test #9 Atomics T1069.002 Test #10'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(\\\s+(localgroup|group(s?)\\\s+.*doma)|Get-AD(PrincipalGroupMembership|Group)|objectcategory=group).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(\\\s+(localgroup|group(s?)\\\s+.*doma)|Get-AD(PrincipalGroupMembership|Group)|objectcategory=group).*'',
   ''i'') '
 techniques:
 - discovery:permission groups discovery:domain groups

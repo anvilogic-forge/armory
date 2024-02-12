@@ -8,8 +8,7 @@ description: 'Adversaries may attempt to get a listing of domain accounts. This 
   Atomics T1087.002 Test #14 Atomics T1087.002 Test #16'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(searchroot|objectcategory|userenum).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(searchroot|objectcategory|userenum).*'',
   ''i'') '
 techniques:
 - discovery:account discovery:domain account

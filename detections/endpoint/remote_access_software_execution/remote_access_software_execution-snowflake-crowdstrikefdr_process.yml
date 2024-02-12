@@ -16,8 +16,7 @@ description: 'Remote access tools are commonly used as legitimate technical supp
   Test #5'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process_path, ''.*(TeamViewer\\\.exe|AnyDesk\\\.exe|LMIIgnition\\\.exe|GoToAssist\\\.exe|ScreenConnect\\\.exe|ammyy\\\.exe|RemotePC\\\.exe|NetSupport\\\.exe|UltraViewer\\\.exe|UltraVNC\\\.exe|Splashtop\\\.exe|Supremo\\\.exe|PCICTLUI.exe).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process_path, ''.*(TeamViewer\\\.exe|AnyDesk\\\.exe|LMIIgnition\\\.exe|GoToAssist\\\.exe|ScreenConnect\\\.exe|ammyy\\\.exe|RemotePC\\\.exe|NetSupport\\\.exe|UltraViewer\\\.exe|UltraVNC\\\.exe|Splashtop\\\.exe|Supremo\\\.exe|PCICTLUI.exe).*'',
   ''i'') '
 techniques:
 - command-and-control:remote access software

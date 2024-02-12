@@ -6,9 +6,8 @@ description: 'mshta.exe is a Windows utility used for executing HTML application
   LockBit'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%mshta.exe'' and regexp_like(process,
-  ''.*(http|ftp)s?:\\\/\\\/.*'', ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%mshta.exe''
+  and regexp_like(process, ''.*(http|ftp)s?:\\\/\\\/.*'', ''i'') '
 techniques:
 - command-and-control:ingress tool transfer
 - defense-evasion:system binary proxy execution:mshta

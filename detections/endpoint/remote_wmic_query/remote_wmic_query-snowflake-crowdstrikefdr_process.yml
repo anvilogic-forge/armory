@@ -8,8 +8,8 @@ description: 'An adversary can use WMI to interact with local and remote systems
   -- Threat Actor Association: Earth Estries, Flax Typhoon'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*(/node:).*'', ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(/node:).*'',
+  ''i'') '
 techniques:
 - execution:windows management instrumentation
 technique_id: null

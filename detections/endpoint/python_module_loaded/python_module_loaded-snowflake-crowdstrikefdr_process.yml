@@ -5,8 +5,7 @@ description: 'This use case detects when a Python module and possible destinatio
   and scripts for execution. Atomic Test T1048.003 Test #1'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
   ''.*python\d?\s+(-m|--module)\\\s+\\\w*\\\s+[0-9]{3,5}.*'', ''i'') and (process_path
   ilike ''%python%'') '
 techniques:

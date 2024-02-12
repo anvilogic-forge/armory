@@ -4,8 +4,7 @@ description: Adversaries may lists the organizational units (OUs) in a parent or
   unit or root during discovery activities in AWS environments.
 logic_format: snowflake
 logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
-  = 'ListOrganizationalUnitsForParent'
+  and event_name = 'ListOrganizationalUnitsForParent'
 techniques:
 - discovery:system information discovery
 technique_id: null

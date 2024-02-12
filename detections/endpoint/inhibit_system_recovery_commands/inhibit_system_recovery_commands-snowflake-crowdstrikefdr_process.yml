@@ -9,8 +9,7 @@ description: 'Adversaries may disable or delete system recovery features during 
   T1490 Test #4 Atomics T1490 Test #7'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and ((regexp_like(process, ''.*vssadmin[^a-z].*'',
+  sysdate()) and event_platform ilike ''%Win%'' and ((regexp_like(process, ''.*vssadmin[^a-z].*'',
   ''i'') and regexp_like(process, ''.*[^a-z]delete[^a-z].*'', ''i'') and regexp_like(process,
   ''.*[^a-z]shadows[^a-z].*'', ''i'') and regexp_like(process, ''.*[^a-z]all.*'',
   ''i'') and regexp_like(process, ''.*[^a-z]quiet.*'', ''i'')) OR (regexp_like(process,

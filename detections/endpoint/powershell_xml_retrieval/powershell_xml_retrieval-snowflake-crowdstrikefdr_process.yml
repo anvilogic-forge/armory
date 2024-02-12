@@ -5,8 +5,7 @@ description: 'This use case detects PowerShell commands attempting to retrieve d
   #8'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(xml|MsXml2\\\.ServerXmlHttp|ComObject).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(xml|MsXml2\\\.ServerXmlHttp|ComObject).*'',
   ''i'') '
 techniques:
 - execution:command and scripting interpreter:powershell

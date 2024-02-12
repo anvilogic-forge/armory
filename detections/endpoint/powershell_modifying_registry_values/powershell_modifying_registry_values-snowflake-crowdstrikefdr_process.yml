@@ -8,8 +8,7 @@ description: 'Adversaries may interact with the Windows Registry to hide configu
   T1546.008 Test #1'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(Invoke-Expression|\\\Wiex\\\W).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(Invoke-Expression|\\\Wiex\\\W).*'',
   ''i'') and regexp_like(process, ''.*(HKCU|HKLM|HKEY_LOCAL_MACHINE|HKEY_CURRENT_USER).*'',
   ''i'') '
 techniques:

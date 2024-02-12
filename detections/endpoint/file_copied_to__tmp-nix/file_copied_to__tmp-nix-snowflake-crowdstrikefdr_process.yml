@@ -8,8 +8,7 @@ description: '/tmp is a world-writeable directory and is a common destination us
   #2 Atomics T1027.002 Test #3 Atomics T1027.002 Test #4'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform = ''Mac'' or event_platform = ''Lin'') and regexp_like(process,
+  sysdate()) and (event_platform = ''Mac'' or event_platform = ''Lin'') and regexp_like(process,
   ''.*(cp|mv)\\\s+.+\\\s+\\\/tmp\\\/.*'', ''i'') '
 techniques:
 - defense-evasion:masquerading

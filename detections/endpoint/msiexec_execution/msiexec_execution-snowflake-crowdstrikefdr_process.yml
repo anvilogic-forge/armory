@@ -8,8 +8,7 @@ description: msiexec.exe is a Windows system component used to install and modif
   Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%msiexec.exe'' '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%msiexec.exe'' '
 techniques:
 - defense-evasion:system binary proxy execution:msiexec
 technique_id:

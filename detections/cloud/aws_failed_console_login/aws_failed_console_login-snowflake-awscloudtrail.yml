@@ -4,8 +4,7 @@ description: 'Adversaries may attempt to gain access to the AWS console by loggi
   in with guessed or recovered credentials. -- Threat Actor Association: LUCR-3'
 logic_format: snowflake
 logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
-  = 'ConsoleLogin' and response ilike '%Failure%'
+  and event_name = 'ConsoleLogin' and response ilike '%Failure%'
 techniques:
 - credential-access:brute force
 technique_id: null

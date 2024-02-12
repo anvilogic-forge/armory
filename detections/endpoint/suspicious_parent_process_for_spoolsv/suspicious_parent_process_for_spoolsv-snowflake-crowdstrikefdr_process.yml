@@ -6,8 +6,7 @@ description: This use case detects when the Windows print spooler process (spool
   process for spoolsv.exe is services.exe.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process_path, ''.*(\\\x5csystem32\\\x5cspoolsv\\\.exe).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process_path, ''.*(\\\x5csystem32\\\x5cspoolsv\\\.exe).*'',
   ''i'') and parent_process_name != ''services.exe'' and parent_process_name != ''-''
   and parent_process_name is not null and parent_process_name != ''%14!S!'' '
 techniques:

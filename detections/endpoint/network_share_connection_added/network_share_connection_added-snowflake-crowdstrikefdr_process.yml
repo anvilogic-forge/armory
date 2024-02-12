@@ -7,8 +7,7 @@ description: 'Adversaries may use Valid Accounts to interact with a remote netwo
   Preta/BRONZE PRESIDENT/TA416/RedDelta) -- Atomics T1070.005 Test #1'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*net(\\\.exe)?\\\s+(share|use)\\\s+\\\S+.*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*net(\\\.exe)?\\\s+(share|use)\\\s+\\\S+.*'',
   ''i'') and not regexp_like(process, ''.*/delete.*'', ''i'') '
 techniques:
 - lateral-movement:remote services:smb/windows admin shares

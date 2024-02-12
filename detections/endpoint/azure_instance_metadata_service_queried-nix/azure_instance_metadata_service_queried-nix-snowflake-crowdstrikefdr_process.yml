@@ -9,9 +9,8 @@ description: The Azure Instance Metadata Service (IMDS) provides information abo
   Metadata:true.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'') and process_path
-  ilike ''%curl%'' and regexp_like(process, ''.*Metadata:true.*http:\\\/\\\/169\\\.254\\\.169\\\.254\\\/metadata\\\/instance.*'',
+  sysdate()) and (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'')
+  and process_path ilike ''%curl%'' and regexp_like(process, ''.*Metadata:true.*http:\\\/\\\/169\\\.254\\\.169\\\.254\\\/metadata\\\/instance.*'',
   ''i'') '
 techniques:
 - credential-access:unsecured credentials:cloud instance metadata api

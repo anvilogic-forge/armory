@@ -10,8 +10,7 @@ description: Adversaries may inject code into processes in order to evade proces
   with process injection.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(VirtualAlloc|VirtualAllocEx|VirtualProtect|LdrLoadDll|LoadLibrary|LoadLibraryA|LoadLibraryEx|GetProcAddress|OpenProcess|OpenProcessToken|AdjustTokenPrivileges|WriteProcessMemory|CreateRemoteThread|NtCreateThreadEx|CreateThread|QueueUserAPC|SuspendThread|ResumeThread|GetDelegateForFunctionPointer).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(VirtualAlloc|VirtualAllocEx|VirtualProtect|LdrLoadDll|LoadLibrary|LoadLibraryA|LoadLibraryEx|GetProcAddress|OpenProcess|OpenProcessToken|AdjustTokenPrivileges|WriteProcessMemory|CreateRemoteThread|NtCreateThreadEx|CreateThread|QueueUserAPC|SuspendThread|ResumeThread|GetDelegateForFunctionPointer).*'',
   ''i'') '
 techniques:
 - privilege-escalation:process injection

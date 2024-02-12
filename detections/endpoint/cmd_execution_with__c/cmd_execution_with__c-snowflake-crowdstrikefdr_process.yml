@@ -8,8 +8,7 @@ description: 'The cmd.exe /c command is used to execute a specific command and t
   -- Atomics T1036 Test #2 Atomics T1059.003 Test #5'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*cmd(\\\.exe\\\"?)*\\\s+/c\\\s+".*'',
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*cmd(\\\.exe\\\"?)*\\\s+/c\\\s+".*'',
   ''i'') '
 techniques:
 - execution:command and scripting interpreter:windows command shell

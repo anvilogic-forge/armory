@@ -9,9 +9,8 @@ description: 'Adversaries may abuse Compiled HTML files (.chm) to conceal malici
   #2'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and parent_process_name ilike ''%hh%'' and regexp_like(process_path,
-  ''.*(cmd|powershell|pwsh|wscript|cscript|regsvr32|wmic|rundll32|MSHTA|CertUtil|CertReq|MSbuild|installutil|schtasks|msiexec).*'',
+  sysdate()) and event_platform = ''Win'' and parent_process_name ilike ''%hh%'' and
+  regexp_like(process_path, ''.*(cmd|powershell|pwsh|wscript|cscript|regsvr32|wmic|rundll32|MSHTA|CertUtil|CertReq|MSbuild|installutil|schtasks|msiexec).*'',
   ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:compiled html file

@@ -6,9 +6,8 @@ description: 'This use case detects commands setting the hidden attribute to fil
   #4'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%attrib%'' and regexp_like(process,
-  ''.*\\\s+\\\+h\\\s+.*'', ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%attrib%''
+  and regexp_like(process, ''.*\\\s+\\\+h\\\s+.*'', ''i'') '
 techniques:
 - defense-evasion:file and directory permissions modification:windows file and directory
   permissions modification

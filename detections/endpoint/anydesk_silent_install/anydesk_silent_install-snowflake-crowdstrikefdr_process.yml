@@ -10,8 +10,7 @@ description: 'An adversary may use legitimate desktop support and remote access 
   BumbleBee, Clop, Conti, Diavol, Royal'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*(anydesk.exe).*(--silent).*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(anydesk.exe).*(--silent).*'',
   ''i'') '
 techniques:
 - command-and-control:remote access software

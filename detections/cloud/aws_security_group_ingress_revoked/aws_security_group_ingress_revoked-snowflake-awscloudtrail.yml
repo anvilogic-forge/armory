@@ -6,8 +6,7 @@ description: Detects when an ingress rule has been removed from a security group
   destination security groups.
 logic_format: snowflake
 logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
-  and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and event_name
-  = 'RevokeSecurityGroupIngress'
+  and event_name = 'RevokeSecurityGroupIngress'
 techniques:
 - persistence:account manipulation
 technique_id: null

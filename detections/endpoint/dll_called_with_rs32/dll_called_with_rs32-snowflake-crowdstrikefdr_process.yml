@@ -7,8 +7,8 @@ description: Threat actors including Qbot have been observed using rundll32.exe 
   Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\,RS32.*'', ''i'') '
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\.dll\,RS32.*'',
+  ''i'') '
 techniques:
 - defense-evasion:system binary proxy execution:rundll32
 technique_id:

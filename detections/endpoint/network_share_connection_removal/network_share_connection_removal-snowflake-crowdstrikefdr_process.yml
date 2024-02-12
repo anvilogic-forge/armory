@@ -5,8 +5,7 @@ description: 'Adversaries may remove share connections that are no longer useful
   Test #3 Atomics T1070.005 Test #5'
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform = ''Win'' and regexp_like(process, ''.*net(\\\.exe)?\\\s+share\\\s+.*/d.*'',
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*net(\\\.exe)?\\\s+share\\\s+.*/d.*'',
   ''i'') '
 techniques:
 - defense-evasion:indicator removal:network share connection removal

@@ -6,8 +6,7 @@ description: Advanced Port Scanner is a free network scanner that allows users t
   to use Advanced Port Scanner during reconnaissance activities.
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%advanced_port_scanner.exe'' '
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%advanced_port_scanner.exe'' '
 techniques:
 - discovery:network service discovery
 technique_id: null

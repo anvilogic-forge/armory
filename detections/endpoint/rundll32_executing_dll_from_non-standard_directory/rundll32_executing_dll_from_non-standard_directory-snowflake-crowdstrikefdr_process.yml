@@ -9,9 +9,8 @@ description: rundll32.exe is a legitimate Windows utility used to run functions 
   (LOLBIN)
 logic_format: snowflake
 logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
-  sysdate()) and to_timestamp(date_part(epoch_second, event_time)) < $latest$ and
-  event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe'' and process
-  ilike ''%.dll%'' and not regexp_like(process, ''.*(rundll32(\\\.exe)?\\\"?\\\s+(\\\/\\\w+\\\s+)?[\\\w.]+\\\.dll).*'',
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%rundll32.exe''
+  and process ilike ''%.dll%'' and not regexp_like(process, ''.*(rundll32(\\\.exe)?\\\"?\\\s+(\\\/\\\w+\\\s+)?[\\\w.]+\\\.dll).*'',
   ''i'') and not regexp_like(process, ''.*(C:\\\x5c(Windows\\\x5c(System32|WinSxS|SysWoW64)|Program\\\sFiles(\\\s\\\(x86\\\))?\\\x5c.+\\\.dll)).*'',
   ''i'') '
 techniques:
