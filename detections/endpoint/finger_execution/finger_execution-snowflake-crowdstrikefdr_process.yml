@@ -1,0 +1,21 @@
+id: '7833.14679'
+title: Finger Execution
+description: 'Finger.exe, a command that ships with Windows to retrieve information
+  about users on remote computers running the Finger service or daemon. Communication
+  is carried via the Name/Finger network communication protocol.As this is a common
+  component on Windows, it can be leveraged to perform living-off-the-land attacks.
+  -- Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN) -- Software Association:
+  MINEBRIDGE -- Atomics T1105 Test #16 '
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and (process_path ilike ''%finger.exe''
+  or regexp_like(process, ''.*\\\S+@(.*?\\\.\\\w{2,4}|\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}).*'',
+  ''i'')) '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: null
+data_category:
+- EDR Logs
+references:
+- https://dmfrsecurity.com/2020/12/31/using-finger-exe-to-transfer-files/
+- https://strontic.github.io/xcyclopedia/library/finger.exe-8E9AFA491D704EAF9183B15A189BBDE2.html
