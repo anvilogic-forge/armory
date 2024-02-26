@@ -1,0 +1,20 @@
+id: '10321.18029'
+title: Linux Network Sniffing
+description: 'An attacker may use a variety of tools to sniff the traffic on the network
+  of a compromised machine. This is part of reconnaissance after compromising a system
+  in order to gather more information about the network or other potentially vulnerable
+  services/servers in order to pivot to them or make lateral movements inside the
+  network. Atomic Test T1040 - Test #1'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform = ''Lin'' or event_platform = ''Mac'') and regexp_like(process,
+  ''.*(tshark|tcpdump\\\s+\\\S+).*'', ''i'') '
+techniques:
+- credential-access:network sniffing
+- discovery:network sniffing
+technique_id: 
+- T1040
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1040/T1040.md#atomic-test-1---packet-capture-linux

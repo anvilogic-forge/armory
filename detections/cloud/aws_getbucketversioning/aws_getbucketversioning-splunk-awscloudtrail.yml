@@ -1,0 +1,24 @@
+id: '28146.51192'
+title: AWS GetBucketVersioning
+description: After gaining access to an AWS account, threat actors may perform enumeration
+  and reconnaissance activities to form follow-on behaviors. This use case detects
+  the AWS API call GetBucketVersioning which retrieves the versioning state of a bucket.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(GetBucketVersioning) | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- discovery:cloud infrastructure discovery
+- discovery:cloud storage object discovery
+technique_id: 
+- T1580
+- T1619
+data_category:
+- AWS CloudTrail logs
+references:
+- https://dfir.ch/posts/aws_ransomware/
+- https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html

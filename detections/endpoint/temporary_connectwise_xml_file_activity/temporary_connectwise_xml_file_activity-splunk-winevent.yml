@@ -1,0 +1,26 @@
+id: '28096.51137'
+title: Temporary ConnectWise xml File Activity
+description: ConnectWise ScreenConnect is a popular remote desktop solution. ConnectWise
+  released an advisory detailing a critical authentication bypass vulnerability affecting
+  ScreenConnect versions prior to 23.9.8. This use case detects when an XML file in
+  the \Temp\ScreenConnect\[version number]\ directory has been created, modified,
+  or deleted. To enable detection of the file activities associated with the vulnerability,
+  configure the Advanced Auditing policy to log successful Windows Event ID 4663 events,
+  and set a System Access Control List (SACL) on the target directory to monitor file
+  modifications. See Huntress article in references for detailed information.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4663) OR
+  "<EventID>4663<") "C:\\Windows\\Temp\\ScreenConnect\\" ".xml" | regex ObjectName="(?i)C:\x5cWindows\x5cTemp\x5c\ScreenConnect\x5c.+\.xml"
+  | table _time, host, user, process, process_*, ObjectName | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- persistence:external remote services
+- command-and-control:remote access software
+- initial-access:external remote services
+technique_id: null
+data_category:
+- File monitoring
+- Windows event logs
+references:
+- https://www.huntress.com/blog/detection-guidance-for-connectwise-cwe-288-2
+- https://www.connectwise.com/company/trust/security-bulletins/connectwise-screenconnect-23.9.8

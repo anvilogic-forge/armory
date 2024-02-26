@@ -1,0 +1,25 @@
+id: '25326.47153'
+title: Scheduled Task with Potential SSH Tunnel - Windows
+description: Threat actors have been observed using scheduled tasks to create reverse
+  SSH tunnels to facilitate persistence on a compromised machine as reported by DFIR.
+  This use case detects scheduled tasks created with commands indicating potential
+  SSH tunnels. The regex filtering matches on the patterns <user>@<IP address> and
+  <port number>:<IP Address> :<port number>. Living Off the Land Binary and Scripts
+  (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") "@" "/create" ("-L"
+  OR "-R") | where match(process, "\w+@\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}") and match(process,
+  "\d{1,5}:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}") and match(process, "-L|R")
+  | table _time, host, user, process, process_*, parent_process_name, parent_process_*,
+  signature_id | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:scheduled task/job
+- command-and-control:protocol tunneling
+technique_id: 
+- T1053
+- T1572
+data_category:
+- PowerShell logs
+references:
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

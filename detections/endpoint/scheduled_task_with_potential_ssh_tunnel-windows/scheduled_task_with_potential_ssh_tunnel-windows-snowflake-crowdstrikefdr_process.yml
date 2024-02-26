@@ -1,0 +1,24 @@
+id: '25326.47108'
+title: Scheduled Task with Potential SSH Tunnel - Windows
+description: Threat actors have been observed using scheduled tasks to create reverse
+  SSH tunnels to facilitate persistence on a compromised machine as reported by DFIR.
+  This use case detects scheduled tasks created with commands indicating potential
+  SSH tunnels. The regex filtering matches on the patterns <user>@<IP address> and
+  <port number>:<IP Address> :<port number>. Living Off the Land Binary and Scripts
+  (LOLBAS) (LOLBIN)
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process like ''%/create%'' and
+  (process ilike ''%-T%'' or process ilike ''%-R%'') and regexp_like(process, ''.*(\\\w+@\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}).*'',
+  ''i'') and regexp_like(process, ''.*(\\\d{1,5}:\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}:\\\d{1,5}).*'',
+  ''i'') '
+techniques:
+- execution:scheduled task/job
+- command-and-control:protocol tunneling
+technique_id: 
+- T1053
+- T1572
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

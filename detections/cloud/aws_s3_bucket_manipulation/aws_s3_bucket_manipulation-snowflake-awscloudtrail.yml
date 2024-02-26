@@ -1,0 +1,23 @@
+id: '5466.13659'
+title: AWS S3 Bucket Manipulation
+description: Detect when various S3 bucket manipulation events occur within an AWS
+  environment which can be indicative of malicious behavior being performed from a
+  compromised account or an insider threat.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and ( event_name = 'PutBucketAcl' or event_name = 'PutBucketPolicy' or event_name
+  = 'PutBucketCors' or event_name = 'PutBucketLifecycle' or event_name = 'PutBucketReplication'
+  or event_name = 'DeleteBucketPolicy' or event_name = 'DeleteBucketCors' or event_name
+  = 'DeleteBucketLifecycle' or event_name = 'DeleteBucketReplication' or event_name
+  = 'DeleteBucket' )
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+- impact:data destruction
+- collection:data from cloud storage
+technique_id: 
+- T1578
+- T1485
+- T1530
+data_category:
+- AWS CloudTrail logs
+references: null

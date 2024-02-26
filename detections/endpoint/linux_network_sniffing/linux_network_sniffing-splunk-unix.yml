@@ -1,0 +1,19 @@
+id: '10321.17662'
+title: Linux Network Sniffing
+description: 'An attacker may use a variety of tools to sniff the traffic on the network
+  of a compromised machine. This is part of reconnaissance after compromising a system
+  in order to gather more information about the network or other potentially vulnerable
+  services/servers in order to pivot to them or make lateral movements inside the
+  network. Atomic Test T1040 - Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(tshark) OR TERM(tcpdump)
+  | bin span=60s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:network sniffing
+- discovery:network sniffing
+technique_id: 
+- T1040
+data_category:
+- Linux audit logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1040/T1040.md#atomic-test-1---packet-capture-linux
