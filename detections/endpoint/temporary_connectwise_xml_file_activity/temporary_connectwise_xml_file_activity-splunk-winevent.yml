@@ -17,7 +17,9 @@ techniques:
 - persistence:external remote services
 - command-and-control:remote access software
 - initial-access:external remote services
-technique_id: null
+technique_id: 
+- T1133
+- T1219
 data_category:
 - File monitoring
 - Windows event logs
