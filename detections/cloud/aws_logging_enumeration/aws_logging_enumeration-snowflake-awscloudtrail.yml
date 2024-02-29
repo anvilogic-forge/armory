@@ -1,0 +1,20 @@
+id: '15708.23340'
+title: AWS Logging Enumeration
+description: Threat identifier for AWS API calls associated with logging enumeration.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())
+  and event_name IN('GetQueryResults', 'GetBucketLogging', 'GetLogRecord', 'GetFlowLogsIntegrationTemplate',
+  'DescribeLogGroups', 'DescribeLogStreams', 'DescribeFlowLogs', 'DescribeSubscriptionFilters',
+  'ListTagsLogGroup')
+techniques:
+- discovery:cloud infrastructure discovery
+- discovery:system information discovery
+- discovery:cloud service discovery
+technique_id: 
+- T1580
+- T1082
+- T1526
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/

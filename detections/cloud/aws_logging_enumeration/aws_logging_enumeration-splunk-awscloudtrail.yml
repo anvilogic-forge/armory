@@ -1,0 +1,25 @@
+id: '15708.23343'
+title: AWS Logging Enumeration
+description: Threat identifier for AWS API calls associated with logging enumeration.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(GetQueryResults) OR TERM(GetBucketLogging)
+  OR TERM(GetLogRecord) OR TERM(GetFlowLogsIntegrationTemplate) OR TERM(DescribeLogGroups)
+  OR TERM(DescribeLogStreams) OR TERM(DescribeFlowLogs) OR TERM(DescribeSubscriptionFilters)
+  OR TERM(ListTagsLogGroup) | table _time, host, user, account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id `group_events("src_ip",90s)`| eventstats dc(event_name) as dc_event by
+  src_ip, _time| where dc_event > 2 | lookup dnslookup clientip as src_ip OUTPUT clienthost
+  as src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- discovery:cloud infrastructure discovery
+- discovery:system information discovery
+- discovery:cloud service discovery
+technique_id: 
+- T1580
+- T1082
+- T1526
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/
