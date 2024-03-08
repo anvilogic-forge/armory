@@ -1,0 +1,26 @@
+id: '19911.35072'
+title: Startup Folder Location Modified - Windows
+description: 'Adversaries may achieve persistence by adding a program to a startup
+  folder or referencing it with a Registry run key. Adding an entry to the "run keys"
+  in the Registry or startup folder will cause the program referenced to be executed
+  when a user logs in. Adversaries may modify registry values to point to a new startup
+  folder where a payload could be stored to launch at boot. This use case detects
+  modifications to registry values that can be used to change the startup folder location.
+  Atomics T1546.002 Test #10 Atomics T1546.002 Test #11'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) TERM(reg) TERM(add) "Startup" "Windows\\CurrentVersion\\Explorer\\User
+  Shell Folders" | table _time, host, user, parent_process*, process, process_*, signature_id,
+  user_id | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+- privilege-escalation:boot or logon autostart execution:registry run keys / startup
+  folder
+technique_id:
+- T1547.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md#atomic-test-10---change-startup-folder---hklm-modify-user-shell-folders-common-startup-value
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md#atomic-test-11---change-startup-folder---hkcu-modify-user-shell-folders-startup-value

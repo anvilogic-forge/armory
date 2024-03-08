@@ -1,0 +1,33 @@
+id: '1015.1018'
+title: 'PowerShell: SMBExec Script'
+description: 'This PowerShell script (SMBExec.ps1) performs SMBExec style command
+  execution with NTLMv2 pass the hash authentication. Invoke-SMBExec supports SMB1
+  and SMB2 with and without SMB signing. Threat Actor Association: FIN12'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` EventCode=4103 AND ("[Char][System.Convert]::ToInt16($_,16)"
+  OR "System.Net.Sockets.TCPClient" OR "System.Security.Cryptography.HMACMD5" OR "successfully
+  authenticated on" OR "failed to authenticate on" OR "Invoke-SMBExec.ps1") | table
+  _time, host, user dvc, dvc_nt_host, event_id, eventtype, host, index, parameters,
+  process, process_name, process_path, shell, signature_id, source, sourcetype, tag,
+  user, user_id | transaction dvc maxspan=1m| fields - _raw closed_txn duration eventcount
+  field_match_sum linecount | stats values(*) as * by dvc _time | where like(process,"%Invoke-SMBExec%")
+  OR(like(process,"%[Char][System.Convert]::ToInt16($_,16)%") ANDlike(process,"%System.Net.Sockets.TCPClient%")
+  ANDlike(process,"%System.Security.Cryptography.HMACMD5%") AND(like(process,"%successfully
+  authenticated on%") OR like(process,"%failed to authenticate on%"))) '
+techniques:
+- execution:command and scripting interpreter:powershell
+- defense-evasion:indirect command execution
+- execution:system services:service execution
+- lateral-movement:remote services:smb/windows admin shares
+- lateral-movement:exploitation of remote services
+technique_id:
+- T1059.001
+- T1202
+- T1021.002
+- T1569.002
+- T1210
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://github.com/EmpireProject/Empire/blob/master/data/module_source/lateral_movement/Invoke-SMBExec.ps1

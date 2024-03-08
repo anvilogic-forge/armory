@@ -1,0 +1,25 @@
+id: '28458.51742'
+title: AWS StartSession
+description: StartSession initiates a connection to a target (for example, a managed
+  node) for a Session Manager session, returning a URL and token that can be used
+  to open a WebSocket connection for sending input and receiving outputs. Because
+  this method does not require an SSH inbound rule in the associated security group
+  of the EC2 instance, security group rules are bypassed. This use case detection
+  when StartSession is called.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(StartSession) | table _time, host,
+  user, account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id | bin span=1s | stats values(*)
+  as * by _time, src_ip | lookup dnslookup clientip as src_ip OUTPUT clienthost as
+  src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- lateral-movement:remote services
+technique_id: 
+- T1021
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.invictus-ir.com/news/automated-first-response-in-aws-using-sigma-and-athena?utm_source=substack&utm_medium=email
+- https://unit42.paloaltonetworks.com/cloud-lateral-movement-techniques/
+- https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_StartSession.html

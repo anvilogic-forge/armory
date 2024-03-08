@@ -1,0 +1,28 @@
+id: '28461.51743'
+title: AWS Instance_Attribute Modifications
+description: The API calls ModifyInstanceAttribute, ModifyDBSnapshotAttribute, and
+  ModifySnapshotAttribute are designed to change configurations and access permissions
+  of AWS EC2 instances, database snapshots, and general snapshots, respectively. A
+  threat actor may misuse these functions to enable unauthorized access to sensitive
+  data or resources for lateral movement, data exfiltration, or persistence within
+  the environment. This use case detects when ModifyInstanceAttribute, ModifyDBSnapshotAttribute,
+  or ModifySnapshotAttribute is called.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(ModifyInstanceAttribute) OR TERM(ModifyDBSnapshotAttribute)
+  OR TERM(ModifySnapshotAttribute) | table _time, host, user, account, region, src_ip,
+  http_user_agent, access_key, user, user_id, identity_type, role, event_name, event_category,
+  cloud_service, request_parameters, response, mfa_enabled, permissions, identity,
+  action, resource_id, object_id | bin span=1s | stats values(*) as * by _time, src_ip
+  | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+technique_id: 
+- T1578
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.invictus-ir.com/news/automated-first-response-in-aws-using-sigma-and-athena?utm_source=substack&utm_medium=email
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceAttribute.html
+- https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBSnapshotAttribute.html
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifySnapshotAttribute.html
