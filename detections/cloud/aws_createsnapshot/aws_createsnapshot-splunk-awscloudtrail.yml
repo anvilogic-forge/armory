@@ -1,0 +1,26 @@
+id: '28569.52019'
+title: AWS CreateSnapshot
+description: The CreateSnapshot API call is used to create a snapshot of an EBS volume.
+  A snapshot is a point-in-time copy of an EBS volume that can be used to create a
+  new EBS volume (for data recovery or scaling purposes) or for backup. The CreateSnapshot
+  operation captures the state of the EBS volume at the moment the snapshot command
+  is executed, including all the data it contains, and stores it in Amazon S3. Threat
+  actors can abuse this technique to gain access to data stored on EC2 instances where
+  they are unable to achieve direct access. This use case detects CreateSnapshot events.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(CreateSnapshot) | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- collection:data from cloud storage
+technique_id: 
+- T1530
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateSnapshot.html
+- https://unit42.paloaltonetworks.com/cloud-lateral-movement-techniques/

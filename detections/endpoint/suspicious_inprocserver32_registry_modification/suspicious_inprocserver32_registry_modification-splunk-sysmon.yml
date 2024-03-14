@@ -1,0 +1,26 @@
+id: '28655.52127'
+title: Suspicious InprocServer32 Registry Modification
+description: The Windows Disk Cleanup utility is a legacy tool designed to delete
+  cache and temporary files to improve system performance and free up hard disk space.
+  Threat actors may insert a malicious DLL path into the registry key for the Disk
+  Cleanup Scheduled Task, ensuring that their code is executed whenever Disk Cleanup
+  runs, thus maintaining persistence on the compromised system without immediate detection.
+  This use case detects commands to edit Disk Cleanup registry keys to include DLLs.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` ((TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(reg) OR "reg.exe") (TERM(add) "/t" "/d" "/v")) OR (TERM(EventCode=13) OR "<EventCode>13<")
+  "HKCU\\SOFTWARE\\Classes\\CLSID\\*\\InprocServer32" ".dll" | table _time, host,
+  user, parent_process_name, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- persistence:event triggered execution:component object model hijacking
+technique_id:
+- T1546.015
+data_category:
+- Windows Sysmon
+- Windows Registry
+references:
+- https://pentestlab.blog/2024/01/29/persistence-disk-clean-up/
+- https://cocomelonc.github.io/persistence/2022/11/16/malware-pers-19.html
+- https://www.hexacorn.com/blog/2018/09/02/beyond-good-ol-run-key-part-86/

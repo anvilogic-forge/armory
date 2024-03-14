@@ -1,0 +1,24 @@
+id: '28613.52077'
+title: Rundll32 Spawned by Disk Cleanup
+description: The Windows Disk Cleanup utility is a legacy tool designed to delete
+  cache and temporary files to improve system performance and free up hard disk space.
+  It is possible to abuse the utility to establish persistence by executing arbitrary
+  code when Disk Cleanup is initiated via COM hijacking. This use case detects rundll32.exe
+  processes launched by CleanMgr.exe (Disk Cleanup binary), indicating potential COM
+  hijacking has taken place. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "cleanmgr" "rundll32" | where match(parent_process_name,
+  "(?i)cleanmgr\.exe") and match(process_name, "(?i)rundll32\.exe") | table _time,
+  host, user, parent_*, process, process_* | bin span=1s | stats values(*) as * by
+  _time, host '
+techniques:
+- persistence:event triggered execution:component object model hijacking
+technique_id:
+- T1546.015
+data_category:
+- Windows event logs
+references:
+- https://pentestlab.blog/2024/01/29/persistence-disk-clean-up/
+- https://cocomelonc.github.io/persistence/2022/11/16/malware-pers-19.html
+- https://www.hexacorn.com/blog/2018/09/02/beyond-good-ol-run-key-part-86/

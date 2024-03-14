@@ -1,0 +1,24 @@
+id: '15884.23699'
+title: Suspicious PowerShell Clipboard Activity
+description: 'Adversaries can use a variety of commands to obfuscate their activity.
+  This use case detects PowerShell commands involving combinations of the SendKeys
+  cmdlet, clipboard access, and native text editors. -- Software Association: BbyStealer
+  -- Atomics T1059.001 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") ("[Windows.Forms.Clipboard]"
+  TERM(sendkeys)) (TERM(notepad) OR TERM(wordpad)) | table _time, host, user, process,
+  process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- collection:clipboard data
+- execution:command and scripting interpreter
+technique_id:
+- T1059.001
+- T1115
+data_category:
+- PowerShell logs
+- Process command-line parameters
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md#atomic-test-5---mimikatz---cradlecraft-pssendkeys
+- https://cyble.com/blog/bbystealer-malware-resurfaces-sets-sights-on-vpn-users/
