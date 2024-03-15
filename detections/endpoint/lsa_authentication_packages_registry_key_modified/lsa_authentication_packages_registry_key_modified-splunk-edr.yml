@@ -1,0 +1,24 @@
+id: '19656.34272'
+title: LSA Authentication Packages Registry Key Modified
+description: 'Adversaries can use the autostart mechanism provided by Local Security
+  Authority (LSA) authentication packages for persistence or privilege escalation
+  by placing a reference to a binary in the Windows Registry location HKLM\SYSTEM\CurrentControlSet\Control\Lsa\.
+  The binary will then be executed by the system when the authentication packages
+  are loaded. This use case detects modifications to registry values involving LSA
+  authentication package configurations. -- Software Association: Cactus -- Atomics
+  T1547.002 Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(reg) TERM(add) ("HKLM" OR
+  "HKEY_LOCAL_MACHINE") ("lsa" "Authentication Packages") | table _time, host, user,
+  parent_process*, process, process_*, signature_id, user_id | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- privilege-escalation:boot or logon autostart execution:authentication package
+- persistence:boot or logon autostart execution:authentication package
+technique_id:
+- T1547.002
+data_category:
+- EDR Logs
+references:
+- https://www.crysys.hu/publications/files/skywiper.pdf
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.002/T1547.002.md#atomic-test-1---authentication-package

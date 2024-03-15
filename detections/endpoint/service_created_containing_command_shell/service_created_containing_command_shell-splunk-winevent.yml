@@ -1,0 +1,17 @@
+id: '22357.39390'
+title: Service Created containing Command Shell
+description: 'This use case detects when a service has been created (event 7045) containing
+  PowerShell or cmd commands. -- Software Association: BlueSky'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=7045) OR
+  "<EventID>7045<") "powershell.exe" OR "pwsh.exe" OR "cmd.exe" | table _time, host,
+  user signature_id, member_nt_domain, user, dest_host | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:system services:service execution
+technique_id:
+- T1569.002
+data_category:
+- Windows event logs
+references:
+- https://thedfirreport.com/2021/11/01/from-zero-to-domain-admin/

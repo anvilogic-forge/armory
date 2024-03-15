@@ -1,0 +1,27 @@
+id: '19656.34277'
+title: LSA Authentication Packages Registry Key Modified
+description: 'Adversaries can use the autostart mechanism provided by Local Security
+  Authority (LSA) authentication packages for persistence or privilege escalation
+  by placing a reference to a binary in the Windows Registry location HKLM\SYSTEM\CurrentControlSet\Control\Lsa\.
+  The binary will then be executed by the system when the authentication packages
+  are loaded. This use case detects modifications to registry values involving LSA
+  authentication package configurations. -- Software Association: Cactus -- Atomics
+  T1547.002 Test #1'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (process_path ilike ''%powershell.exe%''
+  or process_path ilike ''%pwsh.exe%'' or process_path ilike ''%cmd.exe%'') and (((process
+  ilike ''%reg%'' and process ilike ''%add%'') or (process ilike ''%Set-ItemProperty%''
+  or process ilike ''%si%'')) and (process ilike ''%HKLM%'' or process ilike ''%HKEY_Local_Machine%'')
+  and process ilike ''%lsa%'' and process ilike ''%Authentication%'' and process ilike
+  ''%Packages%'') '
+techniques:
+- privilege-escalation:boot or logon autostart execution:authentication package
+- persistence:boot or logon autostart execution:authentication package
+technique_id:
+- T1547.002
+data_category:
+- EDR Logs
+references:
+- https://www.crysys.hu/publications/files/skywiper.pdf
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.002/T1547.002.md#atomic-test-1---authentication-package
