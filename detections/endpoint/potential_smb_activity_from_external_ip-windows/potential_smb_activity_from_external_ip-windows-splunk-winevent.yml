@@ -1,0 +1,24 @@
+id: '28893.52427'
+title: Potential SMB Activity from External IP - Windows
+description: Threat actors may scan for hosts with SMB ports exposed to the internet
+  and attempt to access services. This rule detects external attempts to access SMB
+  shares (Event IDs 5140 or 5145) following network logons (Event ID 4624, Logon Type
+  3) within a one minute period correlated by host and user, which may indicate a
+  threat actor's initial access attempt via SMB.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4624) OR
+  "EventID>4624<") Logon_Type=3 AND NOT src_ip IN(::1, 10.0.0.0/8, 127.0.0.0/8, 172.16.0.0/12,
+  192.168.0.0/16, 169.254.0.0/16, fc00::/7, fe80::/10) OR (TERM(EventCode=5140) OR
+  "EventID>5140<" OR TERM(EventCode=5145) OR "EventID>5145<") | iplocation src_ip
+  prefix=geo | where geoCountry!=""| table _time, host, user user, process_name, process_path,
+  src_country, src_dns, src_ip, geo_* | bin span=60s | stats values(*) as * by _time,
+  host, user | where match(signature_id, "5140|5145") and match(signature_id, "4624") '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: 
+- T1190
+data_category:
+- Windows event logs
+references:
+- https://detection.fyi/sigmahq/sigma/windows/builtin/security/account_management/win_security_successful_external_remote_smb_login/
+- https://www.inversecos.com/2020/04/successful-4624-anonymous-logons-to.html

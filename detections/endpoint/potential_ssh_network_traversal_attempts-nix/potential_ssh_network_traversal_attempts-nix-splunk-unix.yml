@@ -1,0 +1,29 @@
+id: '29320.52871'
+title: Potential SSH Network Traversal Attempts - *nix
+description: 'SSH-Snake is a powerful tool designed to perform automatic network traversal
+  using SSH private keys discovered on systems, with the objective of creating a comprehensive
+  map of a network and its dependencies, identifying to what extent a network can
+  be compromised using SSH and SSH private keys starting from a particular system.
+  SSH-Snake can automatically reveal the relationship between systems which are connected
+  via SSH, which would normally take a tremendous amount of time and effort to perform
+  manually. This use case detects SSH key exchange activity across the network with
+  multiple target hosts (default: more than two unique hosts) within a 5 minute period,
+  which may indicate the use of SSH-Snake or similar tools.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` "oKexAlgorithms" "ssh" | table
+  _time, host, user src_ip, src_host, end_time, process_*, session_id, start_time,
+  user, user_id | bucket span=5m _time | stats values(*) as * dc(host) AS unique_targets
+  values(host) as host_targets by _time| where unique_targets > 2 '
+techniques:
+- lateral-movement:remote services:ssh
+- credential-access:unsecured credentials:private keys
+- discovery:remote system discovery
+technique_id:
+- T1021.004
+- T1552.004
+- T1018
+data_category:
+- Linux audit logs
+references:
+- https://github.com/MegaManSec/SSH-Snake
+- https://joshua.hu/ssh-snake-ssh-network-traversal-discover-ssh-private-keys-network-graph

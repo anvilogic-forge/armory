@@ -1,0 +1,26 @@
+id: '29556.53222'
+title: AWS CreateInstances in Lightsail VPS
+description: AWS Lightsail is a simplified compute service that provides an easy way
+  to launch and manage virtual private servers (instances) for various purposes. Threat
+  actors can abuse this service by creating instances to host malicious content, launch
+  attacks, or carry out unauthorized activities. This use case detects CreateInstance
+  events from the Lightsail service.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(CreateInstances) "lightsail.amazonaws.com"
+  | table _time, host, user, account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country'
+techniques:
+- initial-access:valid accounts:cloud accounts
+- initial-access:valid accounts
+technique_id:
+- T1078.004
+- T1078
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.invictus-ir.com/news/the-curious-case-of-dangerdev-protonmail-me
+- https://docs.aws.amazon.com/lightsail/latest/userguide/how-to-create-amazon-lightsail-instance-virtual-private-server-vps.html

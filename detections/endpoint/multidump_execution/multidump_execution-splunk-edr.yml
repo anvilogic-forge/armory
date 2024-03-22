@@ -1,0 +1,24 @@
+id: '28417.52061'
+title: MultiDump.exe Execution
+description: MultiDump is a post-exploitation tool written in C with a Python handler
+  designed to discreetly dump and extract LSASS memory without triggering Defender
+  alerts. This use case detects rundll32 executions with specific command line parameters
+  unique to MultiDump.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "rundll32" "OpenOptimizationControlPanel"
+  "cleanup" "defrag" "optimize:startup" "report" ".dmp" | table _time, host, user,
+  process, process_*, parent_process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- credential-access:os credential dumping:security account manager
+- credential-access:os credential dumping
+- credential-access:os credential dumping:lsass memory
+technique_id:
+- T1003.002
+- T1003
+- T1003.001
+data_category:
+- EDR Logs
+references:
+- https://xre0us.io/posts/multidump/
+- https://github.com/Xre0uS/MultiDump?tab=readme-ov-file

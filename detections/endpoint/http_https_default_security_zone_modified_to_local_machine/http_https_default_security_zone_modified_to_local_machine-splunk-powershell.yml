@@ -1,0 +1,24 @@
+id: '29278.52976'
+title: HTTP_HTTPS Default Security Zone Modified to Local Machine
+description: Threat actors may Windows Registry to reconfigure the default Internet
+  Zone settings for both HTTP and HTTPS, aligning them with the "My Computer" zone.
+  The effectively grants websites the same level of trust as files and applications
+  locally stored on your machine. This use case detects modifications to Windows registry
+  settings to elevate trust levels for websites, treating them similarly to locally
+  stored files.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  "<EventID>4104<") "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\ProtocolDefaults"
+  (" http " OR " https ") (" /d " OR "-Value" OR "0x00000000") | regex process="(?i)HKCU|HKEY_CURRENT_USER|HKLM|HKEY_LOCAL_MACHINE|HKU"
+  | regex process="(?i)\/d\s+0|\-Value\s+0|0x00000000" | table _time, host, user,
+  process, process_name, parent_process_name | bin span=1s | stats values(*) as *
+  by _time, host '
+techniques:
+- defense-evasion:modify registry
+technique_id: 
+- T1112
+data_category:
+- PowerShell logs
+references:
+- https://twitter.com/JAMESWT_MHT/status/1699042827261391247
+- https://attack.mitre.org/techniques/T1112/

@@ -1,0 +1,23 @@
+id: '28886.52418'
+title: Potential Exposed SMB_RDP Port - Windows
+description: Threat actors may attempt to exploit a weakness in an Internet-facing
+  host or system to initially access a network. The weakness in the system can be
+  a software bug, a temporary glitch, or a misconfiguration. This use case detects
+  successful network logon events (event 4624, Type 3) events with an external source
+  IP, which indicates that logon events are being attempted from external IPs.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4624) OR
+  "EventID>4624<") Logon_Type=3 AND NOT src_ip IN(::1, 10.0.0.0/8, 127.0.0.0/8, 172.16.0.0/12,
+  192.168.0.0/16, 169.254.0.0/16, fc00::/7, fe80::/10) | iplocation src_ip prefix=geo
+  | where geoCountry!=""| table _time, host, user user, process_name, process_path,
+  src_country, src_dns, src_ip, geo_* | bin span=30s | stats values(*) as * by _time,
+  host, user '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: 
+- T1190
+data_category:
+- Windows event logs
+references:
+- https://detection.fyi/sigmahq/sigma/windows/builtin/security/account_management/win_security_successful_external_remote_smb_login/
+- https://www.inversecos.com/2020/04/successful-4624-anonymous-logons-to.html

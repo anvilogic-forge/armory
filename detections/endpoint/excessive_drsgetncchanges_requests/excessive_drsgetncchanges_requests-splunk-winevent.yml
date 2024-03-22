@@ -1,0 +1,32 @@
+id: '29487.53152'
+title: Excessive DRSGetNCChanges Requests
+description: 'Adversaries may attempt to access credentials and other sensitive information
+  by abusing a Windows Domain Controller''s application programming interface (API)
+  to simulate the replication process from a remote domain controller using a technique
+  called DCSync. During a FIN8 attack, a desktop device performed more than 100 DRSGetNCChanges
+  requests to a domain controller. Such activity, when not performed by new domain
+  controllers to sync Active Directory contents, can indicate malicious domain or
+  user enumeration, credential compromise or Active Directory enumeration. This use
+  case detects excessive DRSGetNChanges requests (represented by GUID 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2).
+  Note: Windows Event ID 4662 must be logged and configured correctly for detection.
+  Blocklisting event 4662 event collection and forwarding from expected hosts (likely
+  other Domain Controllers) is recommended for best performance, as activity from
+  DCs is expected behavior. See references for details. -- Threat Actor Association:
+  FIN8 (Syssphinx), Muddled Libra, Scattered Spider'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4662) OR
+  "<EventID>4662<") "0x100" "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2" | table _time,
+  host, user process, process_*, signature_id, parent_*, parameters | bin span=600s
+  | stats values(*) as * by _time, user | where event_count > 5 '
+techniques:
+- credential-access:os credential dumping:dcsync
+technique_id:
+- T1003.006
+data_category:
+- Windows event logs
+references:
+- https://blog.blacklanternsecurity.com/p/detecting-dcsync
+- https://darktrace.com/blog/shining-a-light-on-syssphinx-darktraces-detection-of-a-novel-ransomware-attack
+- https://community.netwitness.com/t5/netwitness-community-blog/dcsync-detection-with-netwitness/ba-p/695474
+- https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-drsr/f977faaa-673e-4f66-b9bf-48c640241d47
+- https://www.extrahop.com/company/blog/2021/dcsync-definition-and-protection/
