@@ -1,0 +1,35 @@
+id: '29247.52789'
+title: Impacket atexec.py Scheduled Task Creation
+description: Impacket's atexec.py is a tool designed for executing commands on a target
+  system via the Windows Task Scheduler to run arbitrary commands with the privileges
+  of the account under which the scheduler is running, often providing a method for
+  remote command execution which can be used by attackers during post-exploitation
+  activities. This use case detects the creation of scheduled tasks matching characteristics
+  of those created by Impacket atexec.py, notably the presence of commands in the
+  task content and an 8 character mixed-case alphabetic task name.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4698) OR
+  "<EventID>4698<") "exec" "/C" ".tmp" | where match(TaskName, "^\x5c[A-Za-z]{8}$")
+  | table _time, host, user, TaskName | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:scheduled task/job
+- execution:command and scripting interpreter
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+- privilege-escalation:scheduled task/job:scheduled task
+- execution:command and scripting interpreter:windows command shell
+- defense-evasion:obfuscated files or information
+technique_id:
+- T1053
+- T1059
+- T1053.005
+- T1059.003
+- T1027
+data_category:
+- Windows event logs
+references:
+- https://u0041.co/blog/post/1
+- https://github.com/fortra/impacket/blob/master/examples/atexec.py
+- https://labs.withsecure.com/content/dam/labs/docs/WithSecure-Lazarus-No-Pineapple-Threat-Intelligence-Report-2023.pdf
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

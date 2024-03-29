@@ -1,0 +1,23 @@
+id: '29624.53381'
+title: QEMU Network Tunneling - Windows
+description: 'QEMU is an open-source machine emulator that allows for running multiple
+  operating systems as separate processes. The use of QEMU executions with specific
+  networking commands may indicate attempts at network tunneling or bypassing security
+  controls, which was observed in intrusion reported on SecureList. This use case
+  detects QEMU executions with command-line arguments that could be used to tunnel
+  traffic. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "qemu-system-" ("-net " OR "-netdev" OR "-redir" OR "socket" OR "listen" OR "-device"
+  OR "hostfwd=") | table _time, host, user, process, process_*, parent_process_name,
+  parent_process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:protocol tunneling
+- command-and-control:non-application layer protocol
+technique_id: 
+- T1572
+- T1095
+data_category:
+- Windows Sysmon
+references:
+- https://securelist.com/network-tunneling-with-qemu/111803/

@@ -1,0 +1,36 @@
+id: '29738.53781'
+title: Impacket atexec.py Temp File Creation
+description: Impacket's atexec.py is a tool designed for executing commands on a target
+  system via the Windows Task Scheduler to run arbitrary commands with the privileges
+  of the account under which the scheduler is running, often providing a method for
+  remote command execution which can be used by attackers during post-exploitation
+  activities. This use case detects the file creation events matching characteristics
+  of those created by Impacket atexec.py.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4656) OR
+  "<EventID>4656<") ("\\Windows\\System32\\Tasks\\" "svchost.exe") OR ("\\Windows\\Temp\\"
+  ".tmp" "cmd.exe") | regex file_name="^([a-zA-Z]){8}(\.tmp)?$" | table _time, host,
+  user, file_name, file_path, process_name | bin span=1s | stats values(*) as * by
+  _time, host '
+techniques:
+- execution:scheduled task/job
+- execution:command and scripting interpreter
+- execution:scheduled task/job:scheduled task
+- persistence:scheduled task/job:scheduled task
+- privilege-escalation:scheduled task/job:scheduled task
+- execution:command and scripting interpreter:windows command shell
+- defense-evasion:obfuscated files or information
+technique_id:
+- T1053
+- T1059
+- T1053.005
+- T1059.003
+- T1027
+data_category:
+- File monitoring
+- Windows event logs
+references:
+- https://u0041.co/blog/post/1
+- https://github.com/fortra/impacket/blob/master/examples/atexec.py
+- https://labs.withsecure.com/content/dam/labs/docs/WithSecure-Lazarus-No-Pineapple-Threat-Intelligence-Report-2023.pdf
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

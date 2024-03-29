@@ -1,0 +1,21 @@
+id: '28729.52252'
+title: Process Executed from Downloads Folder - Windows
+description: This use case detects the execution of executable files (.exe) that originate
+  from the Downloads folder of any user profile on a system. This technique is commonly
+  used by threat actors who leverage social engineering or phishing campaigns to trick
+  users into downloading and executing malicious software, which can then be used
+  for a variety of malicious purposes such as gaining unauthorized access, data exfiltration,
+  or delivering additional payloads.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "EventID>1<")
+  "C:\\Users\\*\\Downloads\\*" | regex process_path="(?i)C:\x5cUsers\x5c.+\x5cDownloads\x5c.+\.exe"
+  | table _time, host, user, process, process_*, parent_process* | bin span=1s | stats
+  values(*) as * by _time, host, process_path '
+techniques:
+- execution:user execution
+technique_id: 
+- T1204
+data_category:
+- Windows Sysmon
+references:
+- https://thedfirreport.com/2023/09/25/from-screenconnect-to-hive-ransomware-in-61-hours/

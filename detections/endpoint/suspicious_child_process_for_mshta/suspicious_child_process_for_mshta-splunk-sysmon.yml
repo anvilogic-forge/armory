@@ -1,0 +1,21 @@
+id: '23910.44204'
+title: Suspicious Child Process for mshta.exe
+description: This use case detects when mshta.exe spawns an unexpected child process.
+  This can indicate process injection/hollowing, masquerading, application allowlist
+  bypass, or other suspicious activity.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "mshta.exe" ("powershell.exe" OR "pwsh.exe" OR "cmd.exe" OR "rundll32.exe" OR "cscript.exe"
+  OR "wscript.exe") | regex parent_process_name="(?i)(mshta\.exe)" | regex process_path="(?i)(cmd|services|powershell|pwsh|(c|w)script)|rundll32\.exe"
+  | table _time, host, user process, process_*, parent_process_name, parent_process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- defense-evasion:system binary proxy execution:mshta
+technique_id:
+- T1059
+- T1218.005
+data_category:
+- Windows Sysmon
+references:
+- https://blog.talosintelligence.com/gamaredon-apt-targets-ukrainian-agencies/

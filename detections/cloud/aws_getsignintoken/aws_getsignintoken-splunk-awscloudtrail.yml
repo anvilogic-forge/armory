@@ -1,0 +1,32 @@
+id: '29617.53365'
+title: AWS GetSigninToken
+description: The GetSigninToken API is part of the AWS Security Token Service and
+  is used to generate a URL that allows federated users to sign in to the AWS Management
+  Console via the AWS federation endpoint. Essentially, it provides a way to create
+  a URL that users can click on to gain temporary access to the AWS Management Console
+  without having to provide a username and password directly. Threat actors may attempt
+  to abuse GetSignintoken to gain unauthorized access to AWS resources. This use case
+  detects when GetSigninToken is called. Events will occur when using the AWS SSO
+  portal to login. Filtering or allowlisting for expected user agents is recommended
+  to reduce false positives. Non-SSO configured roles would be considered abnormal
+  and should be investigated.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` TERM(GetSigninToken) | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- defense-evasion:use alternate authentication material:application access token
+- lateral-movement:remote services
+technique_id:
+- T1550.001
+- T1021
+data_category:
+- AWS CloudTrail logs
+references:
+- https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/aws/cloudtrail/aws_console_getsignintoken.yml?utm_source=tldrsec.com&utm_medium=newsletter&utm_campaign=tl-dr-sec-220-detecting-manual-aws-actions-ai-threat-models-living-off-the-false-positive
+- https://www.crowdstrike.com/blog/analysis-of-intrusion-campaign-targeting-telecom-and-bpo-companies/
+- https://github.com/NetSPI/aws_consoler
