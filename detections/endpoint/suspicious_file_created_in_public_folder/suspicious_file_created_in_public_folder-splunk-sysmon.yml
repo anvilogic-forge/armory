@@ -1,0 +1,23 @@
+id: '27745.50435'
+title: Suspicious File Created in Public Folder
+description: 'Threat actors are increasingly utilizing the Public directory on Windows
+  endpoints due to the ease of access and evasion. This use case detects file creation
+  events for .dll, .exe, and .conf files in the Public directory. Note: if file writes
+  to the \Users\Public directory are overly noisy, logic can be modified to the \Users\Public\Library
+  directory.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=11) OR "<EventID>11<")
+  "\\Users\\Public\\" (".dll" OR ".dll0" OR ".conf" OR ".exe") | rex field=_raw "<Data
+  Name=''TargetFilename''>(?<target_filename>[^<]+)</Data>"| regex target_filename="(?i)\x5cUsers\x5cPublic\x5c.+\.(dll0?|conf|exe)"|
+  table _time, host, user, process_*, parent_process_name, parent_process_*, target_filename
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:masquerading
+- defense-evasion:masquerading:match legitimate name or location
+technique_id:
+- T1036.005
+data_category:
+- Windows Sysmon
+references:
+- https://blogs.blackberry.com/en/2022/10/unattributed-romcom-threat-actor-spoofing-popular-apps-now-hits-ukrainian-militaries
+- https://blogs.blackberry.com/en/2023/07/decoding-romcom-behaviors-and-opportunities-for-detection
