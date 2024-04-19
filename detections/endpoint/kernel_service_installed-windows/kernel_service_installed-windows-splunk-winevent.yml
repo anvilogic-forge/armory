@@ -1,0 +1,25 @@
+id: '30490.54568'
+title: Kernel Service Installed - Windows
+description: Adversaries may bring a signed vulnerable driver onto a compromised machine
+  so that they can exploit the vulnerability to execute code in kernel mode. This
+  process is sometimes referred to as Bring Your Own Vulnerable Driver (BYOVD). Adversaries
+  may include the vulnerable driver with files delivered during Initial Access or
+  download it to a compromised system via Ingress Tool Transfer or Lateral Tool Transfer.
+  The use case detects Windows System Event ID 7045 with .sys file type.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ((EventCode=7045) OR ">7045</EventID>")
+  ".sys" | table _time, host, user, signature_id, process_name, ServiceName, ServiceType,
+  ImagePath | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:create or modify system process:windows service
+- privilege-escalation:exploitation for privilege escalation
+technique_id:
+- T1543.003
+- T1068
+data_category:
+- Windows event logs
+references:
+- https://techcommunity.microsoft.com/t5/microsoft-security-experts-blog/strategies-to-monitor-and-prevent-vulnerable-driver-attacks/ba-p/4103985
+- https://www.loldrivers.io/
+- https://attack.mitre.org/techniques/T1068/
+- https://attack.mitre.org/techniques/T1543/003/

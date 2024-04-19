@@ -1,0 +1,28 @@
+id: '30702.54839'
+title: ADExplorer Snapshot Creation
+description: Active Directory Explorer (AD Explorer) is a tool from the Sysinternals
+  suite that allows users to view, search, and analyze objects within Active Directory,
+  and it includes the capability to take snapshots of the AD database for offline
+  analysis. A threat actor might leverage AD Explorer to gain detailed insights into
+  the AD environment and use its snapshot capability to discreetly export and study
+  the structure, user accounts, and security settings, potentially identifying vectors
+  for privilege escalation or lateral movement within a network. This use case detects
+  executions of ADExplorer with the snapshot command.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("ADExplorer64" OR "ADExplorer" OR "AdExp") "snapshot" | regex process_name="(?i)ADExplorer(64)?|AdExp\.exe"|
+  regex process="(?i)snapshot\s" | table _time, host, user, parent_process_name, process,
+  process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:os credential dumping:ntds
+- credential-access:unsecured credentials:credentials in files
+technique_id:
+- T1552.001
+- T1003.003
+data_category:
+- Windows Sysmon
+references:
+- https://learn.microsoft.com/en-us/sysinternals/downloads/adexplorer
+- https://trustedsec.com/blog/adexplorer-on-engagements
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_sysinternals_adexplorer_execution.yml
+- https://www.documentcloud.org/documents/5743766-Global-Threat-Report-2019.html

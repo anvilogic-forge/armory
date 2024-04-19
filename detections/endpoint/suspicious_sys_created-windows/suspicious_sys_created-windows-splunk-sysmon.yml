@@ -1,0 +1,27 @@
+id: '30491.54569'
+title: Suspicious .sys Created - Windows
+description: Adversaries may bring a signed vulnerable driver onto a compromised machine
+  so that they can exploit the vulnerability to execute code in kernel mode. This
+  process is sometimes referred to as Bring Your Own Vulnerable Driver (BYOVD). Adversaries
+  may include the vulnerable driver with files delivered during Initial Access or
+  download it to a compromised system via Ingress Tool Transfer or Lateral Tool Transfer.
+  This use case detects rare file creation events for .sys files.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=11) OR "<EventID>11<")
+  ".sys" | regex file_name="(?i)\.sys$" | table _time, host, user, process_name, signature_id,
+  file_name, file_path `group_events("host, process_name, file_name", 5)` | eventstats
+  c(file_name) as c_file_name dc(host) as dc_host by file_name| where c_file_name
+  < 3 AND dc_host=1 '
+techniques:
+- persistence:create or modify system process:windows service
+- privilege-escalation:exploitation for privilege escalation
+technique_id:
+- T1543.003
+- T1068
+data_category:
+- Windows Sysmon
+references:
+- https://techcommunity.microsoft.com/t5/microsoft-security-experts-blog/strategies-to-monitor-and-prevent-vulnerable-driver-attacks/ba-p/4103985
+- https://attack.mitre.org/techniques/T1068/
+- https://attack.mitre.org/techniques/T1543/003/
+- https://www.loldrivers.io/

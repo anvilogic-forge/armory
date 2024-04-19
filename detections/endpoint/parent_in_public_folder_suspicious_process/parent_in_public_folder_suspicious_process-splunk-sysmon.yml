@@ -1,0 +1,25 @@
+id: '30578.54662'
+title: Parent in Public Folder Suspicious Process
+description: Adversaries may attempt to hide artifacts associated with their behaviors
+  to evade detection. Adversaries may abuse command and script interpreters to execute
+  commands, scripts, or binaries. This use case detects suspicious processes with
+  a parent process in the Users\Public directory.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "\\Users\\Public" ("powershell" OR "pwsh" OR "wscript.exe" OR "cscript.exe" OR "bitsadmin"
+  OR "certutil" OR "mshta.exe") OR ("cmd.exe" (" /c " OR " /r " OR " /k " )) | regex
+  parent_process_path="^C:\x5cUsers\x5cPublic" | table _time, host, user, parent_process_name,
+  parent_process_path, process_name, process_path, process | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- defense-evasion:hide artifacts
+technique_id: 
+- T1059
+- T1564
+data_category:
+- Windows Sysmon
+references:
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_susp_execution_from_public_folder_as_parent/
+- https://attack.mitre.org/techniques/T1564/
+- https://attack.mitre.org/techniques/T1059/

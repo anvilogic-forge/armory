@@ -1,0 +1,23 @@
+id: '30662.54815'
+title: ADExplorer Execution
+description: Active Directory Explorer (AD Explorer) is a tool from the Sysinternals
+  suite that allows users to view, search, and analyze objects within Active Directory
+  to understand its structure, object properties, and security settings. A threat
+  actor might leverage AD Explorer to gain detailed insights into the AD environment,
+  such as identifying privileged user accounts and network resources, which can be
+  exploited to escalate privileges or facilitate lateral movement within a network.
+  This use case detects executions of ADExplorer .
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process_path, ''.*(ADExplorer(64)?|AdExp).*'',
+  ''i'') '
+techniques:
+- credential-access:os credential dumping:ntds
+- credential-access:unsecured credentials:credentials in files
+technique_id:
+- T1552.001
+- T1003.003
+data_category:
+- EDR Logs
+references:
+- https://learn.microsoft.com/en-us/sysinternals/downloads/adexplorer
