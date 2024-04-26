@@ -1,0 +1,22 @@
+id: '30750.54977'
+title: Live Sysinternals Execution
+description: Sysinternals utilities are a suite of advanced system utilities aimed
+  at managing, troubleshooting, and diagnosing Windows systems and applications. The
+  live version of Sysinternals, available from https://live.sysinternals.com, enables
+  users to run the tools without having to first download and install them locally.
+  Threat actors may leverage these tools for system reconnaissance, privilege escalation,
+  or to facilitate lateral movement within a network. This use case detects command
+  line invocations of live.sysinternals.com, indicating potential attempts to execute
+  Sysinternals tools without installation.
+logic_format: snowflake
+logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
+  and event_platform ilike '%Win%' and process ilike '%live.sysinternals.com%'
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- EDR Logs
+references:
+- https://live.sysinternals.com/
+- https://learn.microsoft.com/en-us/sysinternals/

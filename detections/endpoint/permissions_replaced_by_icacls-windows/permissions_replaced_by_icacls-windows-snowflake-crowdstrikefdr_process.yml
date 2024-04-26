@@ -1,0 +1,25 @@
+id: '24625.45526'
+title: Permissions Replaced by icacls - Windows
+description: 'icacls is a command-line utility in Windows that allows for viewing
+  and modifying Discretionary Access Control Lists (DACLs) and file permissions. Threat
+  actors may abuse this tool to alter file permissions, potentially gaining unauthorized
+  access or control over sensitive files and directories, as observed by DFIR report
+  (see references). This use case detects icacls executions with switches to replace
+  permissions. -- Threat Actor Association: FIN7 (aka. Carbon Spider, Sangria Tempest)'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%icacls%''
+  and regexp_like(process, ''.*/(grant|deny|remove|setintegritylevel|inheritance):.*'',
+  ''i'') '
+techniques:
+- defense-evasion:file and directory permissions modification
+- defense-evasion:file and directory permissions modification:windows file and directory
+  permissions modification
+technique_id:
+- T1222
+- T1222.001
+data_category:
+- EDR Logs
+references:
+- https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

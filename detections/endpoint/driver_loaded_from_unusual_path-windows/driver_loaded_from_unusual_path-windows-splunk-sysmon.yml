@@ -1,0 +1,28 @@
+id: '30731.54883'
+title: Driver Loaded from Unusual Path - Windows
+description: 'Adversaries may exploit software vulnerabilities in an attempt to elevate
+  privileges. Exploitation of a software vulnerability occurs when an adversary takes
+  advantage of a programming error in a program, service, or within the operating
+  system software or kernel itself to execute adversary-controlled code. Adversaries
+  may also use services to install and execute malicious drivers. For example, after
+  dropping a driver file (ex: .sys) to disk, the payload can be loaded and registered
+  via Native API functions. This use case detects Driver loaded events excluding expected
+  paths Windows\System32\drivers, Windows\SysWOW64\drivers, Windows\INF, and Windows\System32\DriverStore.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=6) OR "<EventID>6<")
+  | regex ImageLoaded!="(?i)\x5cWindows\x5c((System32|sysWOW64)\x5cDrivers(tore)?)|inf"
+  | table _time, host, user, ImageLoaded, signature_id, process_name | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- persistence:create or modify system process:windows service
+- privilege-escalation:exploitation for privilege escalation
+technique_id:
+- T1543.003
+- T1068
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1068/
+- https://attack.mitre.org/techniques/T1543/003/
+- https://techcommunity.microsoft.com/t5/microsoft-security-experts-blog/strategies-to-monitor-and-prevent-vulnerable-driver-attacks/ba-p/4103985
+- https://www.loldrivers.io/

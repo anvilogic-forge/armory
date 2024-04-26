@@ -1,0 +1,26 @@
+id: '24625.45522'
+title: Permissions Replaced by icacls - Windows
+description: 'icacls is a command-line utility in Windows that allows for viewing
+  and modifying Discretionary Access Control Lists (DACLs) and file permissions. Threat
+  actors may abuse this tool to alter file permissions, potentially gaining unauthorized
+  access or control over sensitive files and directories, as observed by DFIR report
+  (see references). This use case detects icacls executions with switches to replace
+  permissions. -- Threat Actor Association: FIN7 (aka. Carbon Spider, Sangria Tempest)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "icacls" ("/grant:" OR "/deny:" OR "/remove:" OR "/setintegritylevel:" OR "/inheritance:")
+  | rex field=_raw "(?<=icacls\.exe\"\s)(?<file_path>[^\s]+)"| rex field=_raw "/(grant|deny|remove|setintegritylevel|inheritance):\S\s(?<permission_user>[^\:]+):F"|
+  table _time, host, user, process, process_*, parent_process, parent_process_*, user,
+  file_path, permission_user | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:file and directory permissions modification
+- defense-evasion:file and directory permissions modification:windows file and directory
+  permissions modification
+technique_id:
+- T1222
+- T1222.001
+data_category:
+- Windows Sysmon
+references:
+- https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/

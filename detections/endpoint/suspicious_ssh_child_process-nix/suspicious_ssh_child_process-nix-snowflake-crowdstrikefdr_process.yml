@@ -1,0 +1,23 @@
+id: '30471.54884'
+title: Suspicious SSH Child Process - *nix
+description: Adversaries may manipulate products or product delivery mechanisms prior
+  to receipt by a final consumer for the purpose of data or system compromise. This
+  use case detects potentially suspicious SSH (sshd) child processes with a specific
+  execution user. This could be a sign of potential exploitation of CVE-2024-3094.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Lin%'' and parent_process_name ilike ''%sshd''
+  and ((user ilike ''root'' and regexp_like(process, ''.*(ba)?sh\s.*-c.*'', ''i''))
+  or (process_path ilike ''%sshd'' and process ilike ''%root%'')) '
+techniques:
+- lateral-movement:remote services:ssh
+- initial-access:supply chain compromise
+technique_id:
+- T1021.004
+- T1195
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1195/
+- https://detection.fyi/sigmahq/sigma/emerging-threats/2024/exploits/cve-2024-3094/proc_creation_lnx_exploit_cve_2024_3094_sshd_child_process/
+- https://twitter.com/ellishlomo/status/1776595450381967809

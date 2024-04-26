@@ -1,0 +1,34 @@
+id: '30808.55042'
+title: Suspicious AteraAgent Installation - Windows
+description: An adversary may use legitimate desktop support and remote access software
+  to establish an interactive command and control channel to target systems within
+  networks. These remote monitoring and management (RMM) tools, such as AteraAgent,
+  are commonly used as legitimate technical support software and may be allowed by
+  application control within a target environment. Remote access software may be installed
+  and used post-compromise as an alternate communications channel for redundant access
+  or as a way to establish an interactive remote desktop session with the target system.
+  They may also be used as a component of malware to establish a reverse connection
+  or back-connect to a service or adversary controlled system. This use case detects
+  installation of AteraAgent RMM with an IntegratorLogin from non-business email providers.
+  In lieu of filtering for specific publicly available mail providers, a negative
+  match for expected user email domains can be used.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "AteraAgent.exe" "/i " "IntegratorLogin=" ("@gmail.com" OR "@hotmail.com" OR "@outlook.com"
+  OR "@yandex.ru" OR "@mail.ru" OR "@protonmail.com" OR "@dropmail.me") | rex field=process
+  "IntegratorLogin=\"(?<integrator_email>[^\"]+)\""| where match(process_name, "(?i)AteraAgent\.exe")
+  and match(process, "(?i)\/i\s.*IntegratorLogin=\S+@(gmail|hotmail|outlook|protonmail)\.com|(yandex|mail)\.ru|dropmail\.me")|
+  table _time, host, user, process_*, integrator_email | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:remote access software
+technique_id: 
+- T1219
+data_category:
+- Windows Sysmon
+references:
+- https://thedfirreport.com/2022/10/31/follina-exploit-leads-to-domain-compromise/
+- https://www.cybereason.com/blog/threat-analysis-from-icedid-to-domain-compromise
+- https://www.proofpoint.com/us/blog/threat-insight/security-brief-ta450-uses-embedded-links-pdf-attachments-latest-campaign?utm_source=twitter&utm_medium=social_organic&utm_campaign=2024&utm_post_id=3c4043a3-313b-4b88-aca6-d74b47e16082
+- https://www.atera.com/
+- https://detection.fyi/the-dfir-report/sigma-rules/windows/process_creation/proc_creation_win_ateraagent_malicious_installations/?query=ateraage
