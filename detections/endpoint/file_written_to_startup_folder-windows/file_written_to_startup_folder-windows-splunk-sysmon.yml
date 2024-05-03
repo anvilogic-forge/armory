@@ -1,0 +1,23 @@
+id: '29486.53149'
+title: File Written to Startup Folder - Windows
+description: Adversaries may achieve persistence by adding a program to a startup
+  folder. Adding an entry to the startup folder will cause the program referenced
+  to be executed when a user logs in. These programs will be executed under the context
+  of the user and will have the account's associated permissions level. This use case
+  detects file writes to \Microsoft\Windows\Start Menu\Programs\StartUp.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=11) OR "<EventID>11<")
+  "Microsoft\\Windows\\Start Menu\\Programs\\Startup" | where !match(process_name,
+  "(?i)wuauclt\.exe") and !match(TargetFile, "(?i)C:\x5c\$Windows\.~BT\x5cNewOS\x5c")
+  | table _time, host, user, process, parent_process_name, process_exec | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+technique_id:
+- T1547.001
+data_category:
+- Windows Sysmon
+references:
+- https://www.uptycs.com/blog/cryptocurrency-entities-at-risk-threat-actor-uses-parallax-rat-for-infiltration
+- https://attack.mitre.org/techniques/T1547/001/
+- https://github.com/SigmaHQ/sigma/blob/62d4fd26b05f4d81973e7c8e80d7c1a0c6a29d0e/rules/windows/file/file_event/file_event_win_startup_folder_file_write.yml
