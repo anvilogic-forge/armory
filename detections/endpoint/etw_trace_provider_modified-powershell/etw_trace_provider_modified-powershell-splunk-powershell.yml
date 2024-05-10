@@ -1,0 +1,26 @@
+id: '31175.55799'
+title: ETW Trace Provider Modified - PowerShell
+description: Event Tracing for Windows (ETW) trace providers are components that generate
+  events for logging allowing for monitoring and diagnosis of Windows system and application
+  behaviors. Threat actors may alter ETW trace provides to modify or disable logging
+  capabilities, thereby evading detection and maintaining persistence in a compromised
+  system. This use case detects commands targeting ETW providers, specifically targeting
+  events related to adding or modifying event trace providers.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") (TERM(Remove-EtwTraceProvider)
+  OR (TERM(Set-EtwTraceProvider) "0x11")) OR ("System.Management.Automation.Tracing.PSEtwLogProvider"
+  "m_enabled") | table _time, host, user, parent_process_name, process_name, process
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:impair defenses:indicator blocking
+- defense-evasion:indicator removal
+technique_id:
+- T1562.006
+- T1070
+data_category:
+- PowerShell logs
+references:
+- https://blog.palantir.com/tampering-with-windows-event-tracing-background-offense-and-defense-4be7ac62ac63
+- https://gist.github.com/tandasat/e595c77c52e13aaee60e1e8b65d2ba32
+- https://detection.fyi/sigmahq/sigma/windows/powershell/powershell_script/posh_ps_etw_trace_evasion/

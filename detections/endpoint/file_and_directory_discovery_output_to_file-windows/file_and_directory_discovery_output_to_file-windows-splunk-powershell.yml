@@ -1,0 +1,23 @@
+id: '16818.27143'
+title: File and Directory Discovery Output to File - Windows
+description: 'Adversaries may enumerate files and directories or may search in specific
+  locations of a host or network share for certain information within a file system.
+  Adversaries may use the information from File and Directory Discovery during automated
+  discovery to shape follow-on behaviors, including whether or not the adversary fully
+  infects the target and/or attempts specific actions. -- Threat Actor Association:
+  APT28 (aka. Fancy Bear, Forest Blizzard, Strontium, Tsar Team) -- Atomics T1083
+  Test #1 Atomics T1083 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") (TERM(tree) OR TERM(dir)
+  OR TERM(Get-ChildItem) OR TERM(gci) OR TERM(ls) OR TERM(locate) OR TERM(find)) (TERM(>>)
+  OR "&gt;&gt;" OR TERM(Out-File)) | table _time, host, user process, process_*, parent_process_name
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:file and directory discovery
+technique_id: 
+- T1083
+data_category:
+- PowerShell logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1083/T1083.md#atomic-test-1---file-and-directory-discovery-cmdexe

@@ -1,0 +1,31 @@
+id: '29377.52945'
+title: WMIC Host Reconniassance
+description: WMIC (Windows Management Instrumentation Command-line) reconnaissance
+  involves using the WMIC tool to query system information, configurations, and installed
+  software on Windows systems. Threat actors abuse this feature to gather valuable
+  data about a target environment, which can help them tailor their attacks, escalate
+  privileges, or move laterally across the network. This use case detects WMIC executions
+  with commands that may be used to perform host reconnaissance.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  "<EventID>4104<") ("cmd" OR "cmd.exe") TERM(wmic) (TERM(os) OR TERM(logicaldisk)
+  OR TERM(share) OR TERM(cpu) OR TERM(memorychip) OR TERM(useraccount) OR TERM(nic)
+  OR TERM(startup) OR TERM(service) OR TERM(cpu) OR TERM(path) OR TERM(bios) OR TERM(computersystem)
+  OR TERM(product) OR TERM(partition) OR TERM(group) OR TERM(environment) OR TERM(diskdrive)
+  OR TERM(qfe) OR TERM(sysdriver) OR TERM(namespace) OR TERM(datafile) OR TERM(csproduct)
+  OR TERM(volume)) | regex process="(?i)\s(os|logicaldisk|share|cpu|memorychip|useraccount|nic|startup|service|cpu|path|bios|computersystem|product|partition|group|environment|diskdrive|qfe|sysdriver|namespace|datafile|csproduct|volume)"
+  | table _time, host, user, process, process_name, parent_process_name, user | bin
+  span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:system information discovery
+- execution:windows management instrumentation
+technique_id: 
+- T1082
+- T1047
+data_category:
+- PowerShell logs
+references:
+- https://cyble.com/blog/aurora-a-stealer-using-shapeshifting-tactics/
+- 'https://trustedsec.com/blog/wmi-for-script-kiddies '
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+- https://attack.mitre.org/techniques/T1047/

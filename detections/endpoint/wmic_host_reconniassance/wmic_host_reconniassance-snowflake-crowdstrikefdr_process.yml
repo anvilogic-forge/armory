@@ -1,0 +1,27 @@
+id: '29377.55618'
+title: WMIC Host Reconniassance
+description: WMIC (Windows Management Instrumentation Command-line) reconnaissance
+  involves using the WMIC tool to query system information, configurations, and installed
+  software on Windows systems. Threat actors abuse this feature to gather valuable
+  data about a target environment, which can help them tailor their attacks, escalate
+  privileges, or move laterally across the network. This use case detects WMIC executions
+  with commands that may be used to perform host reconnaissance.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (parent_process_name ilike ''%cmd.exe''
+  or parent_process_name ilike ''%powershell.exe'' or parent_process_name ilike ''%pwsh.exe'')
+  and process_path ilike ''%wmic.exe'' and regexp_like(process, ''.*\\\s(os|logicaldisk|share|cpu|memorychip|useraccount|nic|startup|service|cpu|path|bios|computersystem|product|partition|group|environment|diskdrive|qfe|sysdriver|namespace|datafile|csproduct|volume).*'',
+  ''i'') and not regexp_like(user, ''.*\\\$$|NT\\\sAUTHORITY\\\x5cUSER.*'') '
+techniques:
+- discovery:system information discovery
+- execution:windows management instrumentation
+technique_id: 
+- T1082
+- T1047
+data_category:
+- EDR Logs
+references:
+- https://cyble.com/blog/aurora-a-stealer-using-shapeshifting-tactics/
+- 'https://trustedsec.com/blog/wmi-for-script-kiddies '
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+- https://attack.mitre.org/techniques/T1047/

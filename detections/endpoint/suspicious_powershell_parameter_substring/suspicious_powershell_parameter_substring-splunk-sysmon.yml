@@ -1,0 +1,39 @@
+id: '30388.54742'
+title: Suspicious PowerShell Parameter Substring
+description: Threat actors may use obfuscated and truncated PowerShell execution arguments
+  to evade detection, leveraging PowerShell's parameter binding functionality that
+  allows partial matching of command-line arguments. This use case detects process
+  executions containing substrings for commonly abused PowerShell parameters.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("cmd.exe" OR "pwsh.exe" OR "powershell.exe") " -windowstyl " OR " -windowsty "
+  OR " -windowst " OR " -windows " OR " -windo " OR " -wind " OR " -win " OR " -wi"
+  OR ((" -executionpolic " OR " -executionpoli " OR " -executionpol " OR " -executionpo
+  " OR " -executionp " OR " -execution " OR " -executio " OR " -executi " OR " -execut
+  " OR " -execu " OR " -exec " OR " -exe " OR " -ex") "bypass") OR " -NoPr " OR "
+  -NoPro " OR " -NoProf " OR " -NoProfi " OR " -NoProfil " OR " -nonin " OR " -nonint
+  " OR " -noninte " OR " -noninter " OR " -nonintera " OR " -noninterac " OR " -noninteract
+  " OR " -noninteracti " OR " -noninteractiv " OR " -ec " OR " -encodedComman " OR
+  " -encodedComma " OR " -encodedComm " OR " -encodedCom " OR " -encodedCo " OR "
+  -encodedC " OR " -encoded " OR " -encode " OR " -encod " OR " -enco " OR " -en "
+  OR (" /windowstyle " OR " /windowstyl " OR " /windowsty " OR " /windowst " OR "
+  /windows " OR " /windo " OR " /wind " OR " /win " OR " /wi") OR ((" /executionpolic
+  " OR " /executionpoli " OR " /executionpol " OR " /executionpo " OR " /executionp
+  " OR " /execution " OR " /executio " OR " /executi " OR " /execut " OR " /execu
+  " OR " /exec " OR " /exe " OR " /ex") "bypass") OR " /NoPr " OR " /NoPro " OR "
+  /NoProf " OR " /NoProfi " OR " /NoProfil " OR " /nonin " OR " /nonint " OR " /noninte
+  " OR " /noninter " OR " /nonintera " OR " /noninterac " OR " /noninteract " OR "
+  /noninteracti " OR " /noninteractiv " OR " /ec " OR " /encodedComman " OR " /encodedComma
+  " OR " /encodedComm " OR " /encodedCom " OR " /encodedCo " OR " /encodedC " OR "
+  /encoded " OR " /encode " OR " /encod " OR " /enco " OR " /en" | regex process="(?i)\s(-|\/)(win?d?o?w?s?t?y?l?\s+hi?d?d?e?|windowstyle\s+h\s|NoPro?f?i?l?\s|nonint?e?r?a?c?t?i?v?\s|enc?o?d?e?d?C?o?m?m?a?n?\s|((exe?c?u?t?i?o?n?p?o?l?i?c?)|ep)\s+(bypass)?|ec\s)"
+  | table _time, host, user process, process_*, signature_id, parent_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+technique_id:
+- T1059.001
+data_category:
+- Windows Sysmon
+references:
+- http://www.danielbohannon.com/blog-1/2017/3/12/powershell-execution-argument-obfuscation-how-it-can-make-detection-easier
+- https://github.com/SigmaHQ/sigma/blob/c0332a9d96f6c7804fcc85dd706caed889446a62/rules/windows/process_creation/proc_creation_win_powershell_susp_parameter_variation.yml

@@ -1,0 +1,21 @@
+id: '16818.27378'
+title: File and Directory Discovery Output to File - Windows
+description: 'Adversaries may enumerate files and directories or may search in specific
+  locations of a host or network share for certain information within a file system.
+  Adversaries may use the information from File and Directory Discovery during automated
+  discovery to shape follow-on behaviors, including whether or not the adversary fully
+  infects the target and/or attempts specific actions. -- Threat Actor Association:
+  APT28 (aka. Fancy Bear, Forest Blizzard, Strontium, Tsar Team) -- Atomics T1083
+  Test #1 Atomics T1083 Test #5'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(^|\\\s+)(tree|dir|get-childitem|gci|ls|locate|find)\\\s+.*'',
+  ''i'') and regexp_like(process, ''.*\\\s+(Out-File|>+|&gt;).*'', ''i'') '
+techniques:
+- discovery:file and directory discovery
+technique_id: 
+- T1083
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1083/T1083.md#atomic-test-1---file-and-directory-discovery-cmdexe

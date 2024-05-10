@@ -1,0 +1,26 @@
+id: '27700.50351'
+title: Discovery using CHCP
+description: 'CHCP ("Change Code Page" ) is a legitimate Windows command-line utility
+  used to display or set the active console''s code page. When run without parameters,
+  chcp displays the number of the active console code page, providing information
+  about the environment''s locale and language. Threat actors have used been observed
+  using chcp during discovery activities during intrusions involving IcedID and Conti
+  ransomware. This use case detects chcp executions with no command line parameters
+  and a parent process of cmd or PowerShell executed by a non-system account. -- Threat
+  Actor Association: APT28 (aka. Fancy Bear, Forest Blizzard, Strontium, Tsar Team)
+  -- Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("chcp" OR "chcp.com") ("pwsh.exe"
+  OR "powershell.exe" OR "cmd.exe") | where match(process_name, "(?i)chcp\.com") and
+  match(process, "(?i)chcp\s+?$") and match(parent_process_name, "(?i)(powershell|pwsh|cmd)\.exe")
+  and not match(user, "\$$") | table _time, host, user, process, process_*, parent_process_name,
+  parent_process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:system location discovery:system language discovery
+technique_id:
+- T1614.001
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2022/04/04/stolen-images-campaign-ends-in-conti-ransomware/
+- https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chcp
