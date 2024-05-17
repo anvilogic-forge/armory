@@ -1,0 +1,34 @@
+id: '31298.56358'
+title: PowerHuntShares Commands
+description: Adversaries may look for folders and drives shared on remote systems
+  as a means of identifying sources of information to gather as a precursor for Collection
+  and to identify potential systems of interest for Lateral Movement. Networks often
+  contain shared network drives and folders that enable users to access file directories
+  on various systems across a network. Adversaries may attempt to get a listing of
+  valid accounts, usernames, or email addresses on a system or within a compromised
+  environment. This information can help adversaries determine which accounts exist,
+  which can aid in follow-on behavior such as brute-forcing, spear-phishing attacks,
+  or account takeovers (e.g., Valid Accounts). Adversaries may attempt to get a listing
+  of other systems by IP address, hostname, or other logical identifier on a network
+  that may be used for Lateral Movement from the current system. This use case detects
+  PowerHuntShares' commands used for network share/account/remote system discovery.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(Invoke-HuntSMBShares|Get-CardCreationTime|Get-CardLastAccess|Get-CardLastModified|Get-PercentDisplay|Get-ExPrivSumData|Get-GroupOwnerBar|Get-GroupNameBar|Get-GroupFileBar|Get-UserAceCounts|Convert-DataTableToHtmlTable|Convert-DataTableToHtmlReport|Get-FolderGroupMd5|Get-LdapQuery|Get-DomainSubnet|Invoke-Parallel|checkSubnet).*'',
+  ''i'') '
+techniques:
+- discovery:network share discovery
+- discovery:account discovery
+- discovery:remote system discovery
+technique_id: 
+- T1135
+- T1087
+- T1018
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1135/
+- https://attack.mitre.org/techniques/T1087/
+- https://attack.mitre.org/techniques/T1018/
+- https://github.com/NetSPI/PowerHuntShares/tree/main
+- https://cloud.google.com/blog/topics/threat-intelligence/untangling-iran-apt42-operations/

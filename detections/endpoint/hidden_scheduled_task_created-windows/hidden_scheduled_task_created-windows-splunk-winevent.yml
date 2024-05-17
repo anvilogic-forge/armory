@@ -1,0 +1,23 @@
+id: '30937.55362'
+title: Hidden Scheduled Task Created - Windows
+description: A hidden scheduled task in Windows is a task configured to run specified
+  actions silently without displaying any visible program windows or interfaces to
+  the user. Threat actors may abuse this feature to persistently execute malicious
+  activities covertly, avoiding detection while maintaining a presence on the victim's
+  system, as observed in breaches involving Industroyer2. This use case detects scheduled
+  task creation events where the 'Hidden' setting is enabled.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4698) OR
+  "<EventID>4698<") "hidden" "true" | where match(TaskContent, "(?i)Hidden(&gt;|>)true")
+  | table _time, host, user, TaskName | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:scheduled task/job
+technique_id: 
+- T1053
+data_category:
+- Windows event logs
+references:
+- https://research.splunk.com/endpoint/0b730470-5fe8-4b13-93a7-fe0ad014d0cc/
+- https://www.welivesecurity.com/2022/04/12/industroyer2-industroyer-reloaded/
+- https://cert.gov.ua/article/39518

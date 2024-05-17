@@ -1,0 +1,22 @@
+id: '31176.55812'
+title: Logman Execution - Windows
+description: Logman is a command-line tool in Windows that manages and schedules performance
+  counter and event trace log collections on local and remote systems. Threat actors
+  may abuse Logman to manipulate logging settings and disable security monitoring,
+  allowing them to conduct malicious activities without detection. This use case detects
+  lanman executions with commands to start, stop, delete, update, or query event tracers.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%logman.exe''
+  and regexp_like(process, ''.*\\\s(start|stop|delete|query|update)\\\s.*'', ''i'') '
+techniques:
+- defense-evasion:impair defenses:indicator blocking
+- defense-evasion:indicator removal
+technique_id:
+- T1562.006
+- T1070
+data_category:
+- EDR Logs
+references:
+- https://blog.palantir.com/tampering-with-windows-event-tracing-background-offense-and-defense-4be7ac62ac63
+- https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/logman
