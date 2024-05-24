@@ -1,0 +1,24 @@
+id: '23146.42110'
+title: Process Creation Using Sysnative Folder
+description: 'Threat actors may use tools spawning processes from the Sysnative folder
+  in an attempt to bypass the File System Redirector on 64-bit versions of Windows
+  to execute 32-bit applications from the 64-bit system directory. This use cased
+  detects instances where the Sysnative folder is used during process creation, a
+  tactic often associated with CobaltStrike activities. Note: Sysnative is often referenced
+  by legitimate processes. Allowlisting known processes is recommended to reduce false
+  positives.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "Sysnative" | regex process="(?i)^[A-Z]:\x5cWindows\x5cSysnative\x5c"
+  | table _time, host, user, parent_process_name, process | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques: 
+- defense-evasion:system binary proxy execution
+technique_id:
+- T1218
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://thedfirreport.com/2021/08/29/cobalt-strike-a-defenders-guide/
+- https://learn.microsoft.com/sv-se/windows/win32/winprog64/file-system-redirector

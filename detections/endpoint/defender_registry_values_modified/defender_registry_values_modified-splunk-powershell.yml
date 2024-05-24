@@ -1,0 +1,28 @@
+id: '31402.56383'
+title: Defender Registry Values Modified
+description: Adversaries may interact with the Windows Registry to disable security
+  tools to avoid possible detection of their malware/tools and activities. They may
+  interact directly with the registry via command line interpreters or they may abuse
+  system utilities to achieve the same goals, such as SystemSettingsAdminFlows.exe.
+  This use case detects commands for registry modifications targeting Windows Defender
+  capabilities.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<") OR (TERM(EventCode=4104) OR "<EventID>4104<") "Defender" (("DisableEnhancedNotifications"
+  OR "RTP") "1") OR (("SubmitSamplesConsent" OR "SpynetReporting") "0") OR (("Set-ItemProperty"
+  OR "sp " OR "ADD ") ("SOFTWARE\\Microsoft\\Windows Defender\\Reporting" OR "SOFTWARE\\Microsoft\\Windows
+  Defender\\Spynet" OR "SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection")))
+  | table _time, host, user, process | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:modify registry
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1112
+- T1562.001
+data_category:
+- PowerShell logs
+references:
+- https://attack.mitre.org/techniques/T1562/001/
+- https://attack.mitre.org/techniques/T1112/
+- https://www.huntress.com/blog/lolbin-to-inc-ransomware

@@ -1,0 +1,36 @@
+id: '28258.51477'
+title: Compressed File Downloaded - Proxy
+description: After compromising a host, threat actors often drop an archive file containing
+  additional payloads/scripts to aid in follow-on activities. This use case detects
+  successful GET requests to URI paths ending in extensions for archive file types.
+logic_format: Splunk
+logic: ' `get_web_data` `get_web_data_proxy` TERM(GET) (TERM(ALLOW) OR TERM(200))
+  (".zip" OR ".7z" OR ".rar" OR ".bz2" OR ".gz" OR ".lz" OR ".xz" OR ".z" OR ".a"
+  OR ".ar" OR ".shar" OR ".LBR" OR ".LQR" OR ".mar" OR ".sbx" OR ".tar" OR ".f" OR
+  ".?xf" OR ".lz4" OR ".lzma" OR ".lzo" OR ".rz" OR ".sfark" OR ".sz" OR ".?Q?" OR
+  ".?Z?" OR ".zst" OR ".??_" OR ".s7z" OR ".ace" OR ".afa" OR ".alz" OR ".arc" OR
+  ".ark" OR ".cdx" OR ".arj" OR ".b1" OR ".b6z" OR ".ba" OR ".bh" OR ".cab" OR ".car"
+  OR ".cfs" OR ".cpt" OR ".dar" OR ".dd" OR ".dgc" OR ".dmg" OR ".ear" OR ".gca" OR
+  ".ha" OR ".hki" OR ".ice" OR ".jar" OR ".kgb" OR ".lzh" OR ".lha" OR ".lzx" OR ".pak"
+  OR ".partimg" OR ".paq6" OR ".paq7" OR ".paq8" OR ".pea" OR ".pim" OR ".pit" OR
+  ".qda" OR ".rk" OR ".sda" OR ".sea" OR ".sen" OR ".sfx" OR ".shk" OR ".sit" OR ".sitx"
+  OR ".sqx" OR ".tgz" OR ".tbz2" OR ".tlz" OR ".txz" OR ".uc" OR ".uc0" OR ".uc2"
+  OR ".ucn" OR ".ur2" OR ".ue2" OR ".uca" OR ".uha" OR ".war" OR ".xar" OR ".xp3"
+  OR ".yz1" OR ".zipx" OR ".zoo" OR ".zpaq" OR ".zz" OR ".xpi" OR ".cbz" OR ".cb7"
+  OR ".cba" OR ".cbr" OR "cbt" OR ".cbz" OR "gzip" OR ".bzip2" OR ".tz" OR ".iso"
+  OR ".bin" OR ".cue" OR ".nrg" OR "mdf" OR ".mds" OR ".bwt" OR ".cdi" OR "b5t" OR
+  ".b6t" OR ".b6i" OR ".b5i" OR ".daa" OR ".img" OR ".cif" OR ".aar" OR ".apk" OR
+  ".genozip" OR ".phar" OR ".wim" OR ".ffppkg" OR ".c2d" OR ".mdx" OR ".sdi" OR ".d64"
+  OR ".dsk" OR ".dms" OR "adz" OR ".adf") | regex site!="\w\.windowsupdate\.com"|
+  regex uri_path="\w+\.(zip|7z|rar|bz2|gz|lz|xz|z|a|ar|shar|LBR|LQR|mar|sbx|tar|f|\?xf|lz4|lzma|lzo|rz|sfark|sz|\?Q?\|\?Z?|zst|\?\?_|s7z|ace|afa|alz|arc|ark|cdx|arj|b1|b6z|ba|bh|cab|car|cfs|cpt|dar|dd|dgc|dmg|ear|gca|ha|hki|ice|jar|kgb|lzh|lha|lzx|pak|partimg|paq6|paq7|paq8|pea|pim|pit|qda|rk|sda|sea|sen|sfx|shk|sit|sitx|sqx|tgz|tbz2|tlz|txz|uc|uc0|uc2|ucn|ur2|ue2|uca|uha|war|xar|xp3|yz1|zipx|zoo|zpaq|zz|xpi|cbz|cb7|cba|cbr|cbt|cbz|gzip|bzip2|tz|iso|bin|cue|nrg|mdf|mds|bwt|cdi|b5t|b6t|b6i|b5i|daa|img|cif|fcd|aar|apk|genozip|phar|wim|ffppkg|c2d|mdx|sdi|d64|dsk|dms|adz|adf)$"
+  | table _time, host, user _time, host, uri_path, uri_query, src_ip, tag, status,
+  http_method, form_data, dest_ip | bin span=1s | stats values(*) as * by _time, host
+  | lookup dnslookup clientip as src_ip OUTPUT clienthost as src_dns | iplocation
+  prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- Web proxy
+references: null

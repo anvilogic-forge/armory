@@ -1,0 +1,32 @@
+id: '31349.56234'
+title: Command Line Utility Added to Accessibility Features
+description: 'Adversaries may establish persistence and/or elevate privileges by executing
+  malicious content triggered by accessibility features. Windows contains accessibility
+  features that may be launched with a key combination before a user has logged in
+  (ex: when the user is on the Windows logon screen). An adversary can modify the
+  way these programs are launched to get a command prompt or backdoor without logging
+  in to the system. This use case detects registry modification commands or events
+  adding cmd.exe or PowerShell/pwsh.exe to Accessibility Features registry keys.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=13) OR "<EventID>13<")
+  OR (TERM(EventCode=1) OR "<EventID>1<" ) "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image
+  File Execution" "Debugger" ("sethc.exe" OR "utilman.exe" OR "osk.exe" OR "Magnify.exe"
+  OR "Narrator.exe" OR "DisplaySwitch.exe" OR "atbroker.exe" OR "HelpPane.exe") ("cmd.exe"
+  OR "powershell.exe" OR "pwsh.exe") | where (match(signature_id, "13") and match(TargetObject,
+  "(?i)Debugger") and match(registry_value_name, "(?i)(cmd|pwsh|powershell)\.exe"))
+  or (match(signature_id, "1") and match(process, "(?i)Debugger.+\x5c(cmd|pwsh|powershell)\.exe"))|
+  table _time, host, user, process, registry_*, parent_process_name, process_name,
+  signature_id, TargetObject | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- persistence:event triggered execution:accessibility features
+technique_id:
+- T1059
+- T1546.008
+data_category:
+- Windows Sysmon
+- Windows Registry
+references:
+- https://attack.mitre.org/techniques/T1546/008/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1546.008/T1546.008.md#atomic-test-1---attaches-command-prompt-as-a-debugger-to-a-list-of-target-processes
+- https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-8base

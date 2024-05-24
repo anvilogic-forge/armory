@@ -1,0 +1,28 @@
+id: '31349.56944'
+title: Command Line Utility Added to Accessibility Features
+description: 'Adversaries may establish persistence and/or elevate privileges by executing
+  malicious content triggered by accessibility features. Windows contains accessibility
+  features that may be launched with a key combination before a user has logged in
+  (ex: when the user is on the Windows logon screen). An adversary can modify the
+  way these programs are launched to get a command prompt or backdoor without logging
+  in to the system. This use case detects registry modification commands or events
+  adding cmd.exe or PowerShell/pwsh.exe to Accessibility Features registry keys.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "SOFTWARE\\Microsoft\\Windows
+  NT\\CurrentVersion\\Image File Execution" "Debugger" ("sethc.exe" OR "utilman.exe"
+  OR "osk.exe" OR "Magnify.exe" OR "Narrator.exe" OR "DisplaySwitch.exe" OR "atbroker.exe"
+  OR "HelpPane.exe") ("cmd.exe" OR "powershell.exe" OR "pwsh.exe") | regex process="(?i)Debugger.+\x5c(cmd|pwsh|powershell)\.exe"
+  | table _time, host, user, process | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:command and scripting interpreter
+- persistence:event triggered execution:accessibility features
+technique_id:
+- T1059
+- T1546.008
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1546/008/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1546.008/T1546.008.md#atomic-test-1---attaches-command-prompt-as-a-debugger-to-a-list-of-target-processes
+- https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-8base

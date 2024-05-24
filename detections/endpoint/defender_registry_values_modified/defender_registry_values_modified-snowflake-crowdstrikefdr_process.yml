@@ -1,0 +1,27 @@
+id: '31402.56780'
+title: Defender Registry Values Modified
+description: Adversaries may interact with the Windows Registry to disable security
+  tools to avoid possible detection of their malware/tools and activities. They may
+  interact directly with the registry via command line interpreters or they may abuse
+  system utilities to achieve the same goals, such as SystemSettingsAdminFlows.exe.
+  This use case detects commands for registry modifications targeting Windows Defender
+  capabilities.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (regexp_like(process_path, ''.*(cmd|pwsh|powershell)\\\.exe.*'',
+  ''i'') or regexp_like(parent_process_name, ''.*(cmd|pwsh|powershell)\\\.exe.*'',
+  ''i'')) and (regexp_like(process, ''.*((DisableEnhancedNotifications|RPT.+1)|(SubmitSamplesConsent|SpynetReporting).+0).*'',
+  ''i'') or regexp_like(process, ''.*(Set-ItemProperty|sp\\\s|ADD\\\s).+SOFTWARE\\\x5cMicrosoft\\\x5cWindows\\\s+Defender\\\x5c(Reporting|Spynet|Real-Time\\\s+Protection).*'',
+  ''i'')) '
+techniques:
+- defense-evasion:modify registry
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1112
+- T1562.001
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1562/001/
+- https://attack.mitre.org/techniques/T1112/
+- https://www.huntress.com/blog/lolbin-to-inc-ransomware

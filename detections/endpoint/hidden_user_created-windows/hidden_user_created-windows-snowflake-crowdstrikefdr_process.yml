@@ -1,0 +1,22 @@
+id: '13615.19726'
+title: Hidden User Created - Windows
+description: 'Adversaries may hide user accounts in Windows by setting the HKLM\SOFTWARE\Microsoft\Windows
+  NT\CurrentVersion\Winlogon\SpecialAccounts\UserList Registry key value to 0 for
+  a specific user to prevent that user from being listed on the logon screen. -- Threat
+  Actor Association: Unfading Sea Haze - Software Association: Dagon Locker, IcedID
+  -- Atomics T1564.002 Test #3'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform = ''Win'' and regexp_like(process, ''.*(REG\\\s+?ADD).*\\\x5cCurrentVersion\\\x5cWinlogon\\\x5cSpecialAccounts\\\x5cUserlist.*0.*'',
+  ''i'') '
+techniques:
+- defense-evasion:hide artifacts:hidden users
+- defense-evasion:hide artifacts
+technique_id:
+- T1564.002
+- T1564
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1564.002/T1564.002.md#atomic-test-3---create-hidden-user-in-registry

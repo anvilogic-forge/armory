@@ -1,0 +1,27 @@
+id: '13615.19725'
+title: Hidden User Created - Windows
+description: 'Adversaries may hide user accounts in Windows by setting the HKLM\SOFTWARE\Microsoft\Windows
+  NT\CurrentVersion\Winlogon\SpecialAccounts\UserList Registry key value to 0 for
+  a specific user to prevent that user from being listed on the logon screen. -- Threat
+  Actor Association: Unfading Sea Haze - Software Association: Dagon Locker, IcedID
+  -- Atomics T1564.002 Test #3'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<"
+  OR TERM(EventCode=12) OR "<EventID>12<" OR TERM(EventCode=13) OR "<EventID>13<")
+  (TERM(ADD) AND "UserList" AND "/d" AND "0") OR (HKLM\Software\Microsoft\Windows
+  NT\CurrentVersion\Winlogon\SpecialAccounts\Userlist) | table _time, host, user signature_id,
+  process, process_*, parent_*, signature, user_id | bin span=1s | stats values(*)
+  as * by _time, host | where match(process, "(?i)(\s+ADD\s+.*\/d.*0)") OR match(signature_id,
+  "12") OR match(signature_id, "13") '
+techniques:
+- defense-evasion:hide artifacts:hidden users
+- defense-evasion:hide artifacts
+technique_id:
+- T1564.002
+- T1564
+data_category:
+- Process command-line parameters
+- Windows Sysmon
+references:
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1564.002/T1564.002.md#atomic-test-3---create-hidden-user-in-registry

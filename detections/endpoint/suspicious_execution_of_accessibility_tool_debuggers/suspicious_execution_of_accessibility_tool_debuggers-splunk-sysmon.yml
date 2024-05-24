@@ -1,0 +1,29 @@
+id: '31925.57027'
+title: Suspicious Execution of Accessibility Tool Debuggers
+description: Threat actors may establish persistence or elevate privileges by executing
+  malicious content through accessibility features. Windows accessibility features
+  can be launched with a key combination before user login, such as from the Windows
+  logon screen. Threat actors can modify the launch process of these programs to gain
+  a command prompt or backdoor access without logging into the system. This use case
+  detects the execution of accessibility tools by a debugger process, which can indicate
+  an attempt to gain unauthorized access or persistence through malicious use of these
+  tools.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "winlogon.exe" ("cmd.exe" OR "cscript.exe" OR "mshta.exe" OR "powershell.exe" OR
+  "pwsh.exe" OR "regsvr32.exe" OR "rundll32.exe" OR "wscript.exe" OR "wt.exe") ("sethc.exe"
+  OR "utilman.exe" OR "osk.exe" OR "Magnify.exe" OR "Narrator.exe" OR "DisplaySwitch.exe"
+  OR "atbroker.exe" OR "HelpPane.exe") | regex parent_process_name="(?i)winlogon\.exe"|
+  regex process_name="(?i)(cmd|cscript|mshta|powershell|pwsh|regsvr32|rundll32|wscript|wt)\.exe"|
+  regex process="(?i)(sethc|utilman|osk|Magnify|Narrator|DisplaySwitch|atbroker|HelpPane)\.exe"
+  | table _time, host, user, parent_process_name, process, process_name | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- persistence:event triggered execution:accessibility features
+technique_id:
+- T1546.008
+data_category:
+- Windows Sysmon
+references:
+- https://learn.microsoft.com/en-us/archive/blogs/jonathantrull/detecting-sticky-key-backdoors
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_cmd_sticky_key_like_backdoor_execution.yml
