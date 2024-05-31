@@ -1,0 +1,24 @@
+id: '32248.57379'
+title: Group Policy Editor Execution
+description: Adversaries may abuse mmc.exe to proxy execution of malicious .msc files.
+  Microsoft Management Console (MMC) is a binary that may be signed by Microsoft and
+  is used in several ways in either its GUI or in a command prompt. MMC can be used
+  to create, open, and save custom consoles that contain administrative tools created
+  by Microsoft, called snap-ins. These snap-ins may be used to manage Windows systems
+  locally or remotely. MMC can also be used to open Microsoft created .msc files to
+  manage system configuration. For example, mmc gpedit.msc, will open the Group Policy
+  Editor application window. This use case detects gpedit.msc executions.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` ((TERM(EventCode=4103)
+  OR "<EventID>4103<") OR (TERM(EventCode=4104) OR "<EventID>4104<")) (TERM(gpedit)
+  OR "gpedit.msc") | table _time, host, user, process, signature_id | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:mmc
+technique_id:
+- T1218.014
+data_category:
+- PowerShell logs
+references:
+- https://attack.mitre.org/techniques/T1218/014/
+- https://www.itechtics.com/enable-gpedit-windows-10-home/

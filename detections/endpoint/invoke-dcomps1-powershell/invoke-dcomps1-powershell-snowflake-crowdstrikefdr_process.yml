@@ -1,0 +1,25 @@
+id: '31900.57477'
+title: Invoke-DCOM.ps1 - PowerShell
+description: 'Adversaries may use Valid Accounts to interact with remote machines
+  by taking advantage of Distributed Component Object Model (DCOM). The adversary
+  may then perform actions as the logged-on user. This use case detects the usage
+  of Invoke-DCOM PowerShell script to remotely obtain arbitrary and direct shellcode
+  execution through Office applications as well as other Windows objects that contain
+  insecure methods. Note: PowerShell logging is recommended for best detection. Detection
+  using other log sources is dependent on commands being run in manner that creates
+  a new process, such as powershell -c.'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process_path, ''.*(pwsh|powershell|cmd)\\\.exe.*'',
+  ''i'') and regexp_like(process, ''.*(MMC20\\\.Application|ShellWindows|ShellBrowserWindow|CheckDomain|ServiceCheck|MinimizeAll|ServiceStop|ServiceStart|DetectOffice|RegisterXLL|ExcelDDE|9BA05972-F6A8-11CF-A442-00A0C90A8F39|C08AFD90-F2A1-11D1-8455-00A0C91F3880|7e0423cd-1119-0928-900c-e6d4a52a0715|Application\\\.ServiceStart|Application\\\.ServiceStop|Application\\\.IsServiceRunning|Application\\\.ShutDownWindows|Application\\\.GetSystemInformation|DDEInitiate|Application\\\.RegisterXLL|Application\\\.ProductCode|Application\\\.MinimizeAll|ActiveView\\\.ExecuteShellCommand).*'',
+  ''i'') and not process_path ilike ''%rundll32.exe'' '
+techniques:
+- lateral-movement:remote services:distributed component object model
+technique_id:
+- T1021.003
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1021/003/
+- https://github.com/EmpireProject/Empire/blob/master/data/module_source/lateral_movement/Invoke-DCOM.ps1
+- https://enigma0x3.net/2017/01/23/lateral-movement-via-dcom-round-2/

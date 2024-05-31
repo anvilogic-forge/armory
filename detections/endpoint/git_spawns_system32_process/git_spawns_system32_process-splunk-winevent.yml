@@ -1,0 +1,29 @@
+id: '32312.57469'
+title: Git Spawns System32 Process
+description: 'Adversaries may abuse command and script interpreters to execute commands,
+  scripts, or binaries with the help of Git hooks. These interfaces and languages
+  provide ways of interacting with computer systems and are a common feature across
+  many different platforms. Most systems come with some built-in command-line interface
+  and scripting capabilities, for example, Windows installations include the Windows
+  Command Shell and PowerShell. This use case detects Git hooks spawning a System32
+  process. Note: for best rule fidelity, Windows Event or Sysmon process creation
+  logs are recommended due to their detailed parent process path information. Vulnerability
+  reference: CVE-2024-32002'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(git) OR TERM(gh)) "C:\\Windows\\system32"
+  | where match(process, "(?i)C:\x5cWindows\x5csystem32") and match(parent_process_path,
+  "(?i)\x5cgit\x5c") and not match(process, "(?i)\x5c\?\?\x5cC:\x5cWindows\x5csystem32\x5cconhost\.exe\s+0xffffffff\s+-ForceV1")
+  | table _time, host, user, parent_process_name, parent_process_path, process_path,
+  process | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+technique_id: 
+- T1059
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://amalmurali.me/posts/git-rce/
+- https://github.com/amalmurali47/git_rce/tree/main
+- https://nvd.nist.gov/vuln/detail/CVE-2024-32002

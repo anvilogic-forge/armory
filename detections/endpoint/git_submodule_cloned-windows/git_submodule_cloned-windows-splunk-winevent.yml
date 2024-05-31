@@ -1,0 +1,24 @@
+id: '32307.57463'
+title: Git Submodule Cloned - Windows
+description: 'Adversaries may abuse a bug in Git whereby it can be fooled into writing
+  files not into the submodule''s worktree but into a `.git/` directory. This allows
+  writing a hook that will be executed while the clone operation is still running,
+  giving the user no opportunity to inspect the code that is being executed. This
+  use case detects when a submodule from a GitHub repository was cloned onto the system
+  Vulnerability Association: CVE-2024-32002'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(git) OR TERM(gh)) TERM(submodule) TERM(clone)
+  | table _time, host, user, process, process_path, signature_id, parent_process_path
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://github.com/amalmurali47/git_rce/tree/main
+- https://nvd.nist.gov/vuln/detail/CVE-2024-32002
+- https://amalmurali.me/posts/git-rce/

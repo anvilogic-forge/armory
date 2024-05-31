@@ -1,0 +1,21 @@
+id: '32479.57790'
+title: sudo -i - *nix
+description: 'Adversaries may abuse Unix shell commands and scripts for execution.
+  Unix shells are the primary command prompt on Linux and macOS systems, though many
+  variations of the Unix shell exist (e.g. sh, bash, zsh, etc.) depending on the specific
+  OS or distribution. Unix shells can control every aspect of a system, with certain
+  commands requiring elevated privileges. This use case detects the execution of sudo
+  -i on a system. Note: default auditd logging will not log these events. Either process
+  command logging via EDR, bash history, or custom auditd rules are required for detection.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "sudo" | regex process="(?i)sudo\s+-[euhsp]?i[euhsp]?"
+  | table _time, host, user, process | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- execution:command and scripting interpreter:unix shell
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1059/004/

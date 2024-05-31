@@ -1,0 +1,26 @@
+id: '32506.57779'
+title: Wow6432Node Classes Autorun Keys Modification
+description: Adversaries may achieve persistence by adding a program to a startup
+  folder or referencing it with a Registry run key. Adding an entry to the "run keys"
+  in the Registry or startup folder will cause the program referenced to be executed
+  when a user logs in. These programs will be executed under the context of the user
+  and will have the account's associated permissions level. This use case detects
+  any modifications made to the \Software\Wow6432Node\Classes registry path, indicating
+  modification of autostart extensibility point (ASEP).
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(ADD|set-ItemProperty|sp\\\s|New-ItemProperty|New-Item|md\\\s|ni\\\s).*'',
+  ''i'') and process ilike ''%SOFTWARE\\\Wow6432Node\\\Classes%'' and regexp_like(process,
+  ''.*(\\\x5cFolder\\\x5cShellEx\\\x5cExtShellFolderViews|\\\x5cFolder\\\x5cShellEx\\\x5cDragDropHandlers|\\\x5cFolder\\\x5cShellEx\\\x5cColumnHandlers|\\\x5cDirectory\\\x5cShellex\\\x5cDragDropHandlers|\\\x5cDirectory\\\x5cShellex\\\x5cCopyHookHandlers|\\\x5cCLSID\\\x5c{AC757296-3522-4E11-9862-C17BE5A1767E}\\\x5cInstance|\\\x5cCLSID\\\x5c{ABE3B9A4-257D-4B97-BD1A-294AF496222E}\\\x5cInstance|\\\x5cCLSID\\\x5c{7ED96837-96F0-4812-B211-F13C24117ED3}\\\x5cInstance|\\\x5cCLSID\\\x5c{083863F1-70DE-11d0-BD40-00A0C911CE86}\\\x5cInstance|\\\x5cAllFileSystemObjects\\\x5cShellEx\\\x5cDragDropHandlers|\\\x5cShellEx\\\x5cPropertySheetHandlers|\\\x5cShellEx\\\x5cContextMenuHandlers).*'',
+  ''i'') '
+techniques:
+- persistence:boot or logon autostart execution:registry run keys / startup folder
+- privilege-escalation:boot or logon autostart execution:registry run keys / startup
+  folder
+technique_id:
+- T1547.001
+data_category:
+- EDR Logs
+references:
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_asep_reg_keys_modification_wow6432node.yml
+- https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns

@@ -1,0 +1,31 @@
+id: '31900.56998'
+title: Invoke-DCOM.ps1 - PowerShell
+description: 'Adversaries may use Valid Accounts to interact with remote machines
+  by taking advantage of Distributed Component Object Model (DCOM). The adversary
+  may then perform actions as the logged-on user. This use case detects the usage
+  of Invoke-DCOM PowerShell script to remotely obtain arbitrary and direct shellcode
+  execution through Office applications as well as other Windows objects that contain
+  insecure methods. Note: PowerShell logging is recommended for best detection. Detection
+  using other log sources is dependent on commands being run in manner that creates
+  a new process, such as powershell -c.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` ((TERM(EventCode=4103)
+  OR "<EventID>4103<") OR (TERM(EventCode=4104) OR "<EventID>4104<")) ("MMC20.Application"
+  OR "ShellWindows" OR "ShellBrowserWindow" OR "CheckDomain" OR "ServiceCheck" OR
+  "MinimizeAll" OR "ServiceStop" OR "ServiceStart" OR "DetectOffice" OR "RegisterXLL"
+  OR "ExcelDDE") OR ("9BA05972-F6A8-11CF-A442-00A0C90A8F39" OR "C08AFD90-F2A1-11D1-8455-00A0C91F3880"
+  OR "7e0423cd-1119-0928-900c-e6d4a52a0715") ("Application.ServiceStart" OR "Application.ServiceStop"
+  OR "Application.IsServiceRunning" OR "Application.ShutDownWindows" OR "Application.GetSystemInformation"
+  OR "DDEInitiate" OR "Application.RegisterXLL" OR "Application.ProductCode" OR "Application.MinimizeAll"
+  OR "ActiveView.ExecuteShellCommand") | table _time, host, user, process | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:distributed component object model
+technique_id:
+- T1021.003
+data_category:
+- PowerShell logs
+references:
+- https://attack.mitre.org/techniques/T1021/003/
+- https://github.com/EmpireProject/Empire/blob/master/data/module_source/lateral_movement/Invoke-DCOM.ps1
+- https://enigma0x3.net/2017/01/23/lateral-movement-via-dcom-round-2/

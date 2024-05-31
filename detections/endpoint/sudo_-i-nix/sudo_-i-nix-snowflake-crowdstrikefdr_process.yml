@@ -1,0 +1,21 @@
+id: '32479.57791'
+title: sudo -i - *nix
+description: 'Adversaries may abuse Unix shell commands and scripts for execution.
+  Unix shells are the primary command prompt on Linux and macOS systems, though many
+  variations of the Unix shell exist (e.g. sh, bash, zsh, etc.) depending on the specific
+  OS or distribution. Unix shells can control every aspect of a system, with certain
+  commands requiring elevated privileges. This use case detects the execution of sudo
+  -i on a system. Note: default auditd logging will not log these events. Either process
+  command logging via EDR, bash history, or custom auditd rules are required for detection.'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and (event_platform ilike ''%Lin%'' or event_platform ilike ''%Mac%'')
+  and regexp_like(process, ''.*sudo\\\s+-[euhsp]?i[euhsp]?.*'', ''i'') '
+techniques:
+- execution:command and scripting interpreter:unix shell
+technique_id:
+- T1059.004
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1059/004/

@@ -1,0 +1,22 @@
+id: '32307.57567'
+title: Git Submodule Cloned - Windows
+description: 'Adversaries may abuse a bug in Git whereby it can be fooled into writing
+  files not into the submodule''s worktree but into a `.git/` directory. This allows
+  writing a hook that will be executed while the clone operation is still running,
+  giving the user no opportunity to inspect the code that is being executed. This
+  use case detects when a submodule from a GitHub repository was cloned onto the system
+  Vulnerability Association: CVE-2024-32002'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (process ilike ''%git%'' or process
+  ilike ''%gc%'') and process ilike ''%clone%'' and process ilike ''%submodule%'' '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- EDR Logs
+references:
+- https://github.com/amalmurali47/git_rce/tree/main
+- https://nvd.nist.gov/vuln/detail/CVE-2024-32002
+- https://amalmurali.me/posts/git-rce/

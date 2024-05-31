@@ -1,0 +1,25 @@
+id: '32156.57264'
+title: AutoHotkey Execution
+description: Adversaries may execute commands and perform malicious tasks using AutoIT
+  and AutoHotKey automation scripts. AutoIT and AutoHotkey (AHK) are scripting languages
+  that enable users to automate Windows tasks. These automation scripts can be used
+  to perform a wide variety of actions, such as clicking on buttons, entering text,
+  and opening and closing programs. This use case detects the usage of the AutoHotkey
+  software to execute ahk files.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("AutoHotkey.exe" OR "AutoHotkey.rc" OR "AutoHotkey32.exe" OR "AutoHotkey32_UIA.exe"
+  OR "AutoHotkey64.exe" OR "AutoHotkey64_UIA.exe" OR "AutoHotkeyA32.exe" OR "AutoHotkeyA32_UIA.exe"
+  OR "AutoHotkeyU32.exe" OR "AutoHotkeyU32_UIA.exe" OR "AutoHotkeyU64.exe" OR "AutoHotkeyU64_UIA.exe"
+  OR "AutoHotkeyUX.exe") "ahk" | table _time, host, user, process, parent_process_name,
+  process_name, process_path | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+technique_id: 
+- T1059
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1059/010/
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_renamed_autohotkey/
+- https://www.autohotkey.com/

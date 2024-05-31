@@ -1,0 +1,24 @@
+id: '32363.57556'
+title: .msc Executed from Unusual Location
+description: 'Threat actors may abuse mmc.exe to proxy execution of malicious .msc
+  files. Microsoft Management Console (MMC) is a binary that may be signed by Microsoft
+  and is used in several ways in either its GUI or in a command prompt. MMC can be
+  used to create, open, and save custom consoles that contain administrative tools
+  created by Microsoft, called snap-ins. These snap-ins may be used to manage Windows
+  systems locally or remotely. MMC can also be used to open Microsoft created .msc
+  files to manage system configuration. This use case detects mmc.exe executions referencing
+  .msc files outside of C:\Windows\system32 or C:\Windows\SysWOW64. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "mmc.exe" ".msc" | regex process="(?i)\.msc"|
+  regex process!="(?i)C:\x5cWindows\x5c(system32|syswow64)\x5c\w+\.msc" | table _time,
+  host, user, process | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:mmc
+technique_id:
+- T1218.014
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.itechtics.com/enable-gpedit-windows-10-home/
