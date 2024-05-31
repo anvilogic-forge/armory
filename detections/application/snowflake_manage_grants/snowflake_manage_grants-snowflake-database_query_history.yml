@@ -1,0 +1,18 @@
+id: '32577.57885'
+title: Snowflake Manage Grants
+description: 'The MANAGE GRANTS privilege allows one to impersonate the owner of a
+  securable object for the purpose of granting or revoking privileges on that securable.
+  This use case detects the MANAGE GRANTS query. -- Threat Actor Association: UNC5537
+  - Software Association: rapeflake'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike 'manage grants%'
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Application logs
+references:
+- https://community.snowflake.com/s/article/What-is-MANAGE-GRANTS-privilege
+- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information

@@ -1,0 +1,15 @@
+id: '17535.28691'
+title: Snowflake Alter Network Policy
+description: Modifies the properties for an existing network policy.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike '%network policy%' and query_text ilike 'alter%'
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: 
+- T1078 
+data_category:
+- Application logs
+references: null

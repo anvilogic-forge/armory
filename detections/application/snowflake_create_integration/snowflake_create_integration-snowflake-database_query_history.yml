@@ -1,0 +1,15 @@
+id: '17474.28541'
+title: Snowflake Create Integration
+description: Creates a new integration in the system or replaces an existing integration.
+  An integration is a Snowflake object that provides an interface between Snowflake
+  and third-party services.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike '% integration%' and query_text ilike 'create%'
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Application logs
+references: null

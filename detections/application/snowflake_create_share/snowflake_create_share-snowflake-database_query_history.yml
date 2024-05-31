@@ -1,0 +1,16 @@
+id: '32578.57886'
+title: Snowflake Create Share
+description: 'This use case detects the CREATE SHARE query. - Threat Actor Association:
+  UNC5537 - Software Association: rapeflake'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike 'create share%'
+techniques:
+- collection:data staged
+technique_id: 
+- T1074
+data_category:
+- Application logs
+references:
+- https://docs.snowflake.com/en/sql-reference/sql/create-share
+- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information

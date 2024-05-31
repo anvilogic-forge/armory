@@ -1,0 +1,16 @@
+id: '16388.25237'
+title: Snowflake USE ROLE ACCOUNTADMIN Database Query
+description: Detects when a Snowflake user attempts to elevate their permissions to
+  the ACCOUNTADMIN role.
+logic_format: snowflake
+logic: 'select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2,
+  sysdate()) and (signature = ''UNKNOWN'' or signature = ''USE'') and REGEXP_LIKE(query,
+  ''USE\\\s+ROLE\\\s+ACCOUNTADMIN.*'', ''is'') '
+techniques:
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Application logs
+references: null

@@ -1,0 +1,15 @@
+id: '17335.28231'
+title: Snowflake User Creation
+description: Creates a new user or replaces an existing user in the system.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and signature ilike 'create_user' and query ilike 'create%user%'
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: 
+- T1078 
+data_category:
+- Application logs
+references: null

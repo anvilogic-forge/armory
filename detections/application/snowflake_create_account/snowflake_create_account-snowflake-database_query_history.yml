@@ -1,0 +1,13 @@
+id: '17587.28805'
+title: Snowflake Create Account
+description: Creates a new account in your organization.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query ilike 'create account%'
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Application logs
+references: null

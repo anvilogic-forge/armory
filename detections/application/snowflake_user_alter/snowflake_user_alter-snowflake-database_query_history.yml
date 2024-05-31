@@ -1,0 +1,21 @@
+id: '17338.28234'
+title: Snowflake User Alter
+description: 'Modifies the properties and object/session parameters for an existing
+  user in the system: Administrators can use this command to alter properties and
+  parameter defaults for any users for which the administrators have the appropriate
+  privileges. Individual users can use this command to alter specific properties and
+  any session parameter defaults for themselves.'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and signature ilike 'alter_user' and query ilike 'alter user%'
+techniques:
+- persistence:valid accounts
+- persistence:account manipulation
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+technique_id: 
+- T1078
+- T1098
+data_category:
+- Application logs
+references: null

@@ -1,0 +1,13 @@
+id: '17533.28689'
+title: Snowflake Create Network Policy
+description: Creates a network policy.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike '%network policy%' and query_text ilike 'create%'
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Application logs
+references: null

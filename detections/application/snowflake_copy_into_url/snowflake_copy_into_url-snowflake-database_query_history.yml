@@ -1,0 +1,16 @@
+id: '32575.57883'
+title: Snowflake Copy Into URL
+description: 'This use case detects the COPY INTO query followed by a URL pattern,
+  indicating potential exfiltration attempts. -- Threat Actor Association: UNC5537
+  - Software Association: rapeflake'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and regexp_like(query, '.*copy\\\s+into\\\s+[A-Za-z0-9]{2,5}:\\\/\\\/[^\\\s]+.*',
+  'i')
+techniques:
+- exfiltration:exfiltration over web service
+technique_id: 
+- T1567
+data_category:
+- Application logs
+references: null

@@ -1,0 +1,13 @@
+id: '17536.28692'
+title: Snowflake Drop Network Policy
+description: Removes the specified network policy from the system.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike '%network policy%' and query_text ilike 'drop%'
+techniques:
+- impact:network denial of service
+technique_id: 
+- T1498
+data_category:
+- Application logs
+references: null

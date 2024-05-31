@@ -1,0 +1,18 @@
+id: '32584.57892'
+title: Snowflake Alter Stage
+description: 'This use case detects the ALTER STAGE query. - Threat Actor Association:
+  UNC5537 - Software Association: rapeflake'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike 'alter stage%'
+techniques:
+- collection:data staged
+- persistence:account manipulation
+technique_id: 
+- T1074
+- T1098
+data_category:
+- Application logs
+references:
+- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
+- https://docs.snowflake.com/en/sql-reference/sql/alter-stage

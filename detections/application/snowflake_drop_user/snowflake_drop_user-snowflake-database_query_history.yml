@@ -1,0 +1,13 @@
+id: '17339.28235'
+title: Snowflake Drop User
+description: Removes the specified user from the system.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and signature ilike 'drop_user' and query ilike 'drop user%'
+techniques:
+- impact:account access removal
+technique_id: 
+- T1531
+data_category:
+- Application logs
+references: null

@@ -1,0 +1,17 @@
+id: '17471.28538'
+title: Snowflake Grant Ownership
+description: Transfers ownership of an object (or all objects of a specified type
+  in a schema) from one role to another role. Role refers to either a role or a database
+  role. OWNERSHIP is a special type of privilege that can only be granted from one
+  role to another role; it cannot be revoked. For more details, see Overview of Access
+  Control.
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query_text ilike 'grant ownership%'
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Application logs
+references: null
