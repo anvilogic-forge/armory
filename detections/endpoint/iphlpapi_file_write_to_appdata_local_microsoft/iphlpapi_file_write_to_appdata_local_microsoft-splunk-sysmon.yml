@@ -1,0 +1,26 @@
+id: '32477.57725'
+title: iphlpapi.dll File Write to Appdata_Local_Microsoft
+description: Adversaries may execute their own malicious payloads by side-loading
+  DLLs. Similar to DLL Search Order Hijacking, side-loading involves hijacking which
+  DLL a program loads. But rather than just planting the DLL within the search order
+  of a program then waiting for the victim application to be invoked, adversaries
+  may directly side-load their payloads by planting then invoking a legitimate application
+  that executes their payload(s). Researchers have reported that malicious documents
+  can use DLL sideloading using Teams or OneDrive to establish C&C. This use case
+  iphlpapi.dll file writes in a subfolder under the AppData\Local\Microsoft path,
+  indicating potential abuse of Microsoft applications to sideload malicious DLLs.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=11) OR "<EventID>11<")
+  "iphlpapi.dll" "\\AppData\\Local\\Microsoft" | regex TargetFilename="(?i)\x5cAppData\x5cLocal\x5cMicrosoft\x5c.*iphlpapi\.dll"
+  | table _time, host, user, process, process_*, file_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- persistence:hijack execution flow:dll side-loading
+technique_id:
+- T1574.002
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1574/002/
+- https://detection.fyi/sigmahq/sigma/windows/file/file_event/file_event_win_iphlpapi_dll_sideloading/
+- https://cyble.com/blog/targeted-attacks-being-carried-out-via-dll-sideloading/
