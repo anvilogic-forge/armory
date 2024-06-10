@@ -1,0 +1,18 @@
+id: '32921.58423'
+title: Snowflake Get
+description: 'This use case detects the GET query , indicating potential data staging
+  attempts. -- Threat Actor Association: UNC5537 - Software Association: rapeflake'
+logic_format: snowflake
+logic: select * from snowflake.account_usage.query_history where event_time > dateadd(hour, -2, sysdate())
+  and query ilike 'get %'
+techniques:
+- collection:data staged:local data staging
+- collection:data staged
+technique_id:
+- T1074.001
+- T1074
+data_category:
+- Application logs
+references:
+- https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion?linkId=10091118
+- https://docs.snowflake.com/en/sql-reference/sql/get
