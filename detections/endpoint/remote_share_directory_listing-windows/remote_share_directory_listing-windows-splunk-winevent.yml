@@ -1,0 +1,22 @@
+id: '22624.40798'
+title: Remote Share Directory Listing - Windows
+description: 'Threat actors may seek to enumerate local administrative access on remote
+  systems during reconnaissance activities. This use case detects commands to list
+  files and directories on administrative shares (C$, Admin$, or IPC$). Note: dir
+  and tree commands do not generate process creation logs and will only be detected
+  if called with another executable, e.g. "cmd.exe /c dir".'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(dir) OR TERM(ls) OR TERM(Get-ChildItem)
+  OR TERM(gci) OR TERM(tree)) ("C$" OR "ADMIN$" OR "IPC$") | regex process="(?i)\x5c\x5c(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\x5c(C|ADMIN|IPC)\$"
+  | table _time, host, user user, process, process_*, parent_process_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- discovery:file and directory discovery
+technique_id: 
+- T1083
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://thedfirreport.com/2021/11/01/from-zero-to-domain-admin/

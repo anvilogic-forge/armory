@@ -1,0 +1,20 @@
+id: '31472.58578'
+title: Get-Service - PowerShell
+description: 'Adversaries may try to gather information about registered local system
+  services using tools as well as OS utility commands such as the PowerShell Get-Service
+  cmdlet. This use case detects the PowerShell Get-Service cmdlet or its alias gsv.
+  Note: PowerShell logging is recommended for best detection. Detection using other
+  log sources is dependent on commands being run in manner that creates a new process,
+  such as powershell -command.'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*Get-Service|(^|\\\s|\\\;|\\\|)(gsv)(\\\s+\\\-|\\\s*$|\\\;|\\\||>).*'',
+  ''i'') '
+techniques:
+- discovery:system service discovery
+technique_id: 
+- T1007
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1007/

@@ -1,0 +1,27 @@
+id: '32245.57372'
+title: File Copied to _var_log - *nix
+description: Threat actors may attempt to conceal their activities or manipulate system
+  logs by copying files into the /var/log/ directory within a compromised environment.
+  This technique may be employed to evade detection, establish persistence or obfuscate
+  the threat actor's actions by blending in with legitimate log files. Once placed
+  in the /var/log/ directory, adversaries may manipulate or delete these files to
+  cover their tracks and impede forensic analysis. This use case detects files moved
+  to /var/log either through terminal commands or by a program specifically designed
+  to perform this action.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` ((TERM(scp) OR TERM(cp) OR TERM(rsync)
+  OR TERM(install) OR TERM(cat) OR TERM(dd) OR TERM(sftp) OR TERM(whois) OR TERM(curl))
+  OR ("nametype=CREATE" "root")) ("/var/log" OR "/var/log/") | where match(process,
+  "(?i)\b(s?cp|rsync|install|cat|dd|sftp|whois|curl)\b\s+.{1,128}\s+\/var\/log") or
+  (match(nametype, "(?i)CREATE") and match(ogid, "(?i)root")) | table _time, host,
+  user, process, dest_host | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- Linux audit logs
+references:
+- https://attack.mitre.org/techniques/T1105/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1105/T1105.md#atomic-test-1---rsync-remote-file-copy-push
+- https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/springtail-kimsuky-backdoor-espionage

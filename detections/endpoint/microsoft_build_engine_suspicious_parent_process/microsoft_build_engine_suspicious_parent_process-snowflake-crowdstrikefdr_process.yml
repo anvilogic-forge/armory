@@ -1,0 +1,39 @@
+id: '32492.58495'
+title: Microsoft Build Engine Suspicious Parent Process
+description: Adversaries may take advantage of trusted developer utilities to proxy
+  execution of malicious payloads. There are many utilities used for software development
+  related tasks that can be used to execute code in various forms to assist in development,
+  debugging, and reverse engineering. These utilities may often be signed with legitimate
+  certificates that allow them to execute on a system and proxy execution of malicious
+  code through a trusted process that effectively bypasses application control solutions.
+  This use case detects msbuild.exe spawned by a scripting interpreter (such as CMD,
+  PowerShell, etc.).
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%msbuild.exe''
+  and regexp_like(parent_process_name, ''.*(cmd|powershell(_ise)?|pwsh|cscript|wscript|mshta)\\\.exe.*'',
+  ''i'') '
+techniques:
+- execution:command and scripting interpreter:powershell
+- defense-evasion:trusted developer utilities proxy execution:msbuild
+- execution:command and scripting interpreter
+- defense-evasion:trusted developer utilities proxy execution
+- execution:command and scripting interpreter:visual basic
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1127.001
+- T1059
+- T1127
+- T1059.005
+- T1059.003
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1127/
+- https://attack.mitre.org/techniques/T1127/001/
+- https://attack.mitre.org/techniques/T1059/
+- https://attack.mitre.org/techniques/T1059/001/
+- https://attack.mitre.org/techniques/T1059/003/
+- https://attack.mitre.org/techniques/T1059/005/
+- https://detection.fyi/elastic/detection-rules/windows/defense_evasion_execution_msbuild_started_by_script/?query=msbuild

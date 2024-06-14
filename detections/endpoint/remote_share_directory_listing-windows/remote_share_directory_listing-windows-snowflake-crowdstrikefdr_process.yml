@@ -1,0 +1,20 @@
+id: '22624.40848'
+title: Remote Share Directory Listing - Windows
+description: 'Threat actors may seek to enumerate local administrative access on remote
+  systems during reconnaissance activities. This use case detects commands to list
+  files and directories on administrative shares (C$, Admin$, or IPC$). Note: dir
+  and tree commands do not generate process creation logs and will only be detected
+  if called with another executable, e.g. "cmd.exe /c dir".'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(dir|ls|Get-ChildItem|gci|tree)\\\s.*'',
+  ''i'') and regexp_like(process, ''.*\\\x5c\\\x5c(10\\\.\\\d{1,3}\\\.\\\d{1,3}\\\.\\\d{1,3}|172\\\.(1[6-9]|2[0-9]|3[0-1])\\\.\\\d{1,3}\\\.\\\d{1,3}|192\\\.168\\\.\\\d{1,3}\\\.\\\d{1,3})\\\x5c(C|ADMIN|IPC)\\\$.*'',
+  ''i'') '
+techniques:
+- discovery:file and directory discovery
+technique_id: 
+- T1083
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2021/11/01/from-zero-to-domain-admin/

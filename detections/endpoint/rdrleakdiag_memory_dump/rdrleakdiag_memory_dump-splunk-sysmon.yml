@@ -1,0 +1,28 @@
+id: '32860.58327'
+title: RdrLeakDiag.exe Memory Dump
+description: rdrleakdiag.exe is a Windows diagnostic tool used to detect and analyze
+  memory leaks. Threat actors may abuse rdrleakdiag.exe to create memory dumps on
+  a system, potentially extracting sensitive information such as credentials or encryption
+  keys. Sophos reported use of this technique in their Crimson Palace investigation
+  targeting LSASS for credential dumping. This use case detects memory dump commands
+  using rdrleakdiag.exe, accounting for instances where the binary has been renamed.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (("/fullmemdmp" OR "/memdmp" OR "-memdmp") ("-o" OR "/o") AND ("-p" OR "/p")) OR
+  ((TERM(rdrleakdiag) OR "RdrLeakDiag.exe") ("fullmemdmp" OR "/memdmp" OR "-memdmp"))
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- credential-access:os credential dumping:lsass memory
+technique_id:
+- T1003.001
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1003/001/
+- https://lolbas-project.github.io/lolbas/Binaries/Rdrleakdiag/
+- https://news.sophos.com/en-us/2024/06/05/operation-crimson-palace-a-technical-deep-dive/
+- https://github.com/SigmaHQ/sigma/blob/6312dd1d44d309608552105c334948f793e89f48/rules/windows/process_creation/proc_creation_win_rdrleakdiag_process_dumping.yml
+- https://github.com/SigmaHQ/sigma/blob/6312dd1d44d309608552105c334948f793e89f48/deprecated/windows/proc_creation_win_lolbin_rdrleakdiag.yml
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.001/T1003.001.md#atomic-test-13---dump-lsassexe-using-lolbin-rdrleakdiagexe
