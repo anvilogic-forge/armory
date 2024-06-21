@@ -1,0 +1,22 @@
+id: '33144.58771'
+title: Bash -c Execution - Windows
+description: Bash is a popular default shell on Linux and macOS. Git Bash is a package
+  that installs Bash, some common bash utilities, and Git on a Windows operating system.
+  Bash is also included with Windows Subsystem for Linux. Bash is on the Microsoft
+  recommended block list for executable files. This use case detects executions of
+  bash.exe with -c.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "bash.exe" | regex process_name="(?i)bash\.exe"|
+  regex process="(?i)\s+-[ilsx]*c[ilsx]*" | table _time, host, user, signature_id,
+  process, process_*, parent_process_* | bin span=1s | stats values(*) as * by _time,
+  host | where event_count < 5 '
+techniques:
+- defense-evasion:system binary proxy execution
+- defense-evasion:system script proxy execution
+technique_id: 
+- T1218
+- T1216
+data_category:
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Bash/

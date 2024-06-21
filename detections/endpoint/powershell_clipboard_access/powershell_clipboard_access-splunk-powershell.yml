@@ -1,0 +1,20 @@
+id: '23306.42453'
+title: PowerShell Clipboard Access
+description: Infostealer malware including Bbystealer may use PowerShell commands
+  to access the clipboard to retrieve or store information. This use case detects
+  PowerShell cmdlets and commands used to access the clipboard.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") TERM(Get-Clipboard)
+  OR TERM(gcb) OR TERM(Set-Clipboard) OR TERM(scb) OR ".Clipboard" | table _time,
+  host, user, signature_id, process, process_name, parent_process_name | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- collection:clipboard data
+technique_id:
+- T1059.001
+data_category:
+- PowerShell logs
+references:
+- https://cyble.com/blog/bbystealer-malware-resurfaces-sets-sights-on-vpn-users/
