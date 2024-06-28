@@ -1,0 +1,26 @@
+id: '33701.59575'
+title: Suspicious Execution via Microsoft Common Console
+description: 'Microsoft Management Console (MMC) can be used to create, open, and
+  save custom consoles that contain administrative tools created by Microsoft, called
+  snap-ins. These snap-ins may be used to manage Windows systems locally or remotely.
+  MMC can also be used to open Microsoft created .msc files to manage system configuration.
+  Threat actors may leverage malicious .msc files to gain full code execution via
+  mmc.exe as observed in the GrimResource technique. This use case child processes
+  created by mmc.exe that do not originate from common system directories or standard
+  application paths. NOTE: Due to its extended logging capabilities for parent process
+  behaviors and attributes, Sysmon is recommended for best rule fidelity.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(mmc) OR "mmc.exe") | where match(parent_process_name,
+  "(?i)mmc\.exe") and !match(process_path, "(?i):\x5c(Windows\x5c(System32|SysWOW64)\x5c(mmc|wermgr|WerFault)\.exe)|Program\sFiles(\s\(x86\))?\x5c.*\.exe|Windows\x5cSystem32\x5cspool\x5cdrivers\x5cx64\x5c3\x5c\S+\.exe")
+  and !match(process, "(?i):\x5c(Windows\x5c(System32|SysWOW64)\x5c(wermgr|WerFault)\.exe)")
+  | table _time, host, user, process, parent_process, parent_process_*, process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218.014
+data_category:
+- Windows event logs
+references:
+- https://www.elastic.co/security-labs/grimresource

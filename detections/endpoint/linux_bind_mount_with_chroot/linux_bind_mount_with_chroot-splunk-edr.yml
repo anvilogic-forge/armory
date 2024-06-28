@@ -1,0 +1,20 @@
+id: '33451.59369'
+title: Linux Bind Mount with Chroot
+description: Threat actors have been observed targeting exposed Docker APIs and using
+  chroot to set the root directory to /mnt (typically used for mounting file systems)
+  before executing additional commands. This use case detects commands where chroot
+  is used in conjunction with mount commands.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(chroot) (TERM(/mnt) OR TERM(Mount))
+  | regex process="(?i)chroot\s+(\/mnt|mount)" | table _time, host, user process,
+  process_*, syscall, name | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- privilege-escalation:escape to host
+technique_id: 
+- T1611
+data_category:
+- EDR Logs
+references:
+- https://securitylabs.datadoghq.com/articles/attackers-deploying-new-tactics-in-campaign-targeting-exposed-docker-apis/
+- https://www.cadosecurity.com/blog/the-nine-lives-of-commando-cat-analysing-a-novel-malware-campaign-targeting-docker

@@ -1,0 +1,25 @@
+id: '33701.59577'
+title: Suspicious Execution via Microsoft Common Console
+description: 'Microsoft Management Console (MMC) can be used to create, open, and
+  save custom consoles that contain administrative tools created by Microsoft, called
+  snap-ins. These snap-ins may be used to manage Windows systems locally or remotely.
+  MMC can also be used to open Microsoft created .msc files to manage system configuration.
+  Threat actors may leverage malicious .msc files to gain full code execution via
+  mmc.exe as observed in the GrimResource technique. This use case child processes
+  created by mmc.exe that do not originate from common system directories or standard
+  application paths. NOTE: Due to its extended logging capabilities for parent process
+  behaviors and attributes, Sysmon is recommended for best rule fidelity.'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and parent_process_name ilike ''mmc.exe''
+  and not regexp_like(process_path, ''.*(:\\\x5c(Windows\\\x5c(System32|SysWOW64)\\\x5c(mmc|wermgr|WerFault)\\\.exe)|Program\\\sFiles(\\\s\\\(x86\\\))?\\\x5c.*\\\.exe|Windows\\\x5cSystem32\\\x5cspool\\\x5cdrivers\\\x5cx64\\\x5c3\\\x5c\\\S+\\\.exe).*'',
+  ''i'') and not regexp_like(process, ''.*:\\\x5c(Windows\\\x5c(System32|SysWOW64)\\\x5c(wermgr|WerFault)\\\.exe).*'',
+  ''i'') '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218.014
+data_category:
+- EDR Logs
+references:
+- https://www.elastic.co/security-labs/grimresource

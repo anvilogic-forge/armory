@@ -1,0 +1,27 @@
+id: '33428.59210'
+title: Mock System Directory - Windows
+description: A Windows User Account Control Bypass technique is capable of achieving
+  privilege escalation without displaying a UAC prompt. This method involves creating
+  a mock directory with a trailing whitespace and the same name as a legitmate trusted
+  location (e.g. "C:\Windows \System32\") and copying required files to it. The mock
+  directory can not be created via Windows Explorer, requiring the attacker to create
+  it via scripting or command line. This use case detects process or parent process
+  file paths (where available depending on log source) for trusted system directories
+  (\Windows\system32 or Program Files) including a trailing space before \.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (process_path ilike ''%Windows
+  %'' or process_path ilike ''%Program Files %'') and regexp_like(process_path, ''.*\\\s+\\\x5c.*'',
+  ''i'') '
+techniques:
+- privilege-escalation:abuse elevation control mechanism:bypass user account control
+- defense-evasion:abuse elevation control mechanism:bypass user account control
+- defense-evasion:masquerading
+technique_id:
+- T1548.002
+- T1036
+data_category:
+- EDR Logs
+references:
+- https://borncity.com/win/2023/03/11/windows-10-11-mock-folders-as-uac-bypass-security-disaster-leverage-applocker-and-srp/
+- https://www.fortinet.com/blog/threat-research/fickle-stealer-distributed-via-multiple-attack-chain
