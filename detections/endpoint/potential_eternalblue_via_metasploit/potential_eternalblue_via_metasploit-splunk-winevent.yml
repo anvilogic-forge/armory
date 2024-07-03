@@ -1,0 +1,25 @@
+id: '33131.58750'
+title: Potential EternalBlue via Metasploit
+description: Adversaries may use Valid Accounts to interact with a remote network
+  share using Server Message Block (SMB). The adversary may then perform actions as
+  the logged-on user. This use case detects attempts to authenticate to an SMB share
+  using Metasploit-Framework's EternalBlue module. False positives may be generated
+  for workstations using 16-character alphanumeric naming conventions; allowlisting
+  specific hostnames following this naming convention is recommended for best fidelity.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ((TERM(EventCode=4625) OR
+  "<EventID>4625<") OR (TERM(EventCode=4624) OR "<EventID>4624<") AND AuthenticationPackageName=NTLM
+  AND LogonType=3) OR (TERM(EventCode=4776) OR "<EventID>4776<") | regex Source_Workstation="^[A-Za-z0-9]{16}$"
+  | table _time, host, user, src, src_*, dest, dest_*, Source_Workstation, signature_id,
+  AuthenticationPackageName, LogonType, | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+technique_id:
+- T1021.002
+data_category:
+- Windows event logs
+references:
+- https://attack.mitre.org/techniques/T1021/002/
+- https://github.com/rapid7/metasploit-framework/tree/master
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/builtin/security/win_security_metasploit_authentication.yml

@@ -1,0 +1,27 @@
+id: '32674.59587'
+title: Suspicious csc.exe Source File Folder
+description: 'Adversaries may attempt to make payloads difficult to discover and analyze
+  by delivering files to victims as uncompiled code. Text-based source code files
+  may subvert analysis and scrutiny from protections targeting executables/binaries.
+  These payloads will need to be compiled before execution; typically via native utilities
+  such as csc.exe or GCC/MinGW. This use case detects csc.exe executions compiling
+  a .cs file from a suspicious folder. Note: Due to its extended logging capabilities
+  on parent process information, Sysmon is recommended for best fidelity. -- Threat
+  Actor Association: Alpha (STAC1248)'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%csc.exe''
+  and regexp_like(process, ''.*(\\\x5cAppData\\\x5c|\\\x5cWindows\\\x5cTemp).*'',
+  ''i'') and not regexp_like(parent_process_name, ''.*(sdiagnhost|w3wp|choco)\\\.exe.*'',
+  ''i'') and not regexp_like(process, ''.*\\\"C:\\\x5cWindows\\\x5cMicrosoft\\\.NET\\\x5cFramework64\\\x5cv\\\d+\\\.\\\d+\\\.\\\d+\\\x5ccsc\\\.exe\\\"\\\s\\\/noconfig\\\s\\\/fullpaths\\\s@\\\"C:\\\x5cWINDOWS\\\x5cTEMP\\\x5c[a-zA-Z0-9]{8}\\\x5c[a-zA-Z0-9]{8}\\\.cmdline\\\".*'',
+  ''i'') '
+techniques:
+- defense-evasion:obfuscated files or information:compile after delivery
+technique_id:
+- T1027.004
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1027/004/
+- https://github.com/SigmaHQ/sigma/blob/c0332a9d96f6c7804fcc85dd706caed889446a62/rules/windows/process_creation/proc_creation_win_csc_susp_folder.yml
+- https://kostas-ts.medium.com/ursnif-vs-italy-il-pdf-del-destino-5c83d6281072

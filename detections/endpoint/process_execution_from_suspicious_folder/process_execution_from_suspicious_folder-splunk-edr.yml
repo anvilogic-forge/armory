@@ -1,0 +1,29 @@
+id: '33791.59872'
+title: Process Execution From Suspicious Folder
+description: Threat actors may attempt to manipulate features of their artifacts to
+  make them appear legitimate or benign to users and security tools. Masquerading
+  involves altering the name or location of an object, whether legitimate or malicious,
+  to evade defenses and avoid detection. This technique can include modifying file
+  metadata, misleading users about the file type, and using names that resemble legitimate
+  tasks or services. This use case detects processes executed from a suspicious folder.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("\\$Recycle.bin\\" OR "\\config\\systemprofile\\"
+  OR "\\Intel\\Logs\\" OR "\\RSA\\MachineKeys\\" OR ("\\Users\\" ("\\Public\\" OR
+  "\\All Users\\" OR "\\Default\\" OR "\\NetworkService\\")) OR ("\\Windows\\" ("\\addins\\"
+  OR "\\debug\\" OR "\\Fonts\\" OR "\\Help\\" OR "\\IME\\" OR "\\Media\\" OR "\\repair\\"
+  OR "\\security\\" OR "\\System32\\Tasks\\" OR "\\Tasks\\")) OR "C:\\Perflogs\\")
+  OR "\\Users\\Public" | regex process_path="(?i)(\x5c\$Recycle\.bin\x5c|\x5cconfig\x5csystemprofile\x5c|\x5cIntel\x5cLogs\x5c|\x5cRSA\x5cMachineKeys\x5c)|(\x5cUsers\x5c(Public|All\s+Users|Default|NetworkService)\x5c)|(\x5cWindows\x5c(addins|debug|Fonts|Help|IME|Media|repair|security|System32\x5cTasks|Tasks)\x5c)|^C:\x5cPerflogs\x5c"|
+  regex parent_process_path!="(?i)(^C:\x5cUsers\x5cPublic\x5cIBM\x5cClientSolutions\x5cStart_Programs\x5c)"|
+  regex parent_process_path!="(?i)(^C:\x5cWindows\x5cSysWOW64\x5cconfig\x5csystemprofile\x5cCitrix\x5cUpdaterBinaries\x5c\S+\CitrixReceiverUpdater\.exe)"
+  | table _time, host, user, process, parent_*, process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:masquerading
+technique_id: 
+- T1036
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1036/
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_susp_execution_path.yml
+- https://blogs.blackberry.com/en/2023/07/decoding-romcom-behaviors-and-opportunities-for-detection

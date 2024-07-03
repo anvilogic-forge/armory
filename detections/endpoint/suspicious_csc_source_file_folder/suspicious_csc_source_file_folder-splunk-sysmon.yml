@@ -1,0 +1,26 @@
+id: '32674.58081'
+title: Suspicious csc.exe Source File Folder
+description: 'Adversaries may attempt to make payloads difficult to discover and analyze
+  by delivering files to victims as uncompiled code. Text-based source code files
+  may subvert analysis and scrutiny from protections targeting executables/binaries.
+  These payloads will need to be compiled before execution; typically via native utilities
+  such as csc.exe or GCC/MinGW. This use case detects csc.exe executions compiling
+  a .cs file from a suspicious folder. Note: Due to its extended logging capabilities
+  on parent process information, Sysmon is recommended for best fidelity. -- Threat
+  Actor Association: Alpha (STAC1248)'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(csc) OR "csc.exe") ("\\AppData" OR "\\Windows\\Temp") | regex parent_process_path!="(?i)(^C:\x5cProgram\sFiles)|(sdiagnhost|w3wp|choco)\.exe"|
+  regex parent_process!="(?i)\x5cProgramData\x5cMicrosoft\x5cWindows\sDefender\sAdvanced\sThreat\sProtection"|
+  regex process="(?i)\x5cAppData\x5c|\x5cWindows\x5cTemp" | table _time, host, user,
+  process, process_*, parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:obfuscated files or information:compile after delivery
+technique_id:
+- T1027.004
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1027/004/
+- https://github.com/SigmaHQ/sigma/blob/c0332a9d96f6c7804fcc85dd706caed889446a62/rules/windows/process_creation/proc_creation_win_csc_susp_folder.yml
+- https://kostas-ts.medium.com/ursnif-vs-italy-il-pdf-del-destino-5c83d6281072

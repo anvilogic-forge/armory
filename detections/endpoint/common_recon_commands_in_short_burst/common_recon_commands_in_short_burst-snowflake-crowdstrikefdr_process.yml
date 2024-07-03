@@ -1,0 +1,35 @@
+id: '33080.59644'
+title: Common Recon Commands in Short Burst
+description: Most initial access broker malware run several discovery commands in
+  a short time span to gather information after gaining access to a system. While
+  these commands are used routinely in legitimate activity, several executions in
+  rapid succession may indicate automated reconnaissance activities from malicious
+  actors. This use case detects several common reconnaissance/discovery commands executed
+  in a short time period (default 2 minutes).
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and not regexp_like(process, ''.*(\\\x5cSplunkUniversalForwarder\\\x5c(etc|bin)\\\x5c).*'',
+  ''i'') and not regexp_like(user, ''.*\\\$$.*'', ''i'') and (regexp_like(process_path,
+  ''.*(whoami|systeminfo|ipconfig|arp|nltest|tasklist|net1?|quser|tasklist|netstat|netsh|driverquery|cmdkey|tracert)\\\.exe.*'',
+  ''i'') or regexp_like(process, ''.*whoami|systeminfo|ipconfig|arp|nltest|dclist|domain_trusts|tasklist|quser|tasklist|netstat|netsh|driverquery|cmdkey|tracert|net1?(\\\.exe)?\\\s+(group|use)($|\\\s|\\\.exe).*'',
+  ''i'')) '
+techniques:
+- discovery:system owner/user discovery
+- discovery:account discovery
+- discovery:process discovery
+- discovery:system information discovery
+- discovery:system service discovery
+- defense-evasion:virtualization/sandbox evasion:system checks
+- discovery:system network connections discovery
+technique_id:
+- T1033
+- T1087
+- T1057
+- T1082
+- T1007
+- T1497.001
+- T1049
+data_category:
+- EDR Logs
+references:
+- https://kostas-ts.medium.com/ursnif-vs-italy-il-pdf-del-destino-5c83d6281072

@@ -1,0 +1,28 @@
+id: '33834.59953'
+title: DLL Concatenation
+description: 'Threat actors were observed using Impacket to concatenate the malicious
+  proxy tool Stowaway (msoe.dll) with all DLLs starting with ''d'' from the system32
+  directory into a single DLL (appmgmt.dll) to pad and obfuscate the malicious DLL,
+  thereby facilitating its deployment and evasion. This use case detects copy commands
+  followed by either *.dll or multiple .dll references, indicating possible attempts
+  to concatenate multiple DLLs into a single file. NOTE: For commands using ''copy''
+  or ''type'', they must be executed in a way that creates a new process, e.g. with
+  cmd /c or powershell -c, as they are built-in commands that run within the current
+  cmd session and do not create new processes on their own.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(copy) OR TERM(robocopy)
+  OR TERM(xcopy) OR ((TERM(type) OR TERM(Get-Content) OR "gc" OR "cat" OR TERM(more))
+  ">")) ".dll" | regex process="(?i)(copy|more|Get-Content|type|cat|gc)\s+.*?((\/b\s+\S+\.dll\s+\+\s*\S+\.dll)|(\*\.dll\s+\S+)|(\.dll.*\.dll))"
+  | table _time, host, user, process, signature_id | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:masquerading
+- defense-evasion:obfuscated files or information:binary padding
+technique_id:
+- T1036
+- T1027.001
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1027/001/
+- https://news.sophos.com/en-us/2024/06/05/operation-crimson-palace-a-technical-deep-dive/
