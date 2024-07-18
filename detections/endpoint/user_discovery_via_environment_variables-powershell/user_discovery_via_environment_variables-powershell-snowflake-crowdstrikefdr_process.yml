@@ -1,0 +1,23 @@
+id: '31066.60941'
+title: User Discovery via Environment Variables - PowerShell
+description: Threat actors may perform user discovery to gather information about
+  logged-in users, aiding in further lateral movement or privilege escalation within
+  the network. This use case detects instances where PowerShell is executed with commands
+  involving discovery of the current user's name, potentially indicating an attempt
+  by a threat actor to discover user accounts and environment variables on a compromised
+  system. PowerShell script block logging is recommended for best detection results.
+  Detection using other log sources requires the PowerShell command to be run in a
+  manner that creates a new process, such as powershell -command.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(\\\$env:UserName|\\\[System\\\.Environment\\\]::UserName).*'',
+  ''i'') '
+techniques:
+- discovery:system owner/user discovery
+technique_id: 
+- T1033
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1033/
+- https://research.splunk.com/endpoint/0cdf318b-a0dd-47d7-b257-c621c0247de8/

@@ -1,0 +1,22 @@
+id: '26010.48266'
+title: Microsoft SQL Server Suspicious Child Process - Windows
+description: 'sqlservr.exe is the primary executable for Microsoft SQL Server. Compromised
+  SQL databases may be leveraged to gain footholds for further network exploitation.
+  This use case detects executions of commonly abused binaries with parent process
+  sqlservr.exe. Unexpected executions can indicate SQL injection or RCE. -- Threat
+  Actor Association: FIN7'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and parent_process_name ilike ''%sqlservr.exe''
+  and regexp_like(process_path, ''.*\\\x5c(bash|bitsadmin|cmd|net|netstat|nltest|mshta|ping|powershell|pwsh|regsvr32|rundll32|sh|systeminfo|tasklist|ps|at|schtasks|wsl)\\\.exe.*'',
+  ''i'') '
+techniques:
+- persistence:server software component:sql stored procedures
+- initial-access:exploit public-facing application
+technique_id:
+- T1505.001
+- T1190
+data_category:
+- EDR Logs
+references:
+- https://www.securonix.com/blog/securonix-threat-research-security-advisory-new-returgence-attack-campaign-turkish-hackers-target-mssql-servers-to-deliver-domain-wide-mimic-ransomware/

@@ -1,0 +1,24 @@
+id: '32821.61831'
+title: Proxy Execution via Appcert
+description: Threat actors may exploit legitimate developer utilities to execute malicious
+  payloads by proxy. One such utility is appcert.exe, a command-line tool included
+  in the Windows Application Certification Kit, which is typically used to verify
+  the compliance of Windows applications with Microsoft's certification standards.
+  This use case detects appcert executions with commands to proxy execution of another
+  binary. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(appcert) OR "appcert.exe")
+  TERM(test) | regex process!="(?i)\-setupcommandline"| regex process="(?i)\stest\s"|
+  rex field=process "(?i)-setuppath\s+(?:\"|'')?(?<proxy_exec>[^\s\"'']+\.exe)(?:\"|'')?"
+  | table _time, host, user, process, parent_*, process_*, proxy_exec | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:trusted developer utilities proxy execution
+technique_id: 
+- T1127
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1127/
+- https://attack.mitre.org/techniques/T1218/007/
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Appcert/

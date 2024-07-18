@@ -1,0 +1,26 @@
+id: '35215.61886'
+title: Unusual AppCert Child Process
+description: Threat actors may exploit legitimate developer utilities to execute malicious
+  payloads by proxy. One such utility is appcert.exe, a command-line tool included
+  in the Windows Application Certification Kit, which is typically used to verify
+  the compliance of Windows applications with Microsoft's certification standards.
+  This use case detects appcert launching child processes outside of known good paths
+  C:\Program Files\Windows Kits\10\App Certification Kit\ and C:\Program Files (x86)\Windows
+  Kits\10\App Certification Kit\. Living Off the Land Binary and Scripts (LOLBAS)
+  (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(appcert) OR "appcert.exe") | regex parent_process_name="(?i)^appcert.exe"|
+  regex process_path!="(?i)\x5cProgram\sFiles(\s\(x86\))?\x5cWindows\sKits\x5c10\x5c"
+  | table _time, host, user, process, signature_id, parent_process_*, process_* |
+  bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:trusted developer utilities proxy execution
+technique_id: 
+- T1127
+data_category:
+- Windows event logs
+references:
+- https://attack.mitre.org/techniques/T1127/
+- https://attack.mitre.org/techniques/T1218/007/
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Appcert/

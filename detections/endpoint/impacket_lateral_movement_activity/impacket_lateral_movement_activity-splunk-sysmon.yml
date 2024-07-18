@@ -1,0 +1,31 @@
+id: '33319.58976'
+title: Impacket Lateral Movement Activity
+description: Impacket is a collection of Python classes for working with network protocols,
+  primarily focused on providing tools and scripts that facilitate the interaction
+  with network services and protocols commonly used in network penetration testing
+  and red teaming. wmiexec, smbexec, and dcomexec are specific tools within the Impacket
+  suite that use various protocols to execute commands on remote systems. This use
+  case detects specific behavior patterns associated with Impacket tools wmiexec,
+  smbexec, and dcomexec.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("&1" OR "&amp;1") (("wmiprvse.exe" OR "mmc.exe" OR "explorer.exe" OR "services.exe")
+  ("cmd.exe" "/Q" "/c")) OR ("svchost" "-k" "netsvcs" "taskeng.exe" "cmd" "/C" "Windows\\Temp")
+  | where (match(parent_process_name, "(?i)(wmiprvse|mmc|explorer|services)\.exe")
+  and match(process, "(?i)cmd\.exe\s\/Q\s\/c\s")) or (match(parent_process, "(?i)svchost\.exe\s-k\snetsvcs.+taskeng\.exe")
+  and match(process, "(?i)cmd\.exe\s\/c\s.+Windows\x5cTemp\x5c")) | table _time, host,
+  user, parent_*, process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+- lateral-movement:exploitation of remote services
+technique_id:
+- T1021.002
+- T1210
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1047/
+- https://attack.mitre.org/techniques/T1021/003/
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_hktl_impacket_lateral_movement/?query=10c14723-61c7-4c75-92ca-9af245723ad2
+- https://github.com/fortra/impacket/tree/master

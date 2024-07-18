@@ -1,0 +1,29 @@
+id: '26010.48256'
+title: Microsoft SQL Server Suspicious Child Process - Windows
+description: 'sqlservr.exe is the primary executable for Microsoft SQL Server. Compromised
+  SQL databases may be leveraged to gain footholds for further network exploitation.
+  This use case detects executions of commonly abused binaries with parent process
+  sqlservr.exe. Unexpected executions can indicate SQL injection or RCE. -- Threat
+  Actor Association: FIN7'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(sqlservr) OR "sqlservr.exe")
+  (TERM(bash) OR TERM(bitsadmin) OR TERM(cmd) OR TERM(net) OR TERM(netstat) OR TERM(nltest)
+  OR TERM(mshta) OR TERM(ping) OR TERM(powershell) OR TERM(pwsh) OR TERM(regsvr32)
+  OR TERM(rundll32) OR TERM(sh) OR TERM(systeminfo) OR TERM(tasklist) OR TERM(ps)
+  OR TERM(at) OR TERM(schtasks) OR TERM(wsl) OR "bash.exe" OR "bitsadmin.exe" OR "cmd.exe"
+  OR "net.exe" OR "netstat.exe" OR "nltest.exe" OR "mshta.exe" OR "ping.exe" OR "powershell.exe"
+  OR "pwsh.exe" OR "regsvr32.exe" OR "rundll32.exe" OR "sh.exe" OR "systeminfo.exe"
+  OR "tasklist.exe" OR "ps.exe" OR "at.exe" OR "schtasks.exe" OR "wsl.exe") | where
+  match(parent_process_name, "(?i)sqlservr\.exe") and match(process_path, "(?i)\x5c(bash|bitsadmin|cmd|net|netstat|nltest|mshta|ping|powershell|pwsh|regsvr32|rundll32|sh|systeminfo|tasklist|ps|at|schtasks|wsl)\.exe")
+  | table _time, host, user, process, process_*, parent_process_* | bin span=1s |
+  stats values(*) as * by _time, host '
+techniques:
+- persistence:server software component:sql stored procedures
+- initial-access:exploit public-facing application
+technique_id:
+- T1505.001
+- T1190
+data_category:
+- EDR Logs
+references:
+- https://www.securonix.com/blog/securonix-threat-research-security-advisory-new-returgence-attack-campaign-turkish-hackers-target-mssql-servers-to-deliver-domain-wide-mimic-ransomware/

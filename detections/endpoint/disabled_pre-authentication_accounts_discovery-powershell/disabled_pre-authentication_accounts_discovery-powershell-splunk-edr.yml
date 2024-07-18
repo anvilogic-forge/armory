@@ -1,0 +1,27 @@
+id: '32841.62132'
+title: Disabled Pre-Authentication Accounts Discovery - PowerShell
+description: With the appropriate parameters, PowerShell cmdlets such as Get-ADUser
+  or PowerView cmdlets including Get-DomainUser allow threat actors to discover domain
+  accounts with Kerberos Pre-Authentication disabled, enabling them to target accounts
+  vulnerable to Kerberos attacks such as AS-REP roasting. This use case detects PowerShell
+  commands with parameters targeting accounts with Pre-Authentication disabled. PowerShell
+  script block logging is recommended for best detection results. Detection using
+  other log sources requires the PowerShell command to be run in a manner that creates
+  a new process, such as powershell -command.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("Get-ADUser" ("4194304" OR "DoesNotRequirePreAuth"))
+  OR ("Get-DomainUser" "PreauthNotRequired") OR "DONT_REQ_PREAUTH" | table _time,
+  host, user process, process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:external remote services
+- discovery:account discovery
+technique_id: 
+- T1133
+- T1087
+data_category:
+- EDR Logs
+references:
+- https://research.splunk.com/endpoint/114c6bfe-9406-11ec-bcce-acde48001122/
+- https://attack.mitre.org/techniques/T1558/004/
+- https://m0chan.github.io/2019/07/31/How-To-Attack-Kerberos-101.html
+- https://stealthbits.com/blog/cracking-active-directory-passwords-with-as-rep-roasting/

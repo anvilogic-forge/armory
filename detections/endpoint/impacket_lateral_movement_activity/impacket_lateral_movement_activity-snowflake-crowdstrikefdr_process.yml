@@ -1,0 +1,29 @@
+id: '33319.60521'
+title: Impacket Lateral Movement Activity
+description: Impacket is a collection of Python classes for working with network protocols,
+  primarily focused on providing tools and scripts that facilitate the interaction
+  with network services and protocols commonly used in network penetration testing
+  and red teaming. wmiexec, smbexec, and dcomexec are specific tools within the Impacket
+  suite that use various protocols to execute commands on remote systems. This use
+  case detects specific behavior patterns associated with Impacket tools wmiexec,
+  smbexec, and dcomexec.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and ((process ilike ''%&1%'' or process
+  ilike ''%&amp;1%'') and (regexp_like(parent_process_name, ''.*(wmiprvse|mmc|explorer|services)\\\.exe.*'',
+  ''i'') and regexp_like(process, ''.*(cmd|powershell|pwsh)\\\.exe\\\s+(\\\/Q)?\\\s+(\\\/|-)c(ommand)?\\\s+.*'',
+  ''i'')) or (parent_process_name ilike ''svchost.exe'' and regexp_like(process, ''.*(powershell|pwsh|cmd)\\\.exe\\\s+(\\\/|-)c(ommand)?\\\s+.+Windows\\\x5cTemp\\\x5c.*'',
+  ''i''))) '
+techniques:
+- lateral-movement:remote services:smb/windows admin shares
+- lateral-movement:exploitation of remote services
+technique_id:
+- T1021.002
+- T1210
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1047/
+- https://attack.mitre.org/techniques/T1021/003/
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_hktl_impacket_lateral_movement/?query=10c14723-61c7-4c75-92ca-9af245723ad2
+- https://github.com/fortra/impacket/tree/master

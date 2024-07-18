@@ -1,0 +1,26 @@
+id: '35191.61837'
+title: MSI Installation via Appcert
+description: An MSI file is a Microsoft Installer package used for installing software
+  on Windows systems. Typically, .msi files are installed by msiexec.exe; AppCert.exe
+  is a component of the Windows Application Compatibility Toolkit used primarily for
+  application compatibility testing and can be used to install MSI files, but this
+  is not normal usage for appcert. Threat actors may use appcert to install malicious
+  MSI files in an attempt to evade detection. This use case detects appcert executions
+  with commands to install an msi file. Living Off the Land Binary and Scripts (LOLBAS)
+  (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process)(TERM(appcert) OR "appcert.exe") TERM(test) "-setupcommandline"
+  | regex process="(?i)\stest\s.+\-setupcommandline" | table _time, host, user, process,
+  parent_*, process_*, proxy_exec | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:msiexec
+technique_id:
+- T1218.007
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://attack.mitre.org/techniques/T1127/
+- https://attack.mitre.org/techniques/T1218/007/
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Appcert/

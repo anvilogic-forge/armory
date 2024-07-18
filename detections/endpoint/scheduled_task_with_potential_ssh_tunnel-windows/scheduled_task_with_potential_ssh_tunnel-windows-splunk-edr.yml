@@ -7,9 +7,10 @@ description: Threat actors have been observed using scheduled tasks to create re
   <port number>:<IP Address> :<port number>. Living Off the Land Binary and Scripts
   (LOLBAS) (LOLBIN)
 logic_format: Splunk
-logic: '`get_endpoint_data` `get_endpoint_data_edr` "@" "/create" ("-L" OR "-R") |
-  where match(process, "\w+@\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}") and match(process,
-  "\d{1,5}:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}") and match(process, "-L|R")
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "@" "/create" ("-L" OR "-R" OR
+  "-N" OR "-D" OR "-C" OR "IdentitiesOnly=yes" OR "StrictHostKeyChecking=no" OR "ssh")
+  | where match(process, "\w+@\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}") and match(process,
+  "\d{1,5}:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}") and match(process, "(?i)\-(L|R|N|D|C)|IdentitiesOnly=yes|StrictHostKeyChecking=no|ssh")
   | table _time, host, user, process, process_*, parent_process_name, parent_process_*,
   signature_id | bin span=1s | stats values(*) as * by _time, host '
 techniques:
