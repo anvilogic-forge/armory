@@ -1,0 +1,28 @@
+id: '35367.62272'
+title: Expand.exe Execution
+description: expand.exe is a legitimate Windows utility used to extract files from
+  compressed .cab archives. Threat actors have been observed abusing expand.exe to
+  unpack malicious payloads hidden within .cab files on compromised systems. This
+  use case detects expand.exe executions with .cab file extensions or references to
+  suspicious path locations. Allowlisting expected processes with full file paths
+  and command lines where possible is recommended for best fidelity. Living Off the
+  Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_name ilike ''expand.exe''
+  and regexp_like(process, ''.*(\\\.cab|(-|\\\/)F:|\\\x5cAppData\\\x5c|(Local|Roaming)\\\x5cTemp\\\x5c).*'',
+  ''i'') and not parent_process_name ilike ''ServiceShell.exe'' and not regexp_like(process,
+  ''.*\\\x5cProgramData\\\x5cDell\\\x5cUpdateService\\\x5cTemp\\\x5c.*'', ''i'') '
+techniques:
+- command-and-control:ingress tool transfer
+- defense-evasion:hide artifacts:ntfs file attributes
+technique_id:
+- T1105
+- T1564.004
+data_category:
+- EDR Logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Expand/
+- https://github.com/SigmaHQ/sigma/blob/c04bef2fbbe8beff6c7620d5d7ea6872dbe7acba/rules/windows/process_creation/proc_creation_win_expand_cabinet_files.yml
+- https://www.threatdown.com/blog/new-variant-of-konni-malware-used-in-campaign-targetting-russia/
+- https://www.sygnia.co/blog/ghost-emperor-demodex-rootkit/

@@ -1,0 +1,22 @@
+id: '33361.59030'
+title: Visio.exe File Download
+description: Visio.exe is a diagramming and vector graphics application developed
+  by Microsoft, used for creating flowcharts, organizational charts, and other visual
+  representations of information. Threat actors can abuse visio.exe to download files.
+  This use case detects executions of visio.exe followed by URLs in the command line.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell`(TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") TERM(visio) | regex
+  process="(?i)visio(\.exe(\"|\'')?)?\s+(\"|\'')?[A-Za-z0-9]{2,6}:\/\/[^\s]+" | table
+  _time, host, user, process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- PowerShell logs
+references:
+- https://attack.mitre.org/techniques/T1105/
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Visio/

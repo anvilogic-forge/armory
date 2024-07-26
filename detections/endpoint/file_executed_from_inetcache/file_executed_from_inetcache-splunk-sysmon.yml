@@ -1,0 +1,25 @@
+id: '35400.62242'
+title: File Executed from INetCache
+description: Adversaries may transfer tools or other files from an external system
+  into a compromised environment. Tools or files may be copied from an external adversary-controlled
+  system to the victim network through the command and control channel or through
+  alternate protocols such as ftp. Once present, adversaries may also transfer/spread
+  tools between victim devices within a compromised environment (i.e. Lateral Tool
+  Transfer). This use case detects when a file was executed from the C:\Users\<user>\AppData\Local\Microsoft\Windows\INetCache\IE
+  folder.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE" | regex process_path="(?i)\x5cAppData\x5cLocal\x5cMicrosoft\x5cWindows\x5cINetCache\x5cIE"
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- Windows Sysmon
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Ngen/
+- https://learn.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator
+- https://attack.mitre.org/techniques/T1105/
+- https://www.elastic.co/guide/en/security/8.14/suspicious-execution-from-inet-cache.html

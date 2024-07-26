@@ -1,0 +1,41 @@
+id: '35477.62348'
+title: Crowdstrike Typosquatting Phishing Site - Proxy
+description: Several domains were registered following the CrowdStrike outage in July
+  2024. This use case identifies traffic to known typosquatting/phishing domains registered
+  in the aftermath of the outage.
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_proxy` "crowdstrike-helpdesk.com" OR "crowdstrikebluescreen.com"
+  OR "crowdstrike-bsod.com" OR "crowdstrikedown.site" OR "crowdstrike0day.com" OR
+  "crowdstrikedoomsday.com" OR "crowdstrikefix.com" OR "crashstrike.com" OR "crowdstriketoken.com"
+  OR "fix-crowdstrike-bsod.com" OR "bsodsm8rLIxamzgjedu.com" OR "crowdstrikebsodfix.blob.core.windows.net"
+  OR "crowdstrikecommuication.app" OR "fix-crowdstrike-apocalypse.com" OR "crowdstrikeoutage.info"
+  OR "clownstrike.co.uk" OR "whatiscrowdstrike.com" OR "clownstrike.co" OR "microsoftcrowdstrike.com"
+  OR "crowdfalcon-immed-update.com" OR "crowdstuck.org" OR "failstrike.com" OR "winsstrike.com"
+  OR "crowdpass." OR "supportfalconcrowdstrikel.com" OR "crowdstrikehealthcare.com"
+  OR "crowdstrikeclaim.com" OR "crowdstrikebug.com" OR "crowdstrikeupdate.com" OR
+  "crowdstrikefail.com" OR "crowdstrikeoopsie.com" OR "crowdstrike.fail" OR "crowdstrike.woccpa.com"
+  OR "crowdstrikereport.com" OR "crowdstrike-cloudtrail-storage-bb-126d5e.s3.us-west-1.amazonaws.com"
+  OR "hoo.be/crowdstrike" OR "crowdstrike.orora.group" OR "sinkhole-d845c7b471d9adc14942f95105d5ffcf.crowdstrikeupdate.com"
+  OR "crowdstrike-falcon.online" OR "crowdstrikerecovery1.blob.core.windows.net" OR
+  "crowdstrikeoutage.com" OR "sedo.com/search/details/?partnerid=324561&language=es&domain=crowdstrike.es&ori…"
+  OR "isitcrowdstrike.com" OR "crowdstrike.black" OR "crowdstrikefix.zip" OR "crowdstrikeold.com"
+  OR "crowdstrikeout.com" OR "crowdstrike-out.com" OR "crowdstrikeoops.com" OR "crowdstrikefixer.com"
+  OR "crowdstrikesucks.com" OR "crowdstrikeclaims.com" OR "crowdstrikeglitch.com"
+  OR "crowdstrikelawsuit.com" OR "crowdstrikesuporte.com" OR "crowdstrikezeroday.com"
+  OR "crowdstrikerecovery.com" OR "crowdstrike-bluescreen.com" OR "crowdstrikeclassaction.com"
+  OR "crowdstrikewindowsoutage.com" | where match(site, "(?i)crowdstrike-helpdesk\.com|crowdstrikebluescreen\.com|crowdstrike-bsod\.com|crowdstrikedown\.site|crowdstrike0day\.com|crowdstrikedoomsday\.com|crowdstrikefix\.com|crashstrike\.com|crowdstriketoken\.com|fix-crowdstrike-bsod\.com|bsodsm8rLIxamzgjedu\.com|crowdstrikebsodfix\.blob\.core\.windows\.net|crowdstrikecommuication\.app|fix-crowdstrike-apocalypse\.com|crowdstrikeoutage\.info|clownstrike\.co\.uk|whatiscrowdstrike\.com|clownstrike\.co|microsoftcrowdstrike\.com|crowdfalcon-immed-update\.com|crowdstuck\.org|failstrike\.com|winsstrike\.com|crowdpass\.|supportfalconcrowdstrikel\.com|crowdstrikehealthcare\.com|crowdstrikeclaim\.com|crowdstrikebug\.com|crowdstrikeupdate\.com|crowdstrikefail\.com|crowdstrikeoopsie\.com|crowdstrike\.fail|crowdstrike\.woccpa\.com|crowdstrikereport\.com|crowdstrike-cloudtrail-storage-bb-126d5e\.s3\.us-west-1\.amazonaws\.com|hoo\.be/crowdstrike|crowdstrike\.orora\.group|sinkhole-d845c7b471d9adc14942f95105d5ffcf\.crowdstrikeupdate\.com|crowdstrike-falcon\.online|crowdstrikerecovery1\.blob\.core\.windows\.net|crowdstrikeoutage\.com|sedo\.com/search/details/\?partnerid=324561&language=es&domain=crowdstrike\.es&ori…|isitcrowdstrike\.com|crowdstrike\.black|crowdstrikefix\.zip|crowdstrikeold\.com|crowdstrikeout\.com|crowdstrike-out\.com|crowdstrikeoops\.com|crowdstrikefixer\.com|crowdstrikesucks\.com|crowdstrikeclaims\.com|crowdstrikeglitch\.com|crowdstrikelawsuit\.com|crowdstrikesuporte\.com|crowdstrikezeroday\.com|crowdstrikerecovery\.com|crowdstrike-bluescreen\.com|crowdstrikeclassaction\.com|crowdstrikewindowsoutage\.com")|
+  table _time, host, user, uri_path, http_user_agent, src_ip, dest_ip, site | bin
+  span=1s | stats values(*) as * by _time, host | lookup dnslookup clientip as dest_ip
+  OUTPUT clienthost as dest_dns | iplocation prefix="dest_" dest_ip | rename dest_Country
+  as dest_country '
+techniques:
+- initial-access:phishing
+- initial-access:phishing:spearphishing link
+technique_id:
+- T1566
+- T1566.002
+data_category:
+- Web proxy
+references:
+- https://community.bolster.ai/t/crowdstrike-look-alike-domains-list/217
+- https://socradar.io/suspicious-domains-exploiting-the-recent-crowdstrike-outage/

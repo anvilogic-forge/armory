@@ -1,0 +1,35 @@
+id: '35597.62476'
+title: WebDAV LNK Execution
+description: Threat actors often place malicious payloads on remote servers, which
+  are then downloaded and executed on the user’s PC using scripts or other methods.
+  One type of server attackers can leverage is WebDAV (Web Distributed Authoring and
+  Versioning) — a file transfer protocol built on top of HTTP. Threat actors can exploit
+  this technique by creating LNK files that, when accessed through Windows Explorer,
+  execute commands or scripts, enabling remote code execution and further malicious
+  activities. This use case detects when a LNK file was possibly executed from a WebDAV
+  server by a user who might have been tricked into accessing a URL shortcut.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "explorer.exe" ("cmd.exe" OR "cscript.exe" OR "mshta.exe" OR "powershell.exe" OR
+  "pwsh.exe" OR "wscript.exe") TERM(DavWWWRoot) | regex parent_process_name="(?i)explorer\.exe"
+  | regex process_name="(?i)(cmd|(c|w)script|mshta|powershell|pwsh)\.exe"| regex process="(?i)DavWWWRoot"
+  | table _time, host, user, parent_*, process, process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- execution:user execution
+- execution:command and scripting interpreter:windows command shell
+technique_id:
+- T1059.001
+- T1204
+- T1059.003
+data_category:
+- Windows Sysmon
+references:
+- https://www.trellix.com/blogs/research/beyond-file-search-a-novel-method/
+- https://micahbabinski.medium.com/search-ms-webdav-and-chill-99c5b23ac462
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_webdav_lnk_execution.yml
+- https://attack.mitre.org/techniques/T1059/001/
+- https://attack.mitre.org/techniques/T1059/003/
+- https://attack.mitre.org/techniques/T1204/
+- https://any.run/cybersecurity-blog/client-side-exploitation/

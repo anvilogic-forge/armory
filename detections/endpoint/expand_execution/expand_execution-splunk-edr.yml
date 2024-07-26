@@ -1,0 +1,31 @@
+id: '35367.62269'
+title: Expand.exe Execution
+description: expand.exe is a legitimate Windows utility used to extract files from
+  compressed .cab archives. Threat actors have been observed abusing expand.exe to
+  unpack malicious payloads hidden within .cab files on compromised systems. This
+  use case detects expand.exe executions with .cab file extensions or references to
+  suspicious path locations. Allowlisting expected processes with full file paths
+  and command lines where possible is recommended for best fidelity. Living Off the
+  Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "expand.exe" (".cab" OR "/F:"
+  OR "-F:" OR "\\ProgramData" OR "\\Public" OR "\\AppData\\Local\\Temp\\" OR "\\AppData\\Roaming\\Temp\\")
+  | where match(process_name, "(?i)expand\.exe") and match(process, "(?i)\.cab|(-|\/)F:|\x5cAppData\x5c|(Local|Roaming)\x5cTemp\x5c")
+  and not (match(parent_process_name, "(?i)ServiceShell\.exe") and match(process,
+  "(?i):\x5cProgramData\x5cDell\x5cUpdateService\x5cTemp\x5c")) | table _time, host,
+  user, process, process_name, parent_process_path, parent_process_name | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+- defense-evasion:hide artifacts:ntfs file attributes
+technique_id:
+- T1105
+- T1564.004
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Expand/
+- https://github.com/SigmaHQ/sigma/blob/c04bef2fbbe8beff6c7620d5d7ea6872dbe7acba/rules/windows/process_creation/proc_creation_win_expand_cabinet_files.yml
+- https://www.threatdown.com/blog/new-variant-of-konni-malware-used-in-campaign-targetting-russia/
+- https://www.sygnia.co/blog/ghost-emperor-demodex-rootkit/

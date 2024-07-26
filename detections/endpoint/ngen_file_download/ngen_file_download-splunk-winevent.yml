@@ -1,0 +1,24 @@
+id: '35366.62196'
+title: ngen.exe File Download
+description: ngen.exe (Native Image Generator) is a legitimate Windows binary that
+  compiles .NET assemblies into native machine code to improve application performance.
+  Threat actors can abuse ngen.exe to download files. This use case detects ngen.exe
+  executions with commands to download a file from a remote location. Living Off the
+  Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "ngen.exe" | regex process_name="(?i)ngen\.exe"|
+  regex process="(?i)ngen(\.exe(\"|\'')?)?\s+(\"|\'')?[A-Za-z0-9]{2,6}:\/\/[^\s]+"|
+  table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+technique_id: 
+- T1105
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Ngen/
+- https://attack.mitre.org/techniques/T1105/
+- https://learn.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator
