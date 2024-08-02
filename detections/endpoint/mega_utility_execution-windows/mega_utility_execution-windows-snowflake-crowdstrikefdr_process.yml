@@ -1,0 +1,19 @@
+id: '35820.62798'
+title: Mega Utility Execution - Windows
+description: Mega is a cloud storage service used by many threat actors due to its
+  use of end-to-end encryption and semi-anonymous payment options. The client application
+  MEGAsync.exe and command-line interface utility MegaCMD allow threat actors to exfiltrate
+  large amounts of data. This use case detects process executions of MEGASync or MegaCMD.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (process_path ilike ''%megacmd''
+  or process_path ilike ''%megasync.exe'') '
+techniques:
+- exfiltration:exfiltration over web service
+technique_id: 
+- T1567
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/blog/threat-detection/rclone-mega-extortion/
+- https://mega.io/

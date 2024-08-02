@@ -1,0 +1,21 @@
+id: '25039.46452'
+title: wuauclt.exe Network Connection
+description: wuauclt.exe is the Windows Update client. It can be abused to proxy execution
+  of malicious code as documented in the LOLBAS project. This use case detects network
+  connection events with wuauclt.exe. Connections to Microsoft-owned IPs are expected
+  behavior and have been filtered out. Living Off the Land Binary and Scripts (LOLBAS)
+  (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=3) OR "<EventID>3<")
+  "wuauclt" | where not match(dest_ip, "^(20\.18[4-9]\.|20\.19[0-1]\.|23\.79\.|51\.10[3-5]\.|52\.239\.)")
+  and match(process_name, "(?i)wuauclt\.exe") | table _time, host, user, signature_id,
+  process, process_name, parent_process_path, parent_process_name, src_ip, dest_ip
+  `group_events("host,1)` '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218
+data_category:
+- Windows Sysmon
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Wuauclt/

@@ -1,0 +1,21 @@
+id: '35864.62857'
+title: Process Connection to Mega - Windows
+description: Mega is a cloud storage service used by many threat actors due to its
+  use of end-to-end encryption and semi-anonymous payment options. The client application
+  MEGAsync.exe and command-line interface utility MegaCMD allow threat actors to exfiltrate
+  large amounts of data. This use case detects network connections involving MEGASync.exe
+  or MegaCMD or network connections to mega.co.nz or mega.nz (Sysmon only).
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5156) OR
+  "<EventID>5156<") "Megasync.exe" OR "megacmd" | where match(process_name, "(?i)mega(sync|cmd)")
+  | table _time, host, user, process, process_*, parent_process_*, dest_host | bin
+  span=300s | stats values(*) as * by _time, host '
+techniques:
+- exfiltration:exfiltration over web service
+technique_id: 
+- T1567
+data_category:
+- Windows event logs
+- Process use of network
+references:
+- https://redcanary.com/blog/threat-detection/rclone-mega-extortion/

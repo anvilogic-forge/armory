@@ -1,0 +1,20 @@
+id: '35820.62790'
+title: Mega Utility Execution - Windows
+description: Mega is a cloud storage service used by many threat actors due to its
+  use of end-to-end encryption and semi-anonymous payment options. The client application
+  MEGAsync.exe and command-line interface utility MegaCMD allow threat actors to exfiltrate
+  large amounts of data. This use case detects process executions of MEGASync or MegaCMD.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "Megasync.exe" OR "megacmd" | regex process_name="(?i)megasync\.exe|megacmd"
+  | table _time, host, user process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- exfiltration:exfiltration over web service
+technique_id: 
+- T1567
+data_category:
+- Windows event logs
+references:
+- https://redcanary.com/blog/threat-detection/rclone-mega-extortion/
+- https://mega.io/
