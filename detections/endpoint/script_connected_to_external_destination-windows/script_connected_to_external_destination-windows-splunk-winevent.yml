@@ -1,0 +1,22 @@
+id: '21196.37653'
+title: Script Connected to External Destination - Windows
+description: Adversaries may use scripts to connect to external locations for C2 communications,
+  downloading and executing payloads, data exfiltration, or redirection. This use
+  case detects when a Windows script interpreter (wscript, cscript, mshta, rundll32)
+  connects to external IPv4 or IPv6 destinations.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5156) OR
+  "<EventID>5156<") TERM(wscript) OR TERM(cscript) OR TERM(mshta) OR TERM(rundll32)
+  | regex dest_ip!="(?i)^(127|10|172\.1[6-9]|172\.2[0-9]|172\.3[0-1]|192\.168|169\.254|20)\.|(::1|0:0:0:0:0:0:0:1|fe80:|fc|fd)"
+  | table _time, host, user parent_*, process, process_*, dest_ip, dest_host | bin
+  span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- exfiltration:exfiltration over c2 channel
+technique_id: 
+- T1059
+- T1041
+data_category:
+- Windows event logs
+references:
+- https://www.virustotal.com/gui/file/d439a3ce7353ef96cf3556abba1e5da77eac21fdba09d6a4aad42d1fc88c1e3c/behavior
