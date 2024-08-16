@@ -1,0 +1,16 @@
+id: '20966.37307'
+title: 'GCP: Logs Deleted'
+description: Adversaries may delete or modify artifacts generated within systems to
+  remove evidence of their presence or hinder defenses.
+logic_format: snowflake
+logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
+  event_name ilike ''DeleteLog'' '
+techniques:
+- defense-evasion:indicator removal
+- initial-access:valid accounts
+technique_id: 
+- T1070
+- T1078
+data_category:
+- GCP audit logs
+references: null

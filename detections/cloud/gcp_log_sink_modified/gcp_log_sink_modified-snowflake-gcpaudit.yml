@@ -1,0 +1,21 @@
+id: '25731.47676'
+title: 'GCP: Log Sink Modified'
+description: Threat actors may modify log sinks to manipulate or disrupt log data,
+  which can be a tactic to evade detection or obscure malicious activities within
+  the cloud environment. This rule detects the creation, update, or deletion of logging
+  sinks in Google Cloud Platform. Google Service accounts (*@gserviceaccounts.com)
+  have been filtered out to reduce false positives.
+logic_format: snowflake
+logic: 'select * from gcpaudit where event_time > dateadd(hour, -2, sysdate()) and
+  (event_name ilike ''%DeleteSink%'' or event_name ilike ''%CreateSink%'' or event_name
+  ilike ''%UpdateSink%'') '
+techniques:
+- defense-evasion:indicator removal
+- initial-access:valid accounts
+technique_id: 
+- T1070
+- T1078
+data_category:
+- GCP audit logs
+references:
+- https://cloud.google.com/logging/docs/export/configure_export_v2

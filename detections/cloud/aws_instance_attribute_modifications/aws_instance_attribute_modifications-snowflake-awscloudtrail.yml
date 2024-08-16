@@ -1,0 +1,24 @@
+id: '28461.53278'
+title: AWS Instance_Attribute Modifications
+description: The API calls ModifyInstanceAttribute, ModifyDBSnapshotAttribute, and
+  ModifySnapshotAttribute are designed to change configurations and access permissions
+  of AWS EC2 instances, database snapshots, and general snapshots, respectively. A
+  threat actor may misuse these functions to enable unauthorized access to sensitive
+  data or resources for lateral movement, data exfiltration, or persistence within
+  the environment. This use case detects when ModifyInstanceAttribute, ModifyDBSnapshotAttribute,
+  or ModifySnapshotAttribute is called.
+logic_format: snowflake
+logic: select * from awscloudtrail where event_time > dateadd(hour, -2, sysdate())and
+  (cloud_service ilike '%ec2%'and (event_name ilike '%ModifyInstanceAttribute%' or
+  event_name ilike '%ModifySnapshotAttribute%' or event_name ilike '%ModifyDBSnapshotAttribute%'))
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+technique_id: 
+- T1578
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.invictus-ir.com/news/automated-first-response-in-aws-using-sigma-and-athena?utm_source=substack&utm_medium=email
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceAttribute.html
+- https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBSnapshotAttribute.html
+- https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifySnapshotAttribute.html

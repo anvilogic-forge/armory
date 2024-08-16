@@ -1,0 +1,28 @@
+id: '36372.63883'
+title: AWS Lambda CreateFunction
+description: 'AWS Lambda CreateFunction is an API call that allows users to create
+  a new Lambda function in their AWS environment, defining the function''s code, runtime,
+  and configuration settings. Threat actors might abuse this API call to establish
+  persistence or execute arbitrary code by deploying malicious functions, often leveraging
+  stolen or exposed credentials, as part of a larger attack strategy within a compromised
+  AWS account. This use case detects when CreateFunction is called. Note: In the CloudTrail
+  log file, the eventName CreateFunction might include date and version information,
+  but it is still referring to the same public API action. See AWS documentation for
+  further details.'
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` "CreateFunction" | table _time, host,
+  user, account, region, src_ip, http_user_agent, access_key, user, user_id, identity_type,
+  role, event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id | bin span=1s | stats values(*)
+  as * by _time, src_ip | lookup dnslookup clientip as src_ip OUTPUT clienthost as
+  src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- execution:serverless execution
+technique_id: 
+- T1648
+data_category:
+- AWS CloudTrail logs
+references:
+- https://unit42.paloaltonetworks.com/large-scale-cloud-extortion-operation/
+- https://docs.aws.amazon.com/lambda/latest/api/API_CreateFunction.html
+- https://docs.aws.amazon.com/lambda/latest/dg/logging-using-cloudtrail.html
