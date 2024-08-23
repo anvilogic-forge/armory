@@ -1,0 +1,22 @@
+id: '36445.64209'
+title: masscan Execution - Windows
+description: Masscan is a high-performance, open-source network scanning tool designed
+  to scan large ranges of IP addresses for open ports, offering similar functionality
+  to Nmap but with significantly faster scanning capabilities. Threat actors may use
+  port and vulnerability scanning tools to identify running services and potential
+  exploits on remote hosts and network devices. This use case detects masscan executions.
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and process_path ilike ''%masscan.exe'' '
+techniques:
+- discovery:network service discovery
+technique_id: 
+- - T1046
+data_category:
+- EDR Logs
+references:
+- https://github.com/robertdavidgraham/masscan/tree/master
+- https://attack.mitre.org/techniques/T1046/
+- https://cybersecurity.att.com/blogs/labs-research/teamtnt-with-new-campaign-aka-chimaera
+- https://unit42.paloaltonetworks.com/hildegard-malware-teamtnt/
+- https://www.kali.org/tools/masscan/

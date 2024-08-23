@@ -1,0 +1,23 @@
+id: '36612.64215'
+title: masscan Execution - *nix
+description: Masscan is a high-performance, open-source network scanning tool designed
+  to scan large ranges of IP addresses for open ports, offering similar functionality
+  to Nmap but with significantly faster scanning capabilities. Threat actors may use
+  port and vulnerability scanning tools to identify running services and potential
+  exploits on remote hosts and network devices. This use case detects masscan executions.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(masscan) | regex process_name="(?i)masscan"
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- discovery:network service discovery
+technique_id: 
+- T1046
+data_category:
+- Linux audit logs
+references:
+- https://github.com/robertdavidgraham/masscan/tree/master
+- https://attack.mitre.org/techniques/T1046/
+- https://cybersecurity.att.com/blogs/labs-research/teamtnt-with-new-campaign-aka-chimaera
+- https://unit42.paloaltonetworks.com/hildegard-malware-teamtnt/
+- https://www.kali.org/tools/masscan/
