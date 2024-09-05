@@ -1,0 +1,19 @@
+id: '6210.6835'
+title: Azure Create or Modify Resource Group
+description: 'Each resource that you create inside Azure must belong to a resource
+  group. It is a logical container that groups multiple resources together. This use
+  case looks for resource group creations or modifications. '
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "MICROSOFT.RESOURCES/SUBSCRIPTIONS/RESOURCEGROUPS/WRITE"
+  TERM(Succeeded) | table _time, host, user,account, region, src_ip, http_user_agent,
+  access_key, user, user_id, identity_type, role, event_name, event_category, cloud_service,
+  request_parameters, response, mfa_enabled, permissions, identity, action, resource_id,
+  object_id | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- defense-evasion:modify cloud compute infrastructure
+technique_id: 
+- T1578
+data_category:
+- Azure activity logs
+references:
+- https://subscription.packtpub.com/book/networking_and_servers/9781838829025/1/ch01lvl1sec10/azure-subscriptions-and-resource-groups

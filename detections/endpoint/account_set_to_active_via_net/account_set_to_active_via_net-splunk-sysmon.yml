@@ -1,0 +1,25 @@
+id: '8622.11070'
+title: Account set to active via Net.exe
+description: 'Adversaries may obtain and abuse credentials of a default or disabled
+  account as a means of gaining Initial Access, Persistence, Privilege Escalation,
+  or Defense Evasion. Default accounts are those that are built-into an OS, such as
+  the Guest or Administrator accounts on Windows systems. -- Threat Actor Association:
+  Unfading Sea Haze - Software Association: RansomHub -- Atomics T1078.001 Test#1
+  Atomics T1078.001 Test#2 Atomics T1564 Test#2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "EventID>1<")
+  ("/active:yes" OR "/active:y") | table _time, host, user, signature_id, process,
+  process_*, parent_process_*, src_ip, dest_ip, dest_port `group_events("host", 1)` '
+techniques:
+- privilege-escalation:valid accounts:default accounts
+- persistence:account manipulation
+- defense-evasion:valid accounts:default accounts
+- persistence:valid accounts:default accounts
+technique_id:
+- T1078.001
+- T1098
+data_category:
+- Process command-line parameters
+- Windows Sysmon
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1078.001/T1078.001.md
