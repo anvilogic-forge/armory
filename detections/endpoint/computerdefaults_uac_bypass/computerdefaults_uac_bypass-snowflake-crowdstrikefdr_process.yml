@@ -1,0 +1,22 @@
+id: '32258.58729'
+title: ComputerDefaults UAC Bypass
+description: 'computerdefaults.exe is a legitimate Windows executable handling the
+  Default Programs feature in Windows. This feature allows users to set default programs
+  for specific tasks such as web browsing, email, and media playback. Threat actors
+  may modify the registry to have computerdefaults.exe run arbitrary commands when
+  executed, potentially leading to UAC bypass. This use case detects modifications
+  to the registry key HKCU\Software\Classes\ms-settings\shell\open\command which is
+  associated with computerdefaults.exe. Atomics T1548.002 Test #5 Living Off the Land
+  Binary and Scripts (LOLBAS) (LOLBIN)'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*((Set-ItemProperty|sp|ADD|New-Item(Property)?|ni)\\\s.+SOFTWARE\\\x5cClasses\\\x5cms-settings\\\x5cshell\\\x5cOpen\\\x5cCommand.+DelegateExecute).*'',
+  ''i'') '
+techniques:
+- privilege-escalation:abuse elevation control mechanism:bypass user account control
+technique_id:
+- T1548.002
+data_category:
+- EDR Logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1548.002/T1548.002.md

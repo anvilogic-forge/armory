@@ -1,0 +1,29 @@
+id: '25100.46548'
+title: Event Logs Queried for RDP Sessions
+description: 'Threat actors may query Windows Terminal Services logs for RDP session
+  information. - Example 1: During post-compromise reconnaissance activities, Lazarus
+  was observed using wevtutil to query Windows Terminal Services logs for RDP sessions
+  (Event Code 25) in order to gather session reconnection information. - Example 2:
+  Threat actor tracked as Cluster Charlie (STAC1305) searched Windows Event Logs for
+  Windows Remote Connection Manager event ID 1149 -- This use case detects commands
+  querying Terminal Services logs for event 25 for user disconnection or event 1149
+  for records of successful Remote Desktop Services (RDP) logon attempt. While threat
+  actors will most likely be using wevtutil to perform the queries, it has been omitted
+  from the logic to account for instances where it has been renamed. -- Threat Actor
+  Association: Cluster Charlie (STAC1305), Lazarus'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("qe" OR "Query-Event") "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
+  ("EventID=25" OR "EventID=1149") | table _time, host, user, process, process_*,
+  user, parent_process_name, parent_process_path | bin span=1s | stats values(*) as
+  * by _time, host '
+techniques:
+- discovery:system information discovery
+technique_id: 
+- T1082
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://blog.talosintelligence.com/lazarus_new_rats_dlang_and_telegram/
+- https://news.sophos.com/en-us/2024/09/10/crimson-palace-new-tools-tactics-targets/

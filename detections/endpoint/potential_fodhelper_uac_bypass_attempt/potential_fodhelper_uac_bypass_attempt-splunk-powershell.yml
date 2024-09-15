@@ -1,0 +1,25 @@
+id: '20217.35897'
+title: Potential fodhelper UAC Bypass Attempt
+description: 'Adversaries may bypass UAC mechanisms to elevate process privileges
+  on system. Windows User Account Control (UAC) allows a program to elevate its privileges
+  (tracked as integrity levels ranging from low to high) to perform a task under administrator-level
+  permissions, possibly by prompting the user for confirmation. This use case detects
+  the creation of registry keys associated with known methods of using fodhelper to
+  bypass UAC. Atomic Test #3: T1548.002'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") (TERM(New-Item) OR
+  TERM(New-ItemProperty) OR TERM(Set-ItemProperty) OR TERM(sp) OR TERM(Set-Item) OR
+  TERM(sip)) "\\Software\\Classes\\ms-settings\\shell\\open\\command" | table _time,
+  host, user, process, process_*, parent_process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- privilege-escalation:abuse elevation control mechanism:bypass user account control
+- defense-evasion:abuse elevation control mechanism:bypass user account control
+technique_id:
+- T1548.002
+data_category:
+- PowerShell logs
+references:
+- https://blog.sygnia.co/breaking-down-casbaneiro-infection-chain-part2?_ga=2.66949422.1638613298.1690290265-1923873697.1682517767
+- https://gist.github.com/netbiosX/a114f8822eb20b115e33db55deee6692
