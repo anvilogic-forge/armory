@@ -1,0 +1,19 @@
+id: '27224.49778'
+title: Rundll32 Suspicious Command Line
+description: Threat actors using Gamarue, also referred to as Andromeda or Wauchos,
+  have been observed abusing rundll32.exe using unusual strings for DLL names. This
+  use case detects rundll32 executions with strings matching unusual patterns. Living
+  Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(rundll32) OR "rundll32" |
+  regex process="\x5c\x5c?[-_]{2,}[-_]{2,}[-_]{2,}.+,"| table _time, host, user, process,
+  process_*, parent_process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218.011
+data_category:
+- EDR Logs
+references:
+- https://redcanary.com/threat-detection-report/threats/gamarue/
+- https://redcanary.com/blog/lolbins-abuse/
