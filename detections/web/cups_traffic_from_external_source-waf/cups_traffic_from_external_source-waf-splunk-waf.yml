@@ -1,0 +1,22 @@
+id: '37778.67665'
+title: CUPS Traffic from External Source - WAF
+description: This use case looks for CUPS traffic (UDP 631) from external sources.
+  A remote unauthenticated attacker can silently replace existing printers’ (or install
+  new ones) IPP urls with a malicious one, resulting in arbitrary command execution
+  (on the computer) when a print job is started (from that computer). CVE-2024-47176
+  CVE-2024-47076 CVE-2024-47175 CVE-2024-47177
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_waf` (protocol="UDP" TERM(631)) dest_ip IN(10.0.0.0/8,
+  172.16.0.0/12, 192.168.16.0/16) AND NOT src_ip IN(10.0.0.0/8, 172.16.0.0/12, 192.168.16.0/16,
+  127.0.0.0/8, ::1) | regex dest_port="631" | table _time, host, user, src_ip, host,
+  dest_ip, dest_port | bin span=1s | stats values(*) as * by _time, dest_ip | iplocation
+  prefix="src_" src_ip| rename src_Country as src_country '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: 
+- T1190
+data_category:
+- Web application firewall logs
+references:
+- https://www.evilsocket.net/2024/09/26/Attacking-UNIX-systems-via-CUPS-Part-I/
+- https://gist.github.com/stong/c8847ef27910ae344a7b5408d9840ee1

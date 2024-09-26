@@ -1,0 +1,25 @@
+id: '37781.67669'
+title: Suspicious cupsd Child Process - *nix
+description: This use case detects unusual cupsd child processes. Expected child processes
+  of cupsd typically include backend processes such as /usr/lib/cups/backend/usb,
+  filter processes like /usr/lib/cups/filter/gstoraster, and scheduler-related tasks
+  involved in managing print jobs and converting formats for printers. Unusual and
+  suspicious child processes of cupsd would include shell processes like /bin/bash,
+  network utilities such as curl or wget, or any processes unrelated to printing tasks,
+  indicating potential command execution or lateral movement. -- CVE-2024-47176 CVE-2024-47076
+  CVE-2024-47175 CVE-2024-47177
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("cupsd" "root" (("bash" OR "sh")
+  "-c") OR "cupsd" | where match(parent_process_name, "cupsd$") and ((match(user,
+  "root") and match(process, "((ba)?sh\s.*-c)|wget|curl|^nc\s")) or match(user, "cupsd"))
+  | table _time, host, user, process, parent_process_name, process_name, process_path
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques: 
+- initial-access:exploit public-facing application
+technique_id: 
+- T1190
+data_category:
+- EDR Logs
+references:
+- https://www.evilsocket.net/2024/09/26/Attacking-UNIX-systems-via-CUPS-Part-I/
+- https://gist.github.com/stong/c8847ef27910ae344a7b5408d9840ee1
