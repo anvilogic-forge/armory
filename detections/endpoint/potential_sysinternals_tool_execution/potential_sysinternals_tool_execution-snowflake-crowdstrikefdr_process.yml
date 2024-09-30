@@ -1,0 +1,25 @@
+id: '22594.40767'
+title: Potential Sysinternals Tool Execution
+description: 'Sysinternals is a widely-used set of utilities for endpoint management,
+  troubleshooting, and monitoring and is available for free from Microsoft. While
+  not installed by default, it can be considered a LOLBAS due to its ubiquity in enterprise
+  environments. Threat actors can abuse these utilities in a variety of ways including
+  information gathering, remote command execution, memory dumping, and many more.
+  This use case detects command line executions including the accepteula flag. The
+  names of individual SysInternal tools have not been included to account for instances
+  where the process has been renamed. Allowlisting by process path for known benign
+  executables using -accepteula or /accepteula combined with usernames expected to
+  use Sysinternals is recommended to reduce false positives. -- Threat Actor Association:
+  Cluster Alpha (STAC1248) - Software Association: Fog -- LOLBINS/LOLBAS'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*\\\s(-|\\\/)accepteula.*'',
+  ''i'') '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218
+data_category:
+- EDR Logs
+references:
+- https://learn.microsoft.com/en-us/sysinternals/
