@@ -1,0 +1,35 @@
+id: '38038.68399'
+title: Code Injection by ld.so.preload
+description: Adversaries may execute their own malicious payloads by hijacking environment
+  variables the dynamic linker uses to load shared libraries. During the execution
+  preparation phase of a program, the dynamic linker loads specified absolute paths
+  of shared libraries from environment variables and files, such as LD_PRELOAD on
+  Linux or DYLD_INSERT_LIBRARIES on macOS. Libraries specified in environment variables
+  are loaded first, taking precedence over system libraries with the same function
+  name. These variables are often used by developers to debug binaries without needing
+  to recompile, deconflict mapped symbols, and implement custom functions without
+  changing the original library. On Linux, adversaries may set LD_PRELOAD to point
+  to malicious libraries that match the name of legitimate libraries which are requested
+  by a victim program, causing the operating system to load the adversary's malicious
+  code upon execution of the victim program. LD_PRELOAD can be set via the environment
+  variable or /etc/ld.so.preload file. Libraries specified by LD_PRELOAD are loaded
+  and mapped into memory by dlopen() and mmap() respectively. This use case detects
+  when ld.so.preload file was created/modified, indicating an attempt to execute malicious
+  payloads through hijacking environment variables the dynamic linker uses to load
+  shared libraries.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` "\/etc\/ld.so.preload" | table
+  _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- persistence:hijack execution flow:dynamic linker hijacking
+technique_id:
+- T1574.006
+data_category:
+- Linux audit logs
+references:
+- https://detection.fyi/sigmahq/sigma/linux/builtin/lnx_ldso_preload_injection/
+- https://www.virustotal.com/gui/file/22e4a57ac560ebe1eff8957906589f4dd5934ee555ebcc0f7ba613b07fad2c13/behavior
+- https://github.com/redcanaryco/atomic-red-team/blob/f339e7da7d05f6057fdfcdd3742bfcf365fee2a9/atomics/T1574.006/src/Linux/T1574.006.c
+- https://github.com/redcanaryco/atomic-red-team/blob/f339e7da7d05f6057fdfcdd3742bfcf365fee2a9/atomics/T1574.006/T1574.006.md#atomic-test-1---shared-library-injection-via-etcldsopreload
+- https://attack.mitre.org/techniques/T1574/006/

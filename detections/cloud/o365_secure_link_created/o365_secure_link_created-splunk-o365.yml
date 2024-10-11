@@ -1,0 +1,23 @@
+id: '38200.68702'
+title: O365 Secure Link Created
+description: This use case detects when a secure link is created for files and folders
+  in SharePoint Online or OneDrive for Business. These links allow users to access
+  shared content, making it a potential security risk if not managed carefully. A
+  threat actor could abuse the secure link functionality to gain access to sensitive
+  data, bypass authentication mechanisms, and exfiltrate information.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` "SecureLinkCreated" OR "AddedToSecureLink"
+  | table _time, host, user,account, region, src_ip, http_user_agent, access_key,
+  user, user_id, identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, user '
+techniques:
+- exfiltration:exfiltration over web service:exfiltration to cloud storage
+- collection:data from cloud storage
+technique_id:
+- T1567.002
+- T1530
+data_category:
+- Office 365 audit logs
+references:
+- https://www.microsoft.com/en-us/security/blog/2024/10/08/file-hosting-services-misused-for-identity-phishing/
