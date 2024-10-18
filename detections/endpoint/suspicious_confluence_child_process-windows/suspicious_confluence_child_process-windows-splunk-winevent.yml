@@ -1,0 +1,28 @@
+id: '38368.68996'
+title: Suspicious Confluence Child Process - Windows
+description: 'Threat actors may target vulnerabilities in Confluence to gain initial
+  access and then spawn command-line utilities from Confluence processes. This allows
+  them to download malicious payloads or execute arbitrary commands on the compromised
+  system, potentially leading to full system control or further lateral movement within
+  the network. This use case detects when Confluence processes launch command-line
+  utilities, potentially indicating that a threat actor has gained initial access
+  through Confluence vulnerabilities such as CVE-2023-22527 or CVE-2023-22518. Note:
+  logging of the full parent process file path is required for detection.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) "Confluence" ("tomcat" OR "java.exe") ("pwsh.exe"
+  OR "powershell.exe" OR "cmd.exe" OR "curl.exe" OR "wget.exe" OR "certutil.exe" OR
+  "bitsadmin.exe" OR "mshta.exe" OR "regsvr32.exe") | regex parent_process_path="(?i)Confluence.*(tomcat\d+?|java)\.exe"|
+  regex process_path="(?i)(pwsh|powershell|cmd|curl|wget|certutil|bitsadmin|mshta|regsvr32)\.exe"
+  | table _time, host, user, process, process_*, parent_process_* | bin span=1s |
+  stats values(*) as * by _time, host '
+techniques:
+- initial-access:exploit public-facing application
+technique_id: 
+- T1190
+data_category:
+- Windows event logs
+references:
+- https://github.com/ForceFledgling/CVE-2023-22518
+- https://packetstormsecurity.com/files/176789/Atlassian-Confluence-SSTI-Injection.html
+- https://www.huntress.com/blog/confluence-to-cerber-exploitation-of-cve-2023-22518-for-ransomware-deployment
