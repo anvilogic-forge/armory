@@ -1,0 +1,21 @@
+id: '24143.44588'
+title: Suspicious Parent Process for msiexec.exe
+description: msiexec.exe is a Windows system component used to install and modify
+  software packages using Windows Installer. Threat actors may abuse msiexec.exe to
+  install malicious software or execute scripts, leveraging its legitimate appearance
+  to bypass security measures and gain persistence on a targeted system as observed
+  in FlawedGrace attacks. This use case detects executions of msiexec.exe with suspicious
+  parent processes. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(msiexec) OR "msiexec.exe"
+  | regex process_name="(?i)msiexec\.exe"| regex parent_process_name="(?i)(spoolsv|powershell|pwsh|cmd|svchost|winlogon|taskhost|wininit)\.exe"
+  | table _time, host, user process, process_*, parent_process_name, parent_process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution:msiexec
+technique_id:
+- T1218.007
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2023/06/12/a-truly-graceful-wipe-out/

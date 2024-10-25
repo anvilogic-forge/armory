@@ -1,0 +1,25 @@
+id: '35722.62685'
+title: Multiple Failed Network Logon Attempts from Host
+description: This use case detects a single source host with failed network (remote)
+  authentication attempts from multiple user accounts in a short time period (default
+  2 minutes). This can be an indication of a password spraying attack from a compromised
+  host.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4625) OR
+  "<EventID>4625<") Logon_Type=3 | regex src_ip!="-" | bin span=120s | stats values(*)
+  as * by _time, host | eventstats dc(TargetUserName) AS unique_accounts values(TargetUserName)
+  as tried_accounts by _time, src_ip, client_host | eventstats avg(unique_accounts)
+  as comp_avg , stdev(unique_accounts) as comp_std by src_ip, client_host| eval upperBound=(comp_avg+comp_std*3)
+  | eval isOutlier=if(unique_accounts > 10 and unique_accounts >= upperBound, 1, 0)
+  | search isOutlier=1 | table _time, host, user, process, process_*, parent_*, unique_accounts,
+  tried_accounts, comp_avg, comp_std, client_host '
+techniques:
+- credential-access:brute force
+- credential-access:brute force:password spraying
+technique_id:
+- T1110
+- T1110.003
+data_category:
+- Windows event logs
+references:
+- https://github.com/splunk/security_content/blob/main/detections/endpoint/multiple_users_remotely_failing_to_authenticate_from_host.yml

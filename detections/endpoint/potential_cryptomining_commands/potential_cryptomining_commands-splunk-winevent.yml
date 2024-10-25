@@ -1,0 +1,26 @@
+id: '19129.33154'
+title: Potential Cryptomining Commands
+description: Adversaries may leverage the resources of co-opted systems in order to
+  solve resource intensive problems, which may impact system and/or hosted service
+  availability. One common purpose for Resource Hijacking is to validate transactions
+  of cryptocurrency networks and earn virtual currency. This use case detects common
+  plaintext and base64 encoded commands for cryptomining activity.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ("--cpu-priority=" OR "--donate-level=" OR " -o
+  pool." OR " --nicehash" OR " --algo=" OR "stratum+tcp://" OR "stratum+udp://" OR
+  "LS1kb25hdGUtbGV2ZWw9" OR "0tZG9uYXRlLWxldmVsP" OR "tLWRvbmF0ZS1sZXZlbD" OR "c3RyYXR1bSt0Y3A6Ly"
+  OR "N0cmF0dW0rdGNwOi8v" OR "zdHJhdHVtK3RjcDovL" OR "c3RyYXR1bSt1ZHA6Ly" OR "N0cmF0dW0rdWRwOi8v"
+  OR "zdHJhdHVtK3VkcDovL") | regex process!="(?i)(pool\.(c|o))\s|gcc\s-" | table _time,
+  host, user, process, process_*, parent_process_name | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- impact:resource hijacking
+technique_id: 
+- T1496
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://xmrig.com/docs/miner/command-line-options
+- https://www.trendmicro.com/en_us/research/24/j/unmasking-prometei-a-deep-dive-into-our-mxdr-findings.html
