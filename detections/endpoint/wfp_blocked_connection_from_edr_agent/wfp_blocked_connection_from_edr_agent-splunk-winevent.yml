@@ -1,0 +1,47 @@
+id: '38831.69927'
+title: WFP Blocked Connection from EDR Agent
+description: 'Threat actors may abuse WFP filters to prevent EDR agents from reporting
+  security events, as observed with tools like EDRSilencer or EDRNoisemaker. This
+  use case detects when the Windows Filtering Platform blocks a connective event involving
+  EDR binaries. Windows event 5157 is required for detection. Note: It is highly recommended
+  that you specify only the binaries of EDR tools known to be used in your environment.
+  This modification will greatly improve rule performance.'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5157) OR
+  "<EventID>5157<") ("AmSvc.exe" OR "cb.exe" OR "CETASvc.exe" OR "CNTAoSMgr.exe" OR
+  "CrAmTray.exe" OR "CrsSvc.exe" OR "CSFalconContainer.exe" OR "CSFalconService.exe"
+  OR "CybereasonAV.exe" OR "CylanceSvc.exe" OR "cyserver.exe" OR "CyveraService.exe"
+  OR "CyvrFsFlt.exe" OR "EIConnector.exe" OR "elastic-agent.exe" OR "elastic-endpoint.exe"
+  OR "EndpointBasecamp.exe" OR "ExecutionPreventionSvc.exe" OR "filebeat.exe" OR "fortiedr.exe"
+  OR "hmpalert.exe" OR "hurukai.exe" OR "LogProcessorService.exe" OR "mcsagent.exe"
+  OR "mcsclient.exe" OR "MsMpEng.exe" OR "MsSense.exe" OR "Ntrtscan.exe" OR "PccNTMon.exe"
+  OR "QualysAgent.exe" OR "RepMgr.exe" OR "RepUtils.exe" OR "RepUx.exe" OR "RepWAV.exe"
+  OR "RepWSC.exe" OR "sedservice.exe" OR "SenseCncProxy.exe" OR "SenseIR.exe" OR "SenseNdr.exe"
+  OR "SenseSampleUploader.exe" OR "SentinelAgent.exe" OR "SentinelAgentWorker.exe"
+  OR "SentinelBrowserNativeHost.exe" OR "SentinelHelperService.exe" OR "SentinelServiceHost.exe"
+  OR "SentinelStaticEngine.exe" OR "SentinelStaticEngineScanner.exe" OR "sfc.exe"
+  OR "sophosfilescanner.exe" OR "sophosfs.exe" OR "sophoshealth.exe" OR "sophosips.exe"
+  OR "sophosLivequeryservice.exe" OR "sophosnetfilter.exe" OR "sophosntpservice.exe"
+  OR "sophososquery.exe" OR "sspservice.exe" OR "TaniumClient.exe" OR "TaniumCX.exe"
+  OR "TaniumDetectEngine.exe" OR "TMBMSRV.exe" OR "TmCCSF.exe" OR "TmListen.exe" OR
+  "TmWSCSvc.exe" OR "Traps.exe" OR "winlogbeat.exe" OR "WSCommunicator.exe" OR "xagt.exe"
+  OR "MpCmdRun.exe" OR "MsMpEngCP.exe" OR "CrowdStrikeUI.exe" OR "cbstream.exe" OR
+  "cbnetwork.exe" OR "sfcMonitor.exe" OR "sfcService.exe" OR "SophosClean.exe" OR
+  "SophosUpdate.exe" OR "SentinelSystemMonitor.exe" OR "SentinelCleanup.exe" OR "mcshield.exe"
+  OR "mfemms.exe" OR "updaterui.exe" OR "smc.exe" OR "sepMasterService.exe" OR "avp.exe"
+  OR "avpui.exe" OR "cbresponse.exe" OR "cbservices.exe" OR "endpoint-security.exe"
+  OR "mbamservice.exe" OR "mbamtray.exe") | regex process_path="(?i)\x5c(AmSvc|cb|CETASvc|CNTAoSMgr|CrAmTray|CrsSvc|CSFalconContainer|CSFalconService|CybereasonAV|CylanceSvc|cyserver|CyveraService|CyvrFsFlt|EIConnector|elastic-agent|elastic-endpoint|EndpointBasecamp|ExecutionPreventionSvc|filebeat|fortiedr|hmpalert|hurukai|LogProcessorService|mcsagent|mcsclient|MsMpEng|MsSense|Ntrtscan|PccNTMon|QualysAgent|RepMgr|RepUtils|RepUx|RepWAV|RepWSC|sedservice|SenseCncProxy|SenseIR|SenseNdr|SenseSampleUploader|SentinelAgent|SentinelAgentWorker|SentinelBrowserNativeHost|SentinelHelperService|SentinelServiceHost|SentinelStaticEngine|SentinelStaticEngineScanner|sfc|sophosfilescanner|sophosfs|sophoshealth|sophosips|sophosLivequeryservice|sophosnetfilter|sophosntpservice|sophososquery|sspservice|TaniumClient|TaniumCX|TaniumDetectEngine|TMBMSRV|TmCCSF|TmListen|TmWSCSvc|Traps|winlogbeat|WSCommunicator|xagt|MpCmdRun|MsMpEngCP|CrowdStrikeUI|cbstream|cbnetwork|sfcMonitor|sfcService|SophosClean|SophosUpdate|SentinelSystemMonitor|SentinelCleanup|mcshield|mfemms|updaterui|smc|sepMasterService|avp|avpui|cbresponse|cbservices|endpoint-security|mbamservice|mbamtray)\.exe"
+  | table _time, host, user, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:impair defenses
+technique_id: 
+- T1562
+data_category:
+- Windows event logs
+references:
+- https://github.com/netero1010/EDRSilencer
+- https://github.com/amjcyber/EDRNoiseMaker
+- https://ghoulsec.medium.com/misc-series-4-forensics-on-edrsilencer-events-428b20b3f983
+- https://detection.fyi/sigmahq/sigma/windows/builtin/security/object_access/win_security_wfp_endpoint_agent_blocked/
+- https://www.huntress.com/blog/silencing-the-edr-silencers

@@ -1,0 +1,25 @@
+id: '17741.29689'
+title: Full Control Permissions Granted to Everyone - Windows
+description: 'Adversaries may modify file or directory permissions/attributes to evade
+  access control lists and access protected files. Windows implements file and directory
+  ACLs as Discretionary Access Control Lists (DACLs). Adversaries can interact with
+  the DACLs using built-in Windows commands which can grant adversaries higher permissions
+  on specific files and folders. This use case detects commands assigning full control
+  to Everyone which has been observed with Ryuk ransomware. -- Threat Actor Association:
+  UNC5812 -- Atomics T1222.001 Test #2 Atomics T1222.001 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) TERM(icacls) OR ("/grant" "Everyone:F") | regex
+  process="(?i)\s+\/grant\s+everyone" | table _time, host, user parent_*, process,
+  process_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:file and directory permissions modification:windows file and directory
+  permissions modification
+technique_id:
+- T1222.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://www.logpoint.com/en/blog/ryuk-ransomware/
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1222.001/T1222.001.md

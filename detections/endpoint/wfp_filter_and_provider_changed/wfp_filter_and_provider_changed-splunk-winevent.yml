@@ -1,0 +1,23 @@
+id: '38988.70115'
+title: WFP Filter and Provider Changed
+description: Threat actors may abuse Windows Filtering Platform filters to prevent
+  EDR agents from reporting security events, as observed with tools like EDRSilencer
+  or EDRNoisemaker. This use case detects when a host has events for both WFP provider
+  and filter changes within a short time period (default 30s).
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=5447) OR
+  "<EventID>5447<" OR TERM(EventCode=5448) OR "<EventID>5448<") | regex user!="NT\sAUTHORITY|\$$"
+  | table _time, host, user, process, process_*, parent_process_name, user, signature_id
+  | bin span=30s | stats values(*) as * by _time, host | where match(signature_id,
+  "5447") and match(signature_id, "5448") '
+techniques:
+- defense-evasion:impair defenses
+technique_id: 
+- T1562
+data_category:
+- Windows event logs
+references:
+- https://github.com/netero1010/EDRSilencer
+- https://github.com/amjcyber/EDRNoiseMaker
+- https://ghoulsec.medium.com/misc-series-4-forensics-on-edrsilencer-events-428b20b3f983
+- https://www.huntress.com/blog/silencing-the-edr-silencers

@@ -1,0 +1,24 @@
+id: '36746.69174'
+title: Certificate Enumeration - Windows
+description: Threat actors may use tools such as Certipy or Certify.exe to enumerate
+  misconfigurations in certificate services, allowing them to gather information on
+  potential vulnerabilities that could be exploited for privilege escalation or lateral
+  movement within a network. This use case identifies potential abuse of Active Directory
+  Certificate Services by monitoring file access events (event ID 5145) related to
+  certificate or certification authority data or process creation events (event ID
+  4688) involving tools commonly used to enumerate or exploit vulnerable configurations
+  in AD CS (e.g., Certipy or Certify).
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and (regexp_like(process, ''.*(certipy|find|vulnerable|enrolleeSuppliesSubject|/ca)\\\s.*'',
+  ''i'') or process_path ilike ''%certify.exe'') and not process_path ilike ''%find.exe'' '
+techniques:
+- credential-access:steal or forge authentication certificates
+technique_id: 
+- T1649
+data_category:
+- EDR Logs
+references:
+- https://github.com/ly4k/Certipy
+- https://www.kali.org/tools/certipy-ad/
+- https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation

@@ -1,0 +1,25 @@
+id: '28106.51156'
+title: Temporary File Executed from Public Folder
+description: 'The BlackBerry Threat Research and Intelligence Team has detailed several
+  behaviors of threat actors using the RomCom remote access trojan. One indication
+  of unusual activity is the placement of binaries in Temp directories with the extension
+  .tmp which are launched by processes stored in the Public folder. This use case
+  detects processes executing from temporary directories with parent processes located
+  in public folders. -- Threat Actor Association: UNC5812'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "\\AppData\\Local\\Temp\\" ".tmp" "\\Users\\Public" ".exe" | regex parent_process_path="(?i)\x5cUsers\x5cPublic\x5c\.exe"|
+  regex process_path="(?i)\x5cAppData\x5cLocal\x5cTemp\x5c.+\.tmp" | table _time,
+  host, user, process, process_*, parent_process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:ingress tool transfer
+- lateral-movement:taint shared content
+technique_id: 
+- T1105
+- T1080
+data_category:
+- Windows Sysmon
+references:
+- https://www.virustotal.com/gui/file/6d3ab9e729bb03ae8ae3fcd824474c5052a165de6cb4c27334969a542c7b261d/behavior
+- https://blogs.blackberry.com/en/2022/10/unattributed-romcom-threat-actor-spoofing-popular-apps-now-hits-ukrainian-militaries

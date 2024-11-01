@@ -1,0 +1,25 @@
+id: '38494.69242'
+title: Certificate Abuse - Windows
+description: Threat actors may use tools such as Certipy or Certify.exe to enumerate
+  misconfigurations in certificate services, allowing them to gather information on
+  potential vulnerabilities that could be exploited for privilege escalation or lateral
+  movement within a network. This use case identifies potential abuse of Active Directory
+  Certificate Services by monitoring Certificate Services events (4886 and 4887) or
+  process creation events (event ID 4688) involving tools commonly used to exploit
+  vulnerable configurations in AD CS such as certify.exe, accounting for instances
+  where the binary has been renamed.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  ("certify.exe" OR "request " OR "/ca:" OR "/template:" OR "/altname:") | where match(process,
+  "(?i)request\s.+/ca:.+/(template|altname):") | table _time, host, user user, process,
+  process_*, parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- credential-access:steal or forge authentication certificates
+technique_id: 
+- T1649
+data_category:
+- Windows Sysmon
+references:
+- https://github.com/ly4k/Certipy
+- https://www.kali.org/tools/certipy-ad/
+- https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation

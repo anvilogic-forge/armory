@@ -1,0 +1,27 @@
+id: '36746.69166'
+title: Certificate Enumeration - Windows
+description: Threat actors may use tools such as Certipy or Certify.exe to enumerate
+  misconfigurations in certificate services, allowing them to gather information on
+  potential vulnerabilities that could be exploited for privilege escalation or lateral
+  movement within a network. This use case identifies potential abuse of Active Directory
+  Certificate Services by monitoring file access events (event ID 5145) related to
+  certificate or certification authority data or process creation events (event ID
+  4688) involving tools commonly used to enumerate or exploit vulnerable configurations
+  in AD CS (e.g., Certipy or Certify).
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("certipy" OR "find" OR "vulnerable"
+  OR "enrolleeSuppliesSubject" OR TERM(/ca)) OR "certify.exe" | where match(process,
+  "(?i)(certipy|find|vulnerable|enrolleeSuppliesSubject|/ca)\s") and !match(process_name,
+  "(?i)find\.exe")) or match(process_name, "(?i)certify\.exe") | table _time, host,
+  user user, process, process_*, parent_* | bin span=1s | stats values(*) as * by
+  _time, host '
+techniques:
+- credential-access:steal or forge authentication certificates
+technique_id: 
+- T1649
+data_category:
+- EDR Logs
+references:
+- https://github.com/ly4k/Certipy
+- https://www.kali.org/tools/certipy-ad/
+- https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation
