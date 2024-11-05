@@ -1,0 +1,30 @@
+id: '39090.70294'
+title: RDP File Executed from Outlook Temp Directory
+description: Remote desktop is a common feature in operating systems. It allows a
+  user to log into an interactive session with a system desktop graphical user interface
+  on a remote system. Targeted spear-phishing campaigns attributed to Russia’s APT29
+  have been observed distributing .rdp files to victims to initiate a remote connection.
+  This use case detects the execution of .rdp files in the temporary directory that
+  Outlook uses when opening attachments.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) ".rdp" ("\\AppData\\Local\\Packages\\Microsoft.Outlook_"
+  OR ("\\AppData\\Local\\Microsoft\\Windows\\" "\\Content.Outlook\\"))| where match(process,
+  "(?i)((\x5cAppData\x5cLocal\x5cMicrosoft\x5cWindows\x5c.*\x5cContent\.Outlook\x5c)|(\x5cAppData\x5cLocal\x5cPackages\x5cMicrosoft\.Outlook_)).*\.rdp")
+  | table _time, host, user, process_*, process, parent_*, file_* | bin span=1s |
+  stats values(*) as * by _time, host '
+techniques:
+- lateral-movement:remote services:remote desktop protocol
+- initial-access:phishing:spearphishing attachment
+technique_id:
+- T1021.001
+- T1566.001
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://x.com/cyb3rops/status/1851880158640099675?s=46
+- https://www.microsoft.com/en-us/security/blog/2024/10/29/midnight-blizzard-conducts-large-scale-spear-phishing-campaign-using-rdp-files/
+- https://cert.gov.ua/article/6281076
+- https://aws.amazon.com/blogs/security/amazon-identified-internet-domains-abused-by-apt29/
+- https://github.com/SigmaHQ/sigma/pull/5063/files
