@@ -1,0 +1,25 @@
+id: '39168.70783'
+title: 'Okta: MFA Response without Verify App'
+description: 'A threat example found a threat actor compromised a CTO’s Okta account
+  by social engineering help desk and registering their device. The MFA was then sent
+  via SMS. This use case detects when a user responds to an MFA challenge without
+  using the Okta Verify app, such as SMS, email, or phone call. '
+logic_format: Splunk
+logic: '`get_authentication_data` (eventType="system.sms.send_factor_verify_message"
+  or eventType="system.email.send_factor_verify_message" or eventType="system.voice.send_mfa_challenge_call")
+  and action="SUCCESS" | table _time, host, user, action, dest_host, src_ip, src_user,
+  signature| bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:valid accounts
+- persistence:modify authentication process:multi-factor authentication
+- persistence:account manipulation:device registration
+- defense-evasion:valid accounts
+technique_id:
+- T1078
+- T1556.006
+- T1098.005
+data_category:
+- Application logs
+references:
+- https://www.reliaquest.com/blog/scattered-spider-x-ransomhub-a-new-partnership/
+- https://cryptsus.com/blog/okta-iam-threat-hunting-siem-use-cases.html

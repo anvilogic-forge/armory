@@ -1,0 +1,13 @@
+id: '13773.20213'
+title: 'Okta: Admin App Accessed'
+description: This use case detects when a user has accessed the Okta admin app.
+logic_format: Splunk
+logic: '`get_application_data` eventType="user.session.access_admin_app" `group_events("src_ip",
+  1)` '
+techniques:
+- defense-evasion:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Application logs
+references: null

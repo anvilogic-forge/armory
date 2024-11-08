@@ -1,0 +1,13 @@
+id: '13773.20211'
+title: 'Okta: Admin App Accessed'
+description: This use case detects when a user has accessed the Okta admin app.
+logic_format: snowflake
+logic: 'select * from okta where event_time > dateadd(hour, -2, sysdate()) and to_timestamp(date_part(epoch_second,
+  event_time)) < $latest$ and event_type ilike ''user.session.access_admin_app'' '
+techniques:
+- defense-evasion:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Application logs
+references: null
