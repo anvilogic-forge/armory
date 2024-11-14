@@ -1,0 +1,44 @@
+id: '38391.69031'
+title: Executable Running as NT AUTHORITY_SYSTEM Registered in BAM
+description: Adversaries may exploit software vulnerabilities in an attempt to elevate
+  privileges. Exploitation of a software vulnerability occurs when an adversary takes
+  advantage of a programming error in a program, service, or within the operating
+  system software or kernel itself to execute adversary-controlled code. Security
+  constructs such as permission levels will often hinder access to information and
+  use of certain techniques, so adversaries will likely need to perform privilege
+  escalation to include use of software exploitation to circumvent those restrictions.
+  Background Activity Moderator is a Windows service that controls activity of background
+  applications. The service was first introduced on Windows 10, specifically, after
+  the Fall Creators Update (version 1709). BAM provides the full path of the executable
+  files that was run on the system as well as the last execution date and time of
+  these files. BAM provides evidence of program execution by listing executables under
+  the "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\bam\State\UserSettings\<SID>"
+  registry key. Each user specific executable is stored under the corresponding SID
+  entry. BAM entries are only populated for locally run executables. Launching executables
+  on network shares or removable media will not generate BAM entries. Similarly, console
+  applications aren't stored on the BAM entry. In addition, BAM entries are removed
+  if an executable is removed from its original location; and entries older than 7
+  days are removed when Windows boots. This use case detects when an executable running
+  as NT AUTHORITY\SYSTEM was registered in BAM registry key. This behavior was observed
+  in CVE-2024-30088, but it is not specific only to this issue, rather used only as
+  a reference.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4657) OR
+  "<EventID>4657<") "SYSTEM\\CurrentControlSet\\Services\\bam\\State\\UserSettings\\S-1-5-18"
+  | rex field=_raw "<Data Name=\"NewValueType\">(?<new_value_type>[^<]+)</Data>"|
+  rex field=_raw "<Data Name=\"NewValue\">(?<new_value>[^<]+)</Data>" | where match(new_value_type,
+  "(?i)REG_BINARY") and match(new_value, "(?i)\.exe$") | table _time, host, user,
+  process, process_*, registry_*, parent_*, new_value_type, new_value | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- privilege-escalation:exploitation for privilege escalation
+technique_id: 
+- T1068
+data_category:
+- Windows event logs
+- Windows Registry
+references:
+- https://github.com/tykawaii98/CVE-2024-30088/tree/main
+- https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-30088
+- https://attack.mitre.org/techniques/T1068/
+- https://dfir.ru/2020/04/08/bam-internals/

@@ -1,0 +1,25 @@
+id: '39293.71010'
+title: Unusual winlogon.exe Child Process
+description: Winlogon.exe is a core Windows process that manages secure user authentication
+  events, such as logon, logoff, and screen locking. Expected child processes include
+  LogonUI.exe for the login screen, FontDrvHost.exe for font rendering in secure sessions,
+  Userinit.exe for initializing user settings, Consent.exe for User Account Control
+  (UAC) prompts, and Sihost.exe for managing shell experience components like the
+  Start menu and taskbar. This use case detects unexpected child processes spawned
+  by winlogon.exe.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) TERM(winlogon) OR "winlogon.exe" | regex parent_process_name="(?i)winlogon\.exe"|
+  regex process_path!="(?i)\x5cWindows\x5cSystem32\x5c(AtBroker|LogonUI|dwm|fontdrvhost|userinit|consent|sihost)\.exe"
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- persistence:boot or logon autostart execution:winlogon helper dll
+- privilege-escalation:boot or logon autostart execution:winlogon helper dll
+technique_id:
+- T1547.004
+data_category:
+- Windows event logs
+references:
+- https://github.com/tykawaii98/CVE-2024-30088
+- https://securityonline.info/poc-exploit-published-for-windows-kernel-elevation-of-privilege-vulnerability-cve-2024-30088/
