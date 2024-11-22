@@ -1,0 +1,25 @@
+id: '39670.71749'
+title: System Information Discovery via sw_vers - macOS
+description: sw_vers is a macOS command-line utility that displays the operating system
+  version, build number, and computer name. A threat actor could abuse it to fingerprint
+  a macOS system, gathering OS version information for tailoring exploits or identifying
+  specific vulnerabilities. This use case detects sw_vers executions querying OS system
+  version, build number, or product version.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(sysctl) ("hw." OR "kern."
+  OR "machdep.") `group_events(host,1)` '
+techniques:
+- discovery:system information discovery
+- defense-evasion:virtualization/sandbox evasion:system checks
+technique_id:
+- T1082
+- T1497.001
+data_category:
+- EDR Logs
+references:
+- https://ss64.com/osx/sw_vers.html
+- https://www.virustotal.com/gui/file/03b71eaceadea05bc0eea5cddecaa05f245126d6b16cfcd0f3ba0442ac58dab3/behavior
+- https://www.virustotal.com/gui/file/d3fa64f63563fe958b75238742d1e473800cb5f49f5cb79d38d4aa3c93709026/behavior
+- https://www.sentinelone.com/labs/bluenoroff-hidden-risk-threat-actor-targets-macs-with-fake-crypto-news-and-novel-persistence/
+- https://www.virustotal.com/gui/file/bd2aa5805b76f272b43a595b3d73e29d0fc4647e15e87950b8f904ea26dcf053/behavior
+- https://detection.fyi/sigmahq/sigma/macos/process_creation/proc_creation_macos_swvers_discovery/

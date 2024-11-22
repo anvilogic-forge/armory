@@ -1,0 +1,18 @@
+id: '19348.33710'
+title: Potential nanodump execution
+description: Nanodump is a flexible tool that creates a minidump of the LSASS process
+  and is commonly used by red teams with cobalt strike. This use case looks for nanodumps
+  default access requests.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` ((TERM(EventCode=4656) OR
+  "<EventID>4656<") "0x1010" ) OR ((TERM(EventCode=4663) OR "<EventID>4663<") "%%4484"
+  ) "lsass.exe" | table _time, host, user process, process_*, signature_id, parent_*
+  | bin span=5s | stats values(*) as * by _time, host | where match(signature_id,
+  "4656") and match(signature_id, "4663") '
+techniques:
+- credential-access:os credential dumping
+technique_id: T1003
+data_category:
+- Windows event logs
+references:
+- https://github.com/fortra/nanodump
