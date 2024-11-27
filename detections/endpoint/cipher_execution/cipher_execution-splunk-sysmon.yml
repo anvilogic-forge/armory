@@ -1,0 +1,30 @@
+id: '39961.72291'
+title: Cipher.exe Execution
+description: Cipher.exe is a Windows command-line utility used for managing encryption
+  on NTFS drives and securely overwriting data to prevent recovery. Threat actors
+  may destroy data on specific systems or across a network to disrupt the availability
+  of systems, services, or resources. This often involves overwriting files or data
+  on local and remote drives, rendering the information irrecoverable. Unlike basic
+  file deletion commands (e.g., del or rm), which typically remove file pointers but
+  leave data recoverable through forensic techniques, this method ensures complete
+  data loss by overwriting the content. Threat actors may overwrite files and directories
+  with random data or other content to prevent recovery and obscure their activity.
+  This tactic targets individual files rather than wiping entire disk sections or
+  logical structures. This use case detects the execution of cipher.exe with the /w
+  flag, accounting for instances where the binary has been renamed. Executions of
+  processes using arguments with the pattern " /w:" followed by non-numeric characters
+  should be allowlisted to reduce false positives.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  "cipher.exe" OR TERM(cipher) | regex process_path="(?i)\x5ccipher\.exe" | table
+  _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- impact:data destruction
+technique_id: 
+- T1485
+data_category:
+- Windows Sysmon
+references:
+- https://www.volexity.com/blog/2024/11/22/the-nearest-neighbor-attack-how-a-russian-apt-weaponized-nearby-wi-fi-networks-for-covert-access/
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/certificates-and-public-key-infrastructure-pki/use-cipher-to-overwrite-deleted-data
