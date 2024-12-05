@@ -1,0 +1,22 @@
+id: '40218.73051'
+title: Remote Apple Events Enabled
+description: 'Remote Apple Events (RAE) is part of the Apple Event Manager framework,
+  enabling macOS applications to communicate and execute tasks over a network using
+  Apple Events. Applications expose specific functions by registering handlers via
+  the Apple Events API. Remote clients can invoke these handlers using event identifiers,
+  allowing automated or remote control of applications across systems. Full disk access
+  is required to successfully enable Remote Apple Events. This use case detects commands
+  to enable Remote Apple Events using systemsetup. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(systemsetup) " -on" "-setremoteappleevents"
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- command-and-control:remote access software
+technique_id: 
+- T1219
+data_category:
+- EDR Logs
+references:
+- https://unit42.paloaltonetworks.com/unique-popular-techniques-lateral-movement-macos/
+- https://ss64.com/mac/systemsetup.html

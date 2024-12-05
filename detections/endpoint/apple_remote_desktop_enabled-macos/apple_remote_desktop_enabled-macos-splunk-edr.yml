@@ -1,0 +1,24 @@
+id: '40097.72564'
+title: Apple Remote Desktop Enabled - macOS
+description: Apple Remote Desktop (ARD) is a remote management tool for macOS, enabling
+  software distribution, remote assistance, system administration, and asset management.
+  Administrators use the ARD app, available on the Mac App Store, to manage clients.
+  The client component is built into macOS and can be activated via the Sharing settings
+  in System Preferences or on the command line using the kickstart service. Threat
+  actors have been observed enabling ARD on compromised hosts to achieve GUI access,
+  persistence, and evasion. This use case detects kickstart commands with arguments
+  to enable ARD.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` TERM(kickstart) | where match(process,
+  "(?i)\skickstart\s") and match(process, "(?i)-(activate|configure|allowAccessFor|allUsers|privs|all)")
+  | table _time, host, user, process, process_*, parent_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- lateral-movement:remote services
+technique_id: 
+- T1021
+data_category:
+- EDR Logs
+references:
+- https://ss64.com/mac/kickstart.html
+- https://unit42.paloaltonetworks.com/unique-popular-techniques-lateral-movement-macos/

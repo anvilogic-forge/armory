@@ -1,0 +1,26 @@
+id: '17427.28494'
+title: Application Discovery - Windows
+description: 'Adversaries may attempt to get a listing of software and software versions
+  that are installed on a system or in a cloud environment. Adversaries may use the
+  information from Software Discovery during automated discovery to shape follow-on
+  behaviors, including whether or not the adversary fully infects the target and/or
+  attempts specific actions. Adversaries may attempt to enumerate software for a variety
+  of reasons, such as figuring out what security measures are present or if the compromised
+  system has a version of software that is vulnerable to Exploitation for Privilege
+  Escalation. This use case detects commands enumerating applications installed on
+  a Windows system. Atomics T1518 Test #2'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(query) OR (TERM(Get-ItemProperty) OR TERM(gp))
+  "Software" "Uninstall") OR ("wmic" TERM(product)) | regex process="(?i)((\s+query\s+|Get-ItemProperty|gp\s).*\x5cUninstall\x5c\*)|wmic\s+product\s+get\s+"
+  | table _time, host, user, process, process_*, parent_process_name | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- discovery:software discovery
+technique_id: 
+- T1518
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1518/T1518.md#atomic-test-2---applications-installed
