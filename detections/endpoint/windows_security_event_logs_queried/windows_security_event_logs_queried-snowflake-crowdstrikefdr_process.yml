@@ -1,0 +1,22 @@
+id: '22454.39801'
+title: Windows Security Event Logs Queried
+description: 'wevtutil.exe is a Windows component used to retrieve information about
+  event logs and publishers. Threat actors such as Mustang Panda have been observed
+  using wevtutil to query Windows event logs to gather information about usernames.
+  This use case detects executions with command line patterns indicating attempts
+  to query Windows Event logs. wevtutil has not been included in detection logic to
+  account for instances where it has been renamed. -- Threat Actor Association: Mustang
+  Panda/Stately Taurus -- LOLBINS/LOLBAS'
+logic_format: snowflake
+logic: 'select * from crowdstrikefdr_process where event_time > dateadd(hour, -2,
+  sysdate()) and event_platform ilike ''%Win%'' and regexp_like(process, ''.*(\\\s(qe|Query-Event)\\\s+security\\\s).*'',
+  ''i'') '
+techniques:
+- discovery:account discovery
+technique_id: 
+- T1087
+data_category:
+- EDR Logs
+references:
+- https://unit42.paloaltonetworks.com/stately-taurus-attacks-se-asian-government/
+- https://www.security.com/threat-intelligence/us-china-espionage
