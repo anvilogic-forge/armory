@@ -1,0 +1,23 @@
+id: '41487.76909'
+title: Suspicious reCAPTCHA Command Line
+description: This use case detects commonly abused LOLBAS utilities referencing reCAPTCHA
+  in the command line.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("powershell.exe" OR "pwsh.exe"
+  OR "cmd.exe" OR "services.exe" OR "dllhost.exe" OR "rundll32.exe" OR "cscript.exe"
+  OR "wscript.exe" OR "mshta.exe" OR "regsvr32.exe") (TERM(reCAPTCHA) OR TERM(robot)
+  OR TERM(human)) | regex process_path="(?i)(powershell|pwsh|cmd|services|dllhost|rundll32|mshta|regsvr32|cscript|wscript)\.exe"|
+  where match(process, "(?i)\sreCAPTCHA\s|I\s+am\s+not\s+a\s+robot|Verify\s+you\s+are\s+human")
+  | table _time, host, user parent_*, process_*, process| bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution
+- execution:command and scripting interpreter
+technique_id: 
+- T1218
+- T1059
+data_category:
+- EDR Logs
+references:
+- https://www.reliaquest.com/blog/using-captcha-for-compromise/
+- https://www.netskope.com/blog/lumma-stealer-fake-captchas-new-techniques-to-evade-detection
