@@ -9,7 +9,7 @@ description: 'Adversaries may match or approximate the name or location of legit
   - Software Association: XWorm -- Atomics T1036.005 Test #2 Atomics T1218 Test #12'
 logic_format: snowflake
 logic: select * from crowdstrikefdr_process where event_time > dateadd(hour, -2, sysdate())
-  and event_platform ilike '%Win%' and regexp_like(process, '.*(svchost\\\.exe|rundll32\\\.exe|services\\\.exe|powershell\\\.exe|pwsh\\\.exe|regsvr32\\\.exe|spoolsv\\\.exe|lsass\\\.exe|smss\\\.exe|csrss\\\.exe|conhost\\\.exe|wininit\\\.exe|lsm\\\.exe|winlog\\\.exe|taskhost\\\.exe|Taskmgr\\\.exe|sihost\\\.exe|RuntimeBroker\\\.exe|smartscreen\\\.exe|dllhost\\\.exe|audiodg\\\.exe|wlanext\\\.exe|cmd\\\.exe|powershell_ise\\\.exe|ie4uinit\\\.exe).*',
+  and event_platform ilike '%Win%' and regexp_like(process, '.*(svchost\\\.exe|rundll32\\\.exe|services\\\.exe|powershell\\\.exe|pwsh\\\.exe|regsvr32\\\.exe|spoolsv\\\.exe|lsass\\\.exe|smss\\\.exe|csrss\\\.exe|conhost\\\.exe|wininit\\\.exe|lsm\\\.exe|winlog\\\.exe|taskhost\\\.exe|Taskmgr\\\.exe|sihost\\\.exe|RuntimeBroker\\\.exe|smartscreen\\\.exe|dllhost\\\.exe|audiodg\\\.exe|wlanext\\\.exe|cmd\\\.exe|powershell_ise\\\.exe|ie4uinit\\\.exe|mshta\\\.exe|printui\\\.exe).*',
   'i') and not (regexp_like(process_path, '.*(\\\x5cWindows\\\x5c(system32|syswow64))|(|Program\\\sFiles\\\x5cPowerShell).*',
   'i'))
 techniques:

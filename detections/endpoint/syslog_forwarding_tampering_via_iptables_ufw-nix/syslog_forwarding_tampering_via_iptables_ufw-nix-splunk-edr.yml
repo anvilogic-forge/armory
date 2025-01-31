@@ -1,0 +1,25 @@
+id: '41092.75714'
+title: Syslog Forwarding Tampering via iptables_ufw - *nix
+description: Adversaries may modify and/or disable security tools to avoid possible
+  detection of their malware/tools and activities. This may take many forms, such
+  as killing security software processes or services, modifying / deleting Registry
+  keys or configuration files so that tools do not operate properly, or other methods
+  to interfere with security tools scanning or reporting information. Adversaries
+  may also disable updates to prevent the latest security patches from reaching tools
+  on victim systems. This use case identifies iptables or UFW commands to modify configurations
+  to block outgoing packets directed to syslog ports.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ((TERM(iptables) TERM(OUTPUT)
+  TERM(DROP)) OR (TERM(ufw) TERM(deny) TERM(out))) ("514" OR "6514") (TERM(tcp) OR
+  TERM(udp)) | table _time, host, user, process, process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1562.001
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://attack.mitre.org/techniques/T1562/001/
+- https://cloud.google.com/blog/topics/threat-intelligence/ivanti-connect-secure-vpn-zero-day

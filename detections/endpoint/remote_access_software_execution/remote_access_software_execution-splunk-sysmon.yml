@@ -18,8 +18,8 @@ logic_format: Splunk
 logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
   ("TeamViewer.exe" OR "AnyDesk.exe" OR "LMIIgnition.exe" OR "GoToAssist.exe" OR "ScreenConnect.exe"
   OR "ammyy.exe" OR "RemotePC.exe" OR "NetSupport.exe" OR "UltraViewer_Desktop.exe"
-  OR "vncviewer.exe" OR "Splashtop.exe" OR "Supremo.exe" OR "PCICTLUI.exe") | where
-  match(process_name, "(?i)^(TeamViewer\.exe|AnyDesk\.exe|LMIIgnition\.exe|GoToAssist\.exe|ScreenConnect\.exe|ammyy\.exe|RemotePC\.exe|NetSupport\.exe|UltraViewer_Desktop\.exe|vncviewer\.exe|Splashtop\.exe|Supremo\.exe|PCICTLUI\.exe)$")|
+  OR "vncviewer.exe" OR "Splashtop.exe" OR "Supremo.exe" OR "PCICTLUI.exe" OR "QuickAssist.exe") | where
+  match(process_name, "(?i)^(TeamViewer\.exe|AnyDesk\.exe|LMIIgnition\.exe|GoToAssist\.exe|ScreenConnect\.exe|ammyy\.exe|RemotePC\.exe|NetSupport\.exe|UltraViewer_Desktop\.exe|vncviewer\.exe|Splashtop\.exe|Supremo\.exe|PCICTLUI\.exe|QuickAssist\.exe)$")|
   table _time, host, user process, process_*, signature_id, parent_* | bin span=1s
   | stats values(*) as * by _time, host '
 techniques:

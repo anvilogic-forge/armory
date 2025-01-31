@@ -14,8 +14,8 @@ logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "Ev
   "conhost.exe" OR "wininit.exe" OR "lsm.exe" OR "winlogon.exe" OR "taskhost.exe"
   OR "taskmgr.exe" OR "sihost.exe" OR "RuntimeBroker.exe" OR "smartscreen.exe" OR
   "dllhost.exe" OR "audiodg.exe" OR "wlanext.exe" OR "cmd.exe" OR "wmiprvse.exe" OR
-  "powershell_ise.exe" OR "ie4uinit.exe") | regex process_path!="(?i)(\x5cWindows\x5c(system32|SysWOW64))|Program\sFiles\x5cPowerShell"|
-  where match(process_name, "(?i)^(svchost\.exe|rundll32\.exe|services\.exe|powershell\.exe|pwsh\.exe|regsvr32\.exe|spoolsv\.exe|lsass\.exe|smss\.exe|csrss\.exe|conhost\.exe|wininit\.exe|lsm\.exe|winlogon\.exe|taskhost\.exe|taskmgr\.exe|sihost\.exe|RuntimeBroker\.exe|smartscreen\.exe|dllhost\.exe|audiodg\.exe|wlanext\.exe|cmd\.exe|wmiprvse\.exe|powershell_ise\.exe|ie4uinit.exe)$")
+  "powershell_ise.exe" OR "ie4uinit.exe" OR "mshta.exe" OR "printui.exe") | regex process_path!="(?i)(\x5cWindows\x5c(system32|SysWOW64))|Program\sFiles\x5cPowerShell"|
+  where match(process_name, "(?i)^(svchost\.exe|rundll32\.exe|services\.exe|powershell\.exe|pwsh\.exe|regsvr32\.exe|spoolsv\.exe|lsass\.exe|smss\.exe|csrss\.exe|conhost\.exe|wininit\.exe|lsm\.exe|winlogon\.exe|taskhost\.exe|taskmgr\.exe|sihost\.exe|RuntimeBroker\.exe|smartscreen\.exe|dllhost\.exe|audiodg\.exe|wlanext\.exe|cmd\.exe|wmiprvse\.exe|powershell_ise\.exe|ie4uinit\.exe|mshta\.exe|printui\.exe)$")
   | table _time, host, user, process, process_* | bin span=1s | stats values(*) as
   * by _time, host '
 techniques:

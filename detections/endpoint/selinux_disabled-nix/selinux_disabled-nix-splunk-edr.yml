@@ -1,0 +1,27 @@
+id: '40861.75169'
+title: SELinux Disabled - *nix
+description: Adversaries may modify and/or disable security tools to avoid possible
+  detection of their malware/tools and activities. This may take many forms, such
+  as killing security software processes or services, modifying / deleting Registry
+  keys or configuration files so that tools do not operate properly, or other methods
+  to interfere with security tools scanning or reporting information. Adversaries
+  may also disable updates to prevent the latest security patches from reaching tools
+  on victim systems. This use case detects when the setenforce command was used to
+  disable SELinux, a security module integrated into the Linux kernel that enforces
+  mandatory access control (MAC) policies.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("setenforce" ("0" OR "Permissive"))
+  OR ("echo" ("0" ">/sys/fs/selinux/enforce")) OR ("disabled" ("/etc/selinux/config"
+  OR "/etc/sysconfig/selinux")) OR "setenforce 0" | regex process="(?i)setenforce\s+?(\x22|\x27)?0|echo\s+(\x22|\x27)?0\s+?(\x22|\x27)?>\s+?/sys/fs/selinux/enforce|SELINUX\s*=\s*disabled"
+  | table _time, host, user, process, process_* | bin span=1s | stats values(*) as
+  * by _time, host '
+techniques:
+- defense-evasion:impair defenses:disable or modify tools
+technique_id:
+- T1562.001
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://cloud.google.com/blog/topics/threat-intelligence/ivanti-connect-secure-vpn-zero-day
+- https://attack.mitre.org/techniques/T1562/001/
