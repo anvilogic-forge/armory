@@ -1,0 +1,21 @@
+id: '19772.34742'
+title: OpenSSL Encryption Commands - *nix
+description: 'Adversaries may encrypt data on target systems or on large numbers of
+  systems in a network to interrupt availability to system and network resources.
+  They can attempt to render stored data inaccessible by encrypting files or data
+  on local and remote drives and withholding access to a decryption key. -- Software
+  Association: Cthulhu Stealer -- Atomics T1560.001 Test #9'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_unix` TERM(openssl) TERM(enc) | table
+  _time, host, user process, process_*, parent_process, target_account | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- impact:data encrypted for impact
+- defense-evasion:hide artifacts:hidden files and directories
+technique_id:
+- T1486
+- T1564.001
+data_category:
+- Linux audit logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1560.001/T1560.001.md#atomic-test-9---encrypts-collected-data-with-aes-256-and-base64

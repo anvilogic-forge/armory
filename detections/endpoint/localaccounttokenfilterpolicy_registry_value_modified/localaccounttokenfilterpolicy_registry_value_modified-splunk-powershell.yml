@@ -1,0 +1,28 @@
+id: '40510.74082'
+title: LocalAccountTokenFilterPolicy Registry Value Modified
+description: The HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\LocalAccountTokenFilterPolicy
+  key is responsible for controlling how local accounts are filtered when they are
+  used to access a Windows system remotely. By setting the key to value '1', it effectively
+  disables Remote UAC filtering for local accounts, allowing local admin accounts
+  to use elevated tokens (with full admin rights when connecting remotely). This may
+  leave a system vulnerable to Pass the Hash attacks. This use case detects registry
+  modification events or process executions with registry modification commands targeting
+  LocalAccountTokenFilterPolicy.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` ((TERM(EventCode=4103)
+  OR "<EventID>4103<") OR (TERM(EventCode=4104) OR "<EventID>4104<")) "\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+  "LocalAccountTokenFilterPolicy" ("Set-Item-Property" OR "sp " OR "ADD") | table
+  _time, host, user, process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:modify registry
+- defense-evasion:use alternate authentication material:pass the hash
+technique_id:
+- T1112
+- T1550.002
+data_category:
+- PowerShell logs
+references:
+- https://www.security.com/threat-intelligence/china-southeast-asia-espionage
+- https://posts.specterops.io/pass-the-hash-is-dead-long-live-localaccounttokenfilterpolicy-506c25a7c167
+- https://kb.cybertecsecurity.com/knowledge/localaccounttokenfilterpolicy
