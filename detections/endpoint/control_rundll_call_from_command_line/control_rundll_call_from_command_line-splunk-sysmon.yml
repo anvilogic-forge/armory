@@ -1,0 +1,31 @@
+id: '39292.71008'
+title: Control_RunDLL Call from Command Line
+description: rundll32.exe can be used to invoke Control_RunDLL, commonly used to execute
+  control panel applets (*.cpl) or DLLs via command-line arguments. Threat actors
+  can abuse this to run malicious DLLs or load persistence mechanisms by hiding payloads
+  behind legitimate-looking control panel functions as observed in attacks associated
+  with CVE-2021-40444. This use case detects when Control_RunDLL is called from the
+  command line, accounting for instances where rundll32.exe has been renamed.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  TERM(Control_RunDLL)| regex process="(?i)Control_RunDLL" | table _time, host, user
+  signature_id, process, process_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:system binary proxy execution
+- defense-evasion:system binary proxy execution:control panel
+- defense-evasion:system binary proxy execution:rundll32
+technique_id:
+- T1218
+- T1218.011
+- T1218.002
+data_category:
+- Windows Sysmon
+references:
+- https://research.splunk.com/endpoint/c8e7ced0-10c5-11ec-8b03-acde48001122/
+- https://strontic.github.io/xcyclopedia/library/rundll32.exe-111474C61232202B5B588D2B512CBB25.html
+- https://app.any.run/tasks/36c14029-9df8-439c-bba0-45f2643b0c70/
+- https://attack.mitre.org/techniques/T1218/011/
+- https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-40444
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.002/T1218.002.yaml
+- https://redcanary.com/blog/intelligence-insights-december-2021/

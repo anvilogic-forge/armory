@@ -1,0 +1,25 @@
+id: '38206.81146'
+title: Sliver C2 Implant Activity Pattern
+description: Adversaries may abuse command and script interpreters to execute commands,
+  scripts, or binaries. These interfaces and languages provide ways of interacting
+  with computer systems and are a common feature across many different platforms.
+  Most systems come with some built-in command-line interface and scripting capabilities,
+  for example, macOS and Linux distributions include some flavor of Unix Shell while
+  Windows installations include the Windows Command Shell and PowerShell. This use
+  case detects process activity patterns related to Sliver C2 framework implants when
+  spawning PowerShell.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "-NoExit" "-Command" "[Console]::OutputEncoding=[Text.UTF8Encoding]::UTF8"
+  | table _time, host, user, parent_*, process, process_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+technique_id: 
+- T1059
+data_category:
+- EDR Logs
+references:
+- https://attack.mitre.org/techniques/T1059/
+- https://github.com/BishopFox/sliver/blob/master/implant/sliver/shell/shell_windows.go#L39
+- https://sliver.sh/docs?name=Compile+from+Source
+- https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_hktl_sliver_c2_execution_pattern.yml
