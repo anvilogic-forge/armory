@@ -1,0 +1,29 @@
+id: '35865.62859'
+title: mega.nz Traffic
+description: 'The website mega.nz (or mega.co.nz) is a cloud storage service that
+  allows users to store and share files. Threat actors may abuse Mega.nz for Command
+  and Control (C2) by having malware fetch commands, store tools for later download,
+  or exfiltrate data by uploading it to the service. This use case detects traffic
+  to clbin.com. While traffic to Mega.nz is not inherently malicious, unexpected or
+  unusual traffic to this site should be investigated due to its potential for abuse.
+  LOTS (Living Off Trusted Sites) -- Threat Actor Association: Andariel (aka. APT45,
+  Silent Chollima, Onyx Sleet, Stonefly), Ember Bear (aka. Bleeding Bear, Cadet Blizzard,
+  Lorec53, Lorec Bear, Saint Bear, UAC-0056, UNC2589) --'
+logic_format: Splunk
+logic: '`get_web_data` `get_web_data_proxy` "mega.nz" OR "mega.co.nz" | where match(site,
+  "(?i)mega\.(co\.)?nz") | table _time, host, user, uri_path, http_user_agent, src_ip,
+  dest_ip, site | bin span=1s | stats values(*) as * by _time, host | lookup dnslookup
+  clientip as dest_ip OUTPUT clienthost as dest_dns | iplocation prefix="dest_" dest_ip
+  | rename dest_Country as dest_country '
+techniques:
+- command-and-control:ingress tool transfer
+- command-and-control:application layer protocol:web protocols
+- exfiltration:exfiltration over web service
+technique_id:
+- T1105
+- T1071.001
+- T1567
+data_category:
+- Web proxy
+references:
+- https://lots-project.com/site/636c62696e2e636f6d
