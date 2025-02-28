@@ -1,0 +1,21 @@
+id: '43031.83249'
+title: 'Auth0: Failed Refresh Token Exchange'
+description: Threat actors may attempt to reuse or exchange stolen refresh tokens
+  to maintain persistent access without re-authenticating. This use case detects failed
+  attempts to exchange refresh tokens, which could indicate token theft, session hijacking,
+  or an attacker attempting to bypass authentication controls.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "ferrt" OR "Failed Exchange of Rotating Refresh
+  Token. This could occur when reuse is detected" OR "fertft" OR "Failed Exchange
+  of Refresh Token for Access Token. This could occur if the refresh token is revoked
+  or expired" | where match(event_type, "(?i)^(ferrt|fertft)$") | table _time, host,
+  user, signature, City, Region, Country | bin span=1s | stats values(*) as * by _time,
+  coi_user '
+techniques:
+- credential-access:steal application access token
+technique_id: 
+- T1528
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

@@ -1,0 +1,21 @@
+id: '43059.83285'
+title: 'Auth0: MFA Enrollment Started'
+description: Threat actors may attempt to enroll their own MFA device on a compromised
+  account to establish persistence and bypass authentication controls. This use case
+  detects the initiation of a new MFA enrollment, which could indicate legitimate
+  user setup or an attacker attempting to register an unauthorized authentication
+  method.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_start_enroll" OR "Multi-factor authentication
+  enroll has started" | where match(event_type, "(?i)^gd_start_enroll$") | table _time,
+  host, user, signature, City, Region, Country, user | bin span=1s | stats values(*)
+  as * by _time, user '
+techniques:
+- privilege-escalation:account manipulation:device registration
+- persistence:account manipulation:device registration
+technique_id:
+- T1098.005
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

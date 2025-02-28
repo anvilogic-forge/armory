@@ -1,0 +1,26 @@
+id: '42967.83086'
+title: 'Auth0: High volume auth attempts'
+description: Threat actors may bombard Authentication or Management APIs, finding
+  unusual patterns of API requests can indicate malicious activity like brute-force
+  attempts, automated scraping, or denial-of-service attacks. This use case looks
+  for when the maximum number of requests to the Authentication or Management APIs
+  in a given time has been reached.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "api_limit" OR "The maximum number of requests
+  to the Authentication or Management APIs in a given time has been reached" | where
+  match(event_type = "(?i)api_limit") | table `add_fields_eoi` session_id, event_type,
+  action, user, src_ip, http_user_agent | bin span=1s | stats values(*) as * by _time,
+  user '
+techniques:
+- persistence:valid accounts
+- credential-access:brute force
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+- T1110
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

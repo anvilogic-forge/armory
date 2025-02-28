@@ -1,0 +1,23 @@
+id: '42976.83095'
+title: 'Auth0: Guardian tenant update'
+description: Monitoring updates to Auth0 Guardian possibly altering the MFA process,
+  which could be exploited to weaken or bypass multi-factor authentication (MFA) security.
+  Unauthorized modifications may suggest an attempt to disable or alter MFA enforcement,
+  potentially allowing unauthorized access. This rule will monitor events for changes
+  to Guardian MFA settings, looking for ""gd_tenant_update" events to help detect
+  potential manipulation of authentication processes.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_tenant_update" | where match(event_type
+  = "(?i)gd_tenant_update") | table `add_fields_eoi` session_id, event_type, action,
+  user, src_ip, http_user_agent | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- credential-access:multi-factor authentication request generation
+- persistence:account manipulation
+- persistence:modify authentication process:multi-factor authentication
+- privilege-escalation:account manipulation
+technique_id:
+- T1556.006
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

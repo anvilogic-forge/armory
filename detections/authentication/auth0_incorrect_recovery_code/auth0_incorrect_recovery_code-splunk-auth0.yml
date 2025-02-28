@@ -1,0 +1,25 @@
+id: '43044.83263'
+title: 'Auth0: Incorrect Recovery Code'
+description: Threat actors may attempt to bypass multi-factor authentication (MFA)
+  by guessing or reusing stolen recovery codes. This use case detects failed MFA recovery
+  attempts, which could indicate user error or an attacker attempting to regain access
+  to a compromised account.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_recovery_failed" OR "A user enters a wrong
+  recovery code when attempting to authenticate" | where match(event_type, "(?i)^gd_recovery_failed$")
+  | table _time, host, user, signature, City, Region, Country | bin span=1s | stats
+  values(*) as * by _time, coi_user '
+techniques:
+- credential-access:brute force:password guessing
+- credential-access:brute force:credential stuffing
+- credential-access:brute force
+- credential-access:brute force:password spraying
+technique_id:
+- T1110
+- T1110.001
+- T1110.003
+- T1110.004
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

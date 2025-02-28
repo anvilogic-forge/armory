@@ -1,0 +1,20 @@
+id: '42980.83099'
+title: 'Auth0: Member Added to Organization'
+description: Monitoring the addition of a member to an organization can indicate an
+  attempt to establish persistence within an environment with a unauthorized member.
+  This use case monitors events for "organization_member_added" or "Successfully added
+  member to organization" to audit unauthorized or unexpected additions of members
+  to an organization.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "organization_member_added" OR "Successfully
+  added member to organization" | where match(event_type, "organization_member_added")
+  | table _time, host, user, signature, City, Region, Country, src_ip, user | bin
+  span=1s | stats values(*) as * by _time, coi_user '
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

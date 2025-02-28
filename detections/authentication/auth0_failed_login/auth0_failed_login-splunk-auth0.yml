@@ -1,0 +1,19 @@
+id: '42978.83097'
+title: 'Auth0: Failed Login'
+description: Threat actors may attempt authentication-related actions that fail due
+  to security controls, policy restrictions, or incorrect credentials. This use case
+  detects authentication failures, which could indicate an attacker testing credentials,
+  abusing authentication workflows, or probing for misconfigurations.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "f" OR "fcoa" OR "Failed login" OR "Failed
+  cross-origin authentication" | where match(event_type, "^(f|fcoa)$") | table _time,
+  host, user, signature, City, Region, Country, src_ip, coi_user | bin span=1s | stats
+  values(*) as * by _time, coi_user '
+techniques:
+- credential-access:brute force
+technique_id: 
+- T1110
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

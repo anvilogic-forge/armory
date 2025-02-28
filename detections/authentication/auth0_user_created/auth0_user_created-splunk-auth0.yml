@@ -1,0 +1,18 @@
+id: '43003.83122'
+title: 'Auth0: User Created'
+description: Threat actors may create, modify, or delete users, roles, or other security
+  settings via the Auth0 Management API to establish persistence or escalate privileges.
+  This use case detects successful write operations performed through the Management
+  API with references to user creation.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "Create a User" "sapi" | where match(event_type,
+  "(?i)^sapi$") | table _time, host, user, signature, City, Region, Country | bin
+  span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- persistence:create account
+technique_id: 
+- T1136
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

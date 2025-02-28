@@ -1,0 +1,21 @@
+id: '43033.83251'
+title: 'Auth0: Failed CIBA Token Exchange Attempt'
+description: Threat actors may attempt to exploit the Client-Initiated Backchannel
+  Authentication (CIBA) flow by using stolen or manipulated authentication request
+  IDs to gain unauthorized access. This use case detects failed attempts to exchange
+  an AuthReqId for an access token, which could indicate misuse of the CIBA protocol,
+  expired or invalid authentication requests, or an attacker attempting to bypass
+  authentication.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "ciba_exchange_failed" OR "Failed to exchange
+  AuthReqId for Access Token" | where match(event_type, "(?i)^(ciba_exchange_failed)$")
+  | table _time, host, user, signature, City, Region, Country | bin span=1s | stats
+  values(*) as * by _time, coi_user '
+techniques:
+- credential-access:forge web credentials
+technique_id: 
+- T1606
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

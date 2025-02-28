@@ -1,0 +1,19 @@
+id: '43037.83255'
+title: 'Auth0: Email Notification Failure'
+description: Threat actors may disrupt security notifications, password resets, or
+  user communications by causing email delivery failures, either through misconfiguration
+  or targeted attacks. This use case detects failed attempts to send email notifications,
+  which could indicate email service issues, unauthorized changes to email settings,
+  or attempts to suppress security alerts.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "fn" OR "Failed to send email notification"
+  | where match(event_type, "(?i)^fn$") | table _time, host, user, signature, City,
+  Region, Country | bin span=1s | stats values(*) as * by _time, coi_user '
+techniques:
+- defense-evasion:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

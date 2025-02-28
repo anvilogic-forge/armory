@@ -1,0 +1,19 @@
+id: '43113.83375'
+title: 'Auth0: Failed to Accept User Invitation'
+description: Threat actors may attempt to gain access to an organization by accepting
+  user invitations with unauthorized or mismatched email addresses. This use case
+  detects failed user invitation acceptances, which could indicate a legitimate user
+  error, provisioning issues, or an attacker attempting to exploit the invitation
+  process for unauthorized access.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "fi" OR "Failed to accept a user invitation"
+  | where match(event_type, "(?i)^fi$") | table _time, host, user, signature, City,
+  Region, Country, user `group_events("user", 1)` '
+techniques:
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

@@ -1,0 +1,27 @@
+id: '43028.83246'
+title: 'Auth0: Failed Access Token Exchange'
+description: Threat actors may attempt to bypass authentication by exploiting weaknesses
+  in token exchange flows, abusing misconfigurations, or using stolen credentials.
+  This use case detects failed attempts to exchange various authentication tokens
+  for access tokens, which could indicate unauthorized access attempts, brute-force
+  attacks, or misconfigured authentication integrations.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "feacft" OR "Failed to exchange authorization
+  code for Access Token" OR "feccft" OR "Failed exchange of Access Token for a Client
+  Credentials Grant" OR "fede" OR "Failed to exchange Device Code for Access Token"
+  OR "fens" OR "Failed exchange for Native Social Login" OR "feoobft" OR "Failed exchange
+  of Password and OOB Challenge for Access Token" OR "feotpft" OR "Failed exchange
+  of Password and OTP Challenge for Access Token" OR "fepft" OR "Failed exchange of
+  Password for Access Token" OR "fepotpft" OR "Failed exchange of Passwordless OTP
+  for Access Token" OR "fercft" OR "Failed exchange of Password and MFA Recovery code
+  for Access Token" | where match(event_type, "(?i)^(feacft|feccft|fede|fens|feoobft|feotpft|fepft|fepotpft|fercft)$")
+  | table _time, host, user, signature, City, Region, Country | bin span=1s | stats
+  values(*) as * by _time, coi_user '
+techniques:
+- credential-access:forge web credentials
+technique_id: 
+- T1606
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

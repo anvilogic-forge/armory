@@ -1,0 +1,21 @@
+id: '43066.83292'
+title: 'Auth0: WebAuthn Enrollment Failed'
+description: Threat actors may attempt to enroll a rogue WebAuthn device on a compromised
+  account but fail due to security controls, misconfiguration, or lack of proper credentials.
+  This use case detects failed WebAuthn enrollment attempts, which could indicate
+  an attacker attempting to register an unauthorized authentication method or legitimate
+  user enrollment issues.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_webauthn_enrollment_failed" OR "WebAuthn
+  browser enrollment failed" | where match(event_type, "(?i)^gd_webauthn_enrollment_failed$")
+  | table _time, host, user, signature, City, Region, Country, user | bin span=1s
+  | stats values(*) as * by _time, user '
+techniques:
+- privilege-escalation:account manipulation:device registration
+- persistence:account manipulation:device registration
+technique_id:
+- T1098.005
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

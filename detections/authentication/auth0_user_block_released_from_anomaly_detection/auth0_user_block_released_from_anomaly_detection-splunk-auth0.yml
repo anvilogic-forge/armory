@@ -1,0 +1,24 @@
+id: '42977.83096'
+title: 'Auth0: User block released from anomaly detection'
+description: Monitoring the release of a blocked user from anomaly detection being
+  lifted. This could signal a legitimate user regaining access or a potential attacker
+  bypassing security controls to regain entry. This rule will monitor events for ""ublkdu",
+  OR "User block setup by anomaly detection has been released" with user blocks being
+  released by anomaly detection, helping to identify potential unauthorized access
+  or suspicious authentication activity.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "ublkdu" OR "User block setup by anomaly detection
+  has been released" | where match(event_type = "(?i)ublkdu") | table `add_fields_eoi`
+  session_id, event_type, action, user, src_ip, http_user_agent | bin span=1s | stats
+  values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

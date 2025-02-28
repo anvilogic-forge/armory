@@ -1,0 +1,22 @@
+id: '43111.83373'
+title: 'Auth0: API Rate Limit Increased'
+description: Threat actors may attempt to abuse increased authentication API rate
+  limits to conduct large-scale credential stuffing or brute-force attacks without
+  triggering standard rate-limiting protections. This use case detects instances where
+  elevated public authentication API limits are enabled, which could indicate legitimate
+  scaling needs or potential abuse by an attacker seeking to bypass authentication
+  throttling.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "appi" OR "Increases the Elevated Public Authentication
+  API Limits" | where match(event_type, "(?i)^appi$") | table _time, host, user, signature,
+  City, Region, Country, user `group_events("user", 1)` '
+techniques:
+- persistence:account manipulation
+- initial-access:valid accounts
+technique_id: 
+- T1078
+- T1098
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

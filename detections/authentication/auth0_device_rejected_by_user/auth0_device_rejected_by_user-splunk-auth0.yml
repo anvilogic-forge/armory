@@ -1,0 +1,20 @@
+id: '42896.83008'
+title: 'Auth0: Device Rejected by User'
+description: Threat actors may attempt to enroll a new MFA device but fail to complete
+  the confirmation step, either due to security controls or lack of access to the
+  legitimate user’s approval method. This use case detects instances where a user
+  did not confirm a device enrollment, which could indicate an attacker trying to
+  register an unauthorized MFA device.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "fdecc" OR "User did not confirm device" |
+  where event_type="fdecc" | table _time, host, user, signature, City, Region, Country,
+  src_ip, coi_user | bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- privilege-escalation:account manipulation:device registration
+- persistence:account manipulation:device registration
+technique_id:
+- T1098.005
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

@@ -1,0 +1,21 @@
+id: '42979.83098'
+title: 'Auth0: MFA Notification Failure'
+description: Threat actors may attempt to trigger MFA notifications but fail due to
+  security policies, service disruptions, or rate limits, potentially as part of an
+  attack to manipulate authentication flows. This use case detects failed attempts
+  to send MFA push or SMS notifications, which could indicate an attacker probing
+  MFA mechanisms or a disruption in authentication services.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_send_pn_failure" OR "gd_send_sms_failure"
+  OR "Push notification for MFA failed" OR "Attempt to send SMS for MFA failed" |
+  where match(event_type, "gd_send_(pn|sms)_failure") | table _time, host, user, signature,
+  City, Region, Country, src_ip, coi_user | bin span=1s | stats values(*) as * by
+  _time, coi_user '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

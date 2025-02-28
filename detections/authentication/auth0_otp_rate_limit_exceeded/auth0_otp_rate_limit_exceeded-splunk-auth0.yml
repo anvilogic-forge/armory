@@ -1,0 +1,21 @@
+id: '42992.83111'
+title: 'Auth0: OTP Rate Limit Exceeded'
+description: Threat actors may attempt MFA fatigue attacks or brute-force OTP codes
+  by repeatedly requesting one-time passcodes, hoping to guess or manipulate authentication
+  flows. This use case detects excessive OTP requests within a short period, which
+  could indicate an attacker spamming OTP prompts to bypass multi-factor authentication.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_otp_rate_limit_exceed" OR "A user sends
+  more than 10 requests to their device within one hour." | where match(event_type,
+  "gd_otp_rate_limit_exceed") | table _time, host, user, signature, City, Region,
+  Country, src_ip, coi_user | bin span=1s | stats values(*) as * by _time, coi_user '
+techniques:
+- credential-access:multi-factor authentication request generation
+- credential-access:brute force
+technique_id: 
+- T1621
+- T1110
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

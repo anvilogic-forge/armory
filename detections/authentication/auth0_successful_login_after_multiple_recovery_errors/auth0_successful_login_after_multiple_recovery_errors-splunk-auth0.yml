@@ -1,0 +1,25 @@
+id: '42973.83092'
+title: 'Auth0: Successful login after multiple recovery errors'
+description: Monitoring successful authentication with a recovery code (gd_recovery_succeed)
+  is crucial as it may indicate legitimate account recovery or a potential unauthorized
+  access attempt following multiple failed recovery attempts. If an attacker has gained
+  access to a recovery code, they could bypass standard multi-factor authentication
+  (MFA) protections and compromise the account. This rule will monitor events for
+  successful recovery code authentication (gd_recovery_succeed), which could indicate
+  legitimate account access or a potential unauthorized login following failed recovery
+  attempts.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_recovery_succeed" OR "A user successfully
+  authenticates with a recovery code" | where match(event_type = "(?i)gd_recovery_succeed")
+  | table `add_fields_eoi` session_id, event_type, action, user, src_ip, http_user_agent
+  | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

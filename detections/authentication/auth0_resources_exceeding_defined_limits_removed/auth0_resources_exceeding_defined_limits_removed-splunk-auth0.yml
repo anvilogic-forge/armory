@@ -1,0 +1,19 @@
+id: '43104.83366'
+title: 'Auth0: Resources Exceeding Defined Limits Removed'
+description: Threat actors may attempt to overwhelm system resources or manipulate
+  retention policies to disrupt services or conceal malicious activity. This use case
+  detects the automatic removal of resources exceeding defined limits, which could
+  indicate normal system maintenance or an attacker intentionally triggering resource
+  cleanup to erase forensic evidence.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "resource_cleanup" OR "Emitted when resources
+  exceeding defined limits were removed" | where match(event_type, "(?i)^resource_cleanup$")
+  | table _time, host, user, signature, City, Region, Country, user '
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

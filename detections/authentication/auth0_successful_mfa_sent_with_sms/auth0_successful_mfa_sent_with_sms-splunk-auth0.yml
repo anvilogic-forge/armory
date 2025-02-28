@@ -1,0 +1,23 @@
+id: '42975.83094'
+title: 'Auth0: Successful MFA sent with SMS'
+description: 'Monitoring the sending of a SMS code for mfa authentication is relevant
+  as SMS-based multi-factor authentication (MFA) is generally a weaker authentication
+  method. Tracking these events can help identify unusual MFA activity that may indicate
+  an account takeover attempt. This rule will monitor events for successful MFA SMS
+  messages: "gd_send_sms", OR "SMS for MFA successfully sent." to detect potential
+  misuse or anomalous authentication attempts.'
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_send_sms" OR "SMS for MFA successfully
+  sent" | where match(event_type = "(?i)gd_send_sms") | table `add_fields_eoi` session_id,
+  event_type, action, user, src_ip, http_user_agent | bin span=1s | stats values(*)
+  as * by _time, user '
+techniques:
+- credential-access:multi-factor authentication request generation
+- persistence:modify authentication process:multi-factor authentication
+technique_id:
+- T1621
+- T1556.006
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

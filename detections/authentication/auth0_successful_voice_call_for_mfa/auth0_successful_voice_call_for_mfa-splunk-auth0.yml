@@ -1,0 +1,19 @@
+id: '43055.83276'
+title: 'Auth0: Successful Voice Call for MFA'
+description: Threat actors may attempt to abuse voice-based multi-factor authentication
+  (MFA) by triggering unauthorized verification calls to gain access. This use case
+  detects successful MFA voice call requests, which could indicate legitimate authentication
+  or potential MFA manipulation by an attacker.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_send_voice" OR "Voice call for MFA successfully
+  made" | where match(event_type, "(?i)^gd_send_voice$") | table _time, host, user,
+  signature, City, Region, Country, user | bin span=1s | stats values(*) as * by _time,
+  user '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

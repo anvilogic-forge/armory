@@ -1,0 +1,22 @@
+id: '42913.83026'
+title: 'Auth0: Excessive Login Failures for Single Account'
+description: Threat actors may target a specific account with repeated failed login
+  attempts in an effort to brute-force the password or test stolen credentials. This
+  use case detects IP addresses that have been blocked after exceeding the maximum
+  failed login attempts for a single account, which could indicate a focused account
+  takeover attempt.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "limit_wc" OR "An IP address is blocked because
+  it reached the maximum failed login attempts into a single account" | where event_type="limit_wc"
+  | table _time, host, user, signature, City, Region, Country, src_ip, coi_user |
+  bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- credential-access:brute force:password guessing
+- credential-access:brute force:credential stuffing
+technique_id:
+- T1110.001
+- T1110.004
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

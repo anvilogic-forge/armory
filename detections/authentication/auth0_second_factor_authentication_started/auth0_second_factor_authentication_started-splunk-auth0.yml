@@ -1,0 +1,19 @@
+id: '43058.83279'
+title: 'Auth0: Second Factor Authentication Started'
+description: Threat actors may attempt to trigger multi-factor authentication (MFA)
+  challenges as part of an account takeover attempt or an MFA fatigue attack. This
+  use case detects the initiation of an MFA authentication event, which could indicate
+  a legitimate login attempt or an attacker attempting to gain access to an account.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_start_auth" OR "Second factor authentication
+  event started for MFA." | where match(event_type, "(?i)^gd_start_auth$") | table
+  _time, host, user, signature, City, Region, Country, user | bin span=1s | stats
+  values(*) as * by _time, user '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

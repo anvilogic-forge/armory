@@ -1,0 +1,22 @@
+id: '42885.82997'
+title: 'Auth0: MFA Device Update Failure'
+description: Threat actors may use attempt to bypass MFA or establish persistence
+  by linking a controlled device to a compromised account. This use case detects failed
+  device authorization (fdeaz) and failed device activation (fdeac), which could indicate
+  attempts to enroll a new device being blocked by security controls.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "Device authorization request failed." OR
+  "fdeaz" OR "Failed to activate device" OR "fdeac" | where match(event_type, "fdeac|fdeaz")
+  | table _time, host, user, signature, City, Region, Country, src_ip, coi_user |
+  bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- persistence:valid accounts
+- persistence:account manipulation:device registration
+- initial-access:valid accounts
+technique_id:
+- T1078
+- T1098.005
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

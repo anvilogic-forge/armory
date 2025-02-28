@@ -1,0 +1,21 @@
+id: '42909.83022'
+title: 'Auth0: MFA Device Updated'
+description: Threat actors may update MFA device settings to replace the legitimate
+  user’s authentication method with one they control, ensuring persistent access.
+  This use case detects updates to MFA devices, which could indicate an attacker modifying
+  authentication factors after compromising an account.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_update_device_account" OR "Device used
+  for second factor authentication has been updated" | where event_type="gd_update_device_account"
+  | table _time, host, user, signature, City, Region, Country, src_ip, coi_user |
+  bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- defense-evasion:modify authentication process:multi-factor authentication
+- persistence:modify authentication process:multi-factor authentication
+- credential-access:modify authentication process:multi-factor authentication
+technique_id:
+- T1556.006
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

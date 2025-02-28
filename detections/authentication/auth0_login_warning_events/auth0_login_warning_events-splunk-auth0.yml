@@ -1,0 +1,22 @@
+id: '42981.83100'
+title: 'Auth0: Login warning events'
+description: Monitoring warning logs during login can help detect potential authentication
+  issues, misconfigurations, or suspicious activity that may indicate attempted unauthorized
+  access. These warnings may include unusual login behavior, or potential security
+  risks that require further investigation. This rule will monitor events for login-related
+  warnings (w), which could signal authentication anomalies, or configuration issues.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "w" OR "Filters for logs of type warning during
+  login" | where match(event_type = "(?i)w[^a-zA-Z0-9]") | table `add_fields_eoi`
+  session_id, event_type, action, user, src_ip, http_user_agent | bin span=1s | stats
+  values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

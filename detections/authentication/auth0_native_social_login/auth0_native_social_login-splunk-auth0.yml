@@ -1,0 +1,18 @@
+id: '43106.83368'
+title: 'Auth0: Native Social Login'
+description: Threat actors may attempt to exploit social login integrations to bypass
+  traditional authentication mechanisms using compromised third-party accounts. This
+  use case detects successful native social login events, which could indicate legitimate
+  user authentication or an attacker leveraging stolen social credentials for account
+  takeover.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "sens" OR "Native Social Login" | where match(event_type,
+  "(?i)^sens$") | table _time, host, user, signature, City, Region, Country, user '
+techniques:
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

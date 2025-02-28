@@ -1,0 +1,19 @@
+id: '42970.83089'
+title: 'Auth0: Failed username change'
+description: Threat actors may attempt MFA fatigue attacks by bombarding a user with
+  push-notification requests, hoping they will approve access out of frustration or
+  confusion. This use case tracks the volume of MFA push requests, successful authentications,
+  and rejected attempts per user, which could indicate an attacker spamming MFA notifications
+  to gain unauthorized access.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "fcu" OR "Failed to change username" | where
+  match(event_type = "(?i)fcu") | table `add_fields_eoi` session_id, event_type, action,
+  user, src_ip, http_user_agent | bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

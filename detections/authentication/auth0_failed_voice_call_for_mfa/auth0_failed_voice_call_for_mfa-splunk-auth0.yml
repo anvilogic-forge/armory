@@ -1,0 +1,20 @@
+id: '43056.83277'
+title: 'Auth0: Failed Voice Call for MFA'
+description: Threat actors may attempt to exploit voice-based multi-factor authentication
+  (MFA) but fail due to incorrect configurations, service disruptions, or security
+  controls. This use case detects failed MFA voice call attempts, which could indicate
+  user error, telephony service issues, or an attacker probing MFA mechanisms for
+  weaknesses.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_send_voice_failure" OR "Attempt to make
+  Voice call for MFA failed" | where match(event_type, "(?i)^gd_send_voice_failure$")
+  | table _time, host, user, signature, City, Region, Country, user | bin span=1s
+  | stats values(*) as * by _time, user '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

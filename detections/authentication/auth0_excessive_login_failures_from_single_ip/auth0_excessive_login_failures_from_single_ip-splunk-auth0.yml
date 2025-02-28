@@ -1,0 +1,24 @@
+id: '42912.83025'
+title: 'Auth0: Excessive Login Failures from Single IP'
+description: Threat actors may attempt rapid, repeated login attempts to brute-force
+  credentials or exploit session-based authentication limits. This use case detects
+  users temporarily blocked from logging in due to excessive attempts from the same
+  IP, which could indicate an automated attack or compromised account testing.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "limit_sul" OR "A user is temporarily prevented
+  from logging in because they reached the maximum logins per time period from the
+  same IP address", | where event_type="limit_sul" | table _time, host, user, signature,
+  City, Region, Country, src_ip, coi_user | bin span=1s | stats values(*) as * by
+  _time, src_ip '
+techniques:
+- credential-access:brute force:password guessing
+- credential-access:brute force:credential stuffing
+- credential-access:brute force:password spraying
+technique_id:
+- T1110.001
+- T1110.003
+- T1110.004
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

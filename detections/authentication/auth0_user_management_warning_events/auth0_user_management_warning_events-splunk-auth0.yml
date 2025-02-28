@@ -1,0 +1,22 @@
+id: '42982.83101'
+title: 'Auth0: User management warning events'
+description: 'Monitoring for events indicating issues/warnings for user management
+  operations may indicate potential misconfigurations, unauthorized access attempts,
+  or suspicious account modifications. Identifying these anomalies can help prevent
+  privilege escalation or account takeovers. This rule will monitor events with: "wum",
+  OR "Filters for logs of type warning during user management operations" to help
+  detect potential security risks or misconfigurations.'
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "wum" OR "Filters for logs of type warning
+  during user management operations" | where match(event_type = "(?i)wum") | table
+  `add_fields_eoi` session_id, event_type, action, user, src_ip, http_user_agent |
+  bin span=1s | stats values(*) as * by _time, user '
+techniques:
+- persistence:account manipulation
+- privilege-escalation:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

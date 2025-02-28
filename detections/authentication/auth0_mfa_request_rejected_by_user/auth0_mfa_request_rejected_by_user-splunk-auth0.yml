@@ -1,0 +1,19 @@
+id: '42895.83007'
+title: 'Auth0: MFA Request Rejected by User'
+description: Threat actors may attempt MFA fatigue attacks by repeatedly sending push-notification
+  requests, hoping the legitimate user will mistakenly approve access. This use case
+  detects rejected MFA requests, which could indicate an attacker spamming a user
+  with authentication prompts to gain unauthorized access.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "gd_auth_rejected" OR "A user rejected a Multi-factor
+  authentication request via push-notification" | where event_type="gd_auth_rejected"
+  | table _time, host, user, signature, City, Region, Country, src_ip, coi_user |
+  bin span=1s | stats values(*) as * by _time, src_ip '
+techniques:
+- credential-access:multi-factor authentication request generation
+technique_id: 
+- T1621
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

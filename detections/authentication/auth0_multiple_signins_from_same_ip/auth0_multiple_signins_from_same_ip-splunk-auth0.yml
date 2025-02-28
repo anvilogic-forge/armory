@@ -1,0 +1,22 @@
+id: '42994.83113'
+title: 'Auth0: Multiple Signins from Same IP'
+description: Threat actors may attempt rapid, repeated login attempts to brute-force
+  credentials or exploit session-based authentication limits. This use case detects
+  IPs with multiple successful signins from the same IP.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "succeed" OR (TERM(success) TERM(login)) |
+  where match(event_type, "(?i)^s$") | table _time, host, user, signature, City, Region,
+  Country, src_ip, coi_user | bin span=6000s | stats values(*) as * by _time, src_ip
+  | eventstats dc(src_user) as dc_user by src_ip, _time| eval start_time=strftime(start_time,
+  "%m/%d/%Y %H:%M:%S") | eval end_time=strftime(end_time, "%m/%d/%Y %H:%M:%S")| where
+  dc_user > 1 '
+techniques:
+- credential-access:brute force
+- credential-access:brute force:password spraying
+technique_id:
+- T1110
+- T1110.003
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes
