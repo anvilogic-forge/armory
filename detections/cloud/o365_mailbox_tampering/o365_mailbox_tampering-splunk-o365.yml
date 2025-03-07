@@ -1,0 +1,25 @@
+id: '43488.85240'
+title: O365 Mailbox Tampering
+description: This use case detects instances where a single user performs a combination
+  of AddFolderPermissions, UpdateInboxRules, and MailItemsAccessed events within a
+  short time window. Threat actors may chain these actions to establish persistence,
+  redirect inbound emails, or covertly access and exfiltrate sensitive messages after
+  compromising a mailbox.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_o365` "AddFolderPermissions" OR "UpdateInboxRules"
+  OR "MailItemsAccessed" | table _time, host, user, src_user, event_name | bin span=60s
+  | stats values(*) as * by _time, src_user | stats dc(event_name) as dc_event_name
+  by src_user, _time| where dc_event_name = 3 '
+techniques:
+- collection:email collection:email forwarding rule
+- collection:email collection:local email collection
+- collection:email collection:remote email collection
+technique_id:
+- T1114.003
+- T1114.002
+- T1114.001
+data_category:
+- Office 365 audit logs
+references:
+- https://www.invictus-ir.com/news/forensic-analysis-of-em-client
+- https://learn.microsoft.com/en-us/purview/audit-log-activities
