@@ -1,0 +1,21 @@
+id: '43801.85665'
+title: 'Auth0: Attempted Use of Expired Token'
+description: Threat actors may attempt to gain unauthorized access by exchanging various
+  authentication factors—such as passwords, passkeys, OTPs, recovery codes, or refresh
+  tokens—for access tokens. This use case detects successful access token uses from
+  multiple IP addresses within an hour which could indcate an attacker leveraging
+  stolen session tokens to maintain persistent access.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "JWT expired" | where match(event_type, "(?i)^f$")
+  and match(message, "(?i)JWT\s+Expired") | table _time, host, user, signature, City,
+  Region, Country, user `group_events("user", 1)` '
+techniques:
+- credential-access:steal application access token
+- initial-access:valid accounts
+technique_id: 
+- T1528
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes

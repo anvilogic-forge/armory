@@ -1,0 +1,25 @@
+id: '43849.85979'
+title: 'Auth0: Login Attempts from Inconsistent Locations'
+description: 'This use case looks for login attempts from locations that are inconsistent
+  with the user’s usual patterns. - Threat Actor Association: LUCR-3, Scattered Spider
+  (aka. 0ktapus, UNC3944), Scatter Swine'
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "s" OR "Success Login" | where match(event_type
+  = "(?i)^s$") | iplocation src_ip| stats values(*) as * values(Country) as locations
+  by user | join type=left user [ search `get_authentication_data_auth0` "s" OR "Success
+  Login"| where match(event_type = "(?i)^s$") | iplocation src_ip| stats values(*)
+  as * by user, Country| where isnotnull(Country)] | where isnotnull(locations) AND
+  isnotnull(Country) AND isnull(mvfind(locations, Country)) '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes
+- https://auth0.com/docs/customize/actions/explore-triggers/signup-and-login-triggers/login-trigger/post-login-event-object
+- https://auth0.com/docs/secure/multi-factor-authentication/adaptive-mfa/adaptive-mfa-log-events

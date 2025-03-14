@@ -1,0 +1,40 @@
+id: '42999.83118'
+title: 'Auth0: Impossible travel Sign-In'
+description: 'This use case looks for user signins from multiple locations by time
+  and distance. - Threat Actor Association: LUCR-3, Scattered Spider (aka. 0ktapus,
+  UNC3944), Scatter Swine'
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "s" OR "Success Login" | where match(event_type
+  = "(?i)^s$") | iplocation src_ip | sort 0 user, _time| streamstats window=1 current=f
+  values(_time) as last_time values(src_ip) as last_src_ip values(City) as last_City
+  values(Country) as last_Country values(Region) as last_Region values(lat) as last_lat
+  values(lon) as last_lon by user | eval last_location = if(isnotnull(last_City) AND
+  last_City!="", last_City . ", ", "") . if(isnotnull(last_Country) AND last_Country!="",
+  last_Country . ", ", "") . if(isnotnull(last_Region) AND last_Region!="", last_Region,
+  "") | eval location = if(isnotnull(City) AND City!="", City . ", ", "") . if(isnotnull(Country)
+  AND Country!="", Country . ", ", "") . if(isnotnull(Region) AND Region!="", Region,
+  "")| foreach *location [ | eval <<FIELD>> = replace(replace(<<FIELD>>, "^\s*,\s*",
+  ""), "\s*,\s*$$$$", "")] | eval rlat1 = pi()*last_lat/180, rlat2=pi()*lat/180, rlat
+  = pi()*(lat-last_lat)/180, rlon= pi()*(lon-last_lon)/180 | eval a = sin(rlat/2)
+  * sin(rlat/2) + cos(rlat1) * cos(rlat2) * sin(rlon/2) * sin(rlon/2)| eval c = 2
+  * atan2(sqrt(a), sqrt(1-a)) | eval distance_miles = 6371 * c, time_difference_hours
+  = round((_time - last_time) / 3600,2), speed=round(distance_miles/ ( time_difference_hours),2)
+  | fields - rlat* a c | eval day=strftime(_time, "%m/%d/%Y") | search last_Country!=Country
+  distance_miles!=0 speed>1000 | stats values(*) as * values(time_difference_hours)
+  as time_difference_hours values(speed) as speed first(last_location) as location_one
+  first(location) as location_two values(*src_ip) as *src_ip by user, distance_miles,
+  day, _time | sort - distance_miles | rename location_one AS first_location, location_two
+  AS second_location| eval first_src_ip=last_src_ip, second_src_ip=src_ip '
+techniques:
+- persistence:valid accounts
+- privilege-escalation:valid accounts
+- defense-evasion:valid accounts
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes
+- https://auth0.com/docs/customize/actions/explore-triggers/signup-and-login-triggers/login-trigger/post-login-event-object
+- https://auth0.com/docs/secure/multi-factor-authentication/adaptive-mfa/adaptive-mfa-log-events

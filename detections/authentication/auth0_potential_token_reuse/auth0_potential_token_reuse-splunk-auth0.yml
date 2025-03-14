@@ -1,0 +1,21 @@
+id: '43784.85631'
+title: 'Auth0: Potential Token Reuse'
+description: Threat actors may attempt to gain unauthorized access by exchanging various
+  authentication factors—such as passwords, passkeys, OTPs, recovery codes, or refresh
+  tokens—for access tokens. This use case detects successful access token uses from
+  multiple IP addresses within an hour which could indcate an attacker leveraging
+  stolen session tokens to maintain persistent access.
+logic_format: Splunk
+logic: '`get_authentication_data_auth0` "seacft" OR "seraft" OR "seccft" | where match(event_type,
+  "(?i)^(seacft|seraft|seccft)$") | table _time, host, user, signature, City, Region,
+  Country, user `group_events("user", 3600)`| eventstats values(src_ip) as src_ip_list,
+  values(location_info) as locations, dc(src_ip) as dc_src_ip by user, _time| where
+  dc_src_ip > 1 '
+techniques:
+- initial-access:valid accounts
+technique_id: 
+- T1078
+data_category:
+- Authentication logs
+references:
+- https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes
