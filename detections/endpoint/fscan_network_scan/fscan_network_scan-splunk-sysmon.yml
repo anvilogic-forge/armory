@@ -1,0 +1,26 @@
+id: '44122.86351'
+title: FScan.exe Network Scan
+description: Threat actors may use fscan, an open-source security scanning tool, to
+  perform network reconnaissance, identify open ports, and detect vulnerabilities
+  within a target environment. When executed, fscan often leverages rapid ICMP pings
+  to scan private IP ranges for live hosts. This use case detects internal network
+  scans by identifying hosts that generate over 100 rapid ICMP ping requests to private
+  IP addresses matching fscan's automated command style within a grouped event window
+  (default 30s), which may indicate unauthorized network scanning activity from fscan
+  or similar utilities.
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  TERM(ping) "-n" "-w" | where match(process, "(?i)ping\s+-n\s1\s-w\s1\s(10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3}|192\.168\.[0-9]{1,3}\.[0-9]{1,3})")
+  | table _time, host, user, host, process*, parent* | bin span=30s | stats values(*)
+  as * by _time, host | where event_count > 100 '
+techniques:
+- discovery:remote system discovery
+- discovery:network service discovery
+technique_id: 
+- T1018
+- T1046
+data_category:
+- Windows Sysmon
+references:
+- https://github.com/shadow1ng/fscan
+- https://blog.talosintelligence.com/new-persistent-attacks-japan/

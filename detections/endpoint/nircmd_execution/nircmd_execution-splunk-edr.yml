@@ -1,0 +1,33 @@
+id: '27585.50197'
+title: NirCmd Execution
+description: 'NirCmd is a command line utility with capabilities to delete files from
+  Recycling Bin, delete registry keys, take screenshots and execute command without
+  displaying a user interface. While it has legitimate administrative uses, threat
+  actors including Mint Sandstorm aka PHOSPHORUS have been observed using renamed
+  NirCmd to execute malicious code. This use case detects executions of NirCmd.exe
+  or command line argument patterns consistent with abusive activities observed with
+  NirCmd, accounting for instances where it has been renamed. Allowlisting is recommended
+  for executables using the same command line arguments for best results. '
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "NirCmd" OR ((" execmd " OR ".exe
+  script " OR ".exe shexec " OR " runinteractive " OR " runinteractivecmd " OR " savescreenshot
+  " OR " savescreenshotfull " OR "savescreenshotwin " OR " regdelval " OR " regdelkey
+  " OR " regsetval ") OR ((" exec " OR " exec2 ") (" show " OR " hide "))) | where
+  match(process_name, "(?i)nircmd\.exe") or match(process, "(?i)\s(execcmd|runinteractive(cmd)?|savescreenshot(full|win)?|regdel(val|key)|regsetval|exec2?\s+(show|hide))\s|\.exe\s+(script|shexec)")
+  | table _time, host, user, process, parent_process_name, process_* | bin span=1s
+  | stats values(*) as * by _time, host '
+techniques:
+- collection:screen capture
+- execution:command and scripting interpreter
+- defense-evasion:indicator removal
+technique_id: 
+- T1113
+- T1059
+- T1070
+data_category:
+- EDR Logs
+references:
+- https://www.microsoft.com/en-us/security/blog/2024/01/17/new-ttps-observed-in-mint-sandstorm-campaign-targeting-high-profile-individuals-at-universities-and-research-orgs/
+- https://asec.ahnlab.com/ko/45153/
+- https://nircmd.nirsoft.net/
+- https://www.nirsoft.net/utils/nircmd.html

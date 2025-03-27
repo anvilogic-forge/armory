@@ -1,0 +1,28 @@
+id: '43757.85557'
+title: Security Software Discovery via Findstr.exe
+description: Threat actors may enumerate security software, configurations, and monitoring
+  tools on a system or cloud environment to evade defenses or tailor their attack.
+  This can involve querying registry keys, running system commands, or checking for
+  specific processes related to security tools. This use case detects instances where
+  findstr.exe or find.exe are executed to search for security software on the host.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") ("findstr.exe" OR
+  TERM(findstr) OR "find.exe" OR TERM(find)) ("avira" OR "cb" OR "cylance" OR "defender"
+  OR "kaspersky" OR "kes" OR "mc" OR "sec" OR "sentinel" OR "symantec" OR "virus"
+  OR "wrsa" OR "opssvc" OR "avastui" OR "avgui" OR "bdservicehost" OR "nsWscSvc" OR
+  "ekrn" OR "sophoshealth" OR "falcon") | where match(process, "(?i)\w+(\.exe)?\x22?\s+(avira|cb|cylance|defender|kaspersky|kes|mc|sec|sentinel|symantec|virus|wrsa|opssvc|avastui|avgui|bdservicehost|nsWscSvc|ekrn|sophoshealth|falcon)\x22?$")|
+  table _time, host, user, process, process_* | bin span=1s | stats values(*) as *
+  by _time, host '
+techniques:
+- discovery:software discovery:security software discovery
+technique_id:
+- T1518.001
+data_category:
+- PowerShell logs
+references:
+- https://attack.mitre.org/techniques/T1518/001/
+- https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/findstr
+- https://github.com/redcanaryco/atomic-red-team/blob/987e3ca988ae3cff4b9f6e388c139c05bf44bbb8/atomics/T1518.001/T1518.001.md#atomic-test-1---security-software-discovery
+- https://www.microsoft.com/en-us/security/blog/2025/03/06/malvertising-campaign-leads-to-info-stealers-hosted-on-github/
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_findstr_security_keyword_lookup/

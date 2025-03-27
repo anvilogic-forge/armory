@@ -1,0 +1,22 @@
+id: '8150.13199'
+title: Fsutil fsinfo execution
+description: 'Adversaries may attempt to gather information about attached peripheral
+  devices and components connected to a computer system. Peripheral devices could
+  include auxiliary resources that support a variety of functionalities such as keyboards,
+  printers, cameras, smart card readers, or removable storage. This use case looks
+  for when fsutil is executed with fsinfo. - Threat Actor Association: APT29/Nobelium/Cozy
+  Bear - Software Association: Alphv/BlackCat'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ((event_type IN ("childproc","netconn","proc"))
+  OR (TERM(ProcessRollup2) OR Type=Process) OR TERM(DeviceProcessEvents)) "fsutil"
+  TERM(fsinfo) | table _time, host, user process, process_*, signature_id, parent_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- discovery:peripheral device discovery
+technique_id: 
+- T1120
+data_category:
+- EDR Logs
+- Process command-line parameters
+references:
+- https://www.welivesecurity.com/wp-content/uploads/2020/05/ESET_Turla_ComRAT.pdf

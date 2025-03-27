@@ -1,0 +1,30 @@
+id: '44220.86860'
+title: Browser Started with Remote Debugging - Windows
+description: Threat actors may abuse browser remote debugging features to extract
+  sensitive data, maintain access, or facilitate communication with C2 servers. This
+  is typically done by launching the browser with specific remote debugging flags,
+  allowing remote access to browser sessions and potentially bypassing traditional
+  security controls. This use case detects instances where a browser is started in
+  remote debugging mode.
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(Firefox) " -start-debugger-service") OR
+  " --remote-debugging-" | where match(process, "(?i)\s+--remote-debugging-\S+") or
+  (process="firefox.exe" and match(process, "(?i)\s+-start-debugger-service")) | table
+  _time, host, user, process, parent_process_name, process_path | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- collection:browser session hijacking
+technique_id: 
+- T1185
+data_category:
+- Process command-line parameters
+- Windows event logs
+references:
+- https://yoroi.company/wp-content/uploads/2022/05/EternityGroup_report_compressed.pdf
+- https://www.mdsec.co.uk/2022/10/analysing-lastpass-part-1/
+- https://github.com/defaultnamehere/cookie_crimes/
+- https://github.com/wunderwuzzi23/firefox-cookiemonster
+- https://www.trendmicro.com/en_us/research/25/c/ai-assisted-fake-github-repositories.html
+- https://cyble.com/blog/fake-coding-challenges-steal-sensitive-data-via-fogdoor/
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_browsers_remote_debugging/
