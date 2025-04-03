@@ -1,0 +1,24 @@
+id: '44644.87462'
+title: Command Line Homoglyphs - Windows
+description: Threat actors may use homoglyph attacks by substituting characters in
+  process names or commands with visually similar Unicode symbols to impersonate legitimate
+  commands, or messages (e.g., using Cyrillic “а” instead of Latin “a”). This tactic
+  is often used to evade string-based detection and confuse analysts during investigation.
+  This use case detects Windows processes containing Unicode characters from commonly
+  abused homoglyph ranges, including Cyrillic extended, Greek extended, and full-width
+  Latin letters and digits.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  | regex process="[Ѐ-ӿͰ-Ͽａ-ｚＡ-Ｚ０-９]" | table _time, host, user, process, process_name,
+  parent_process_name | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:obfuscated files or information:command obfuscation
+technique_id:
+- T1027.010
+data_category:
+- Windows Sysmon
+references:
+- https://app.any.run/tasks/c044f84a-fd44-47ab-b53f-976debf96e63
+- https://www.zdnet.com/article/magecart-group-uses-homoglyph-attacks-to-fool-you-into-visiting-malicious-websites/
+- https://www.meshsecurity.io/blog/homoglyph-attacks-understanding-and-mitigating-the-threat
+- https://www.bitdefender.com/en-us/blog/businessinsights/homograph-phishing-attacks-when-user-awareness-is-not-enough

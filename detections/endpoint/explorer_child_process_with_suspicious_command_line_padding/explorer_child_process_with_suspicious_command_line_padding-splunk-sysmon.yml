@@ -1,0 +1,29 @@
+id: '44252.86793'
+title: Explorer Child Process with Suspicious Command Line Padding
+description: 'Threat actors may abuse command-line padding with whitespace or non-printable
+  control characters to hide malicious commands beyond the UI-visible limit, often
+  using LNK files to launch payloads via explorer.exe. This technique enables stealthy
+  execution by concealing the true command from the user''s view. This use case detects
+  processes launched by explorer.exe where the command line contains excessive whitespace
+  padding, suggesting hidden execution activity consistent with LNK-based attacks.
+  Note: Due to command line logging normalization/sanitization in other log sources,
+  Sysmon or EDR logging is recommended for detection. This logic was verified with
+  CrowdStrike FDR logs; if your organization uses a different EDR vendor, it is strongly
+  recommended to perform the test found in the Threat Examples to validate that your
+  logging source is not removing the whitespace padding.'
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(explorer) OR "explorer.exe") | where match(process, "[\x09\x0A\x0B\x0C\x0D\x11\x12\x13]|(\n){5,}")
+  and parent_process_name="explorer.exe" | table _time, host, user, process, process_path,
+  process_name, parent_process_name, parent_process | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:command and scripting interpreter
+- execution:user execution:malicious file
+technique_id:
+- T1059
+- T1204.002
+data_category:
+- Windows Sysmon
+references:
+- https://www.trendmicro.com/en_us/research/25/c/windows-shortcut-zero-day-exploit.html

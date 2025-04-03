@@ -1,0 +1,33 @@
+id: '35956.62966'
+title: Unexpected Network Connection from System Process
+description: Threat actors may abuse legitimate system processes that typically lack
+  network functionality to perform malicious network activity, helping evade detection
+  and blend in with normal system behavior. This technique is often associated with
+  process injection or masquerading, where code is executed within trusted processes
+  to establish command-and-control (C2) channels or exfiltrate data. This use case
+  detects instances where non-networking system processes (e.g., conhost.exe, lsass.exe,
+  wininit.exe) are observed initiating network connections, which may indicate process
+  injection, covert C2 activity, or execution of malicious payloads under trusted
+  process names.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=3) OR "<EventID>3<")
+  ("conhost.exe" OR "explorer.exe" OR "services.exe" OR "wininit.exe" OR "lsass.exe"
+  OR "dwm.exe" OR "spoolsv.exe" OR "taskhost.exe") | table _time, host, user, process,
+  process_*, parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- command-and-control:application layer protocol
+- defense-evasion:masquerading
+- privilege-escalation:process injection
+technique_id: 
+- T1071
+- T1036
+- T1055
+data_category:
+- Windows Sysmon
+references:
+- https://attack.mitre.org/techniques/T1071/
+- https://attack.mitre.org/techniques/T1055/
+- https://attack.mitre.org/techniques/T1057/
+- https://kostas-ts.medium.com/ursnif-vs-italy-il-pdf-del-destino-5c83d6281072
+- https://github.com/S1ckB0y1337/Cobalt-Strike-CheatSheet
+- https://boschko.ca/cobalt-strike-process-injection/
