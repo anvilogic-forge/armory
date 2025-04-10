@@ -1,0 +1,24 @@
+id: '44775.89976'
+title: SimpleHelp Remote Access Tool Execution
+description: Threat actors may install remote access tools (RATs) to maintain persistent
+  access to compromised systems. Tools like SimpleHelp or JWrapper Remote Access are
+  often abused for stealthy remote control, masquerading as legitimate IT support
+  tools. This use case detects process creation events with file paths or executable
+  names related to SimpleHelp Remote Access. - LOLRMM
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "JWrapper-Remote" OR "SimpleHelp"
+  OR "SimpleService" OR "SimpleGatewayService" | where (match(process_name, "(?i)(Simple(help(customer)?|service|gatewayservice)|remote\saccess|windows\slauncher)\.exe")
+  and match(process_path, "(?i)JWrapper-Remote\s+(Access|Support)")) or match(process_name,
+  "(?i)Simple(help(customer)?|service|gatewayservice)\.exe") | table _time, host,
+  user, signature_id, process, process_name, process_path `group_events("host", 5)` '
+techniques:
+- command-and-control:remote access software
+technique_id: 
+- T1219
+data_category:
+- EDR Logs
+references:
+- https://lolrmm.io/tools/simplehelp
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_remote_access_tools_simple_help/
+- https://simple-help.com/downloads
+- https://www.huntress.com/blog/slashandgrab-screen-connect-post-exploitation-in-the-wild-cve-2024-1709-cve-2024-1708
