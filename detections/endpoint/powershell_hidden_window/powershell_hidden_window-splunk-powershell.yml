@@ -1,0 +1,29 @@
+id: '39125.70661'
+title: PowerShell Hidden Window
+description: 'Threat actors may attempt to conceal their activity involving PowerShell
+  windows by setting the WindowStyle parameter to hidden. While legitimate administrative
+  tasks may use hidden windows to perform maintainence tasks in the background, this
+  technique can be used by threat actors to evade user suspicion and reduce the likelihood
+  of detection. This use case detects PowerShell executions involving hidden window
+  commands. PowerShell logging is recommended for detection; process creation logs
+  will only detect this activity if the command is executed in a manner that creates
+  a new process, such as powershell -c. Atomic Test T1564.003 - Test #1'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4104) OR
+  "<EventID>4104<" OR TERM(EventCode=4103) OR "<EventID>4103<") ("-WindowStyle" OR
+  "-w") "hidden" | regex process="(?i)-w(indowStyle)?\s+hidden" | table _time, host,
+  user, process, parent_process_name | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- defense-evasion:hide artifacts:hidden window
+- execution:command and scripting interpreter
+- defense-evasion:hide artifacts
+technique_id:
+- T1564.003
+- T1059
+- T1564
+data_category:
+- PowerShell logs
+references:
+- https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1564.003/T1564.003.md#atomic-test-1---hidden-window
+- https://thedfirreport.com/2023/10/30/netsupport-intrusion-results-in-domain-compromise/
