@@ -1,0 +1,27 @@
+id: '45003.90189'
+title: PowerShell CreateDecryptor
+description: Threat actors may abuse the CreateDecryptor() method within PowerShell
+  scripts to dynamically decrypt embedded payloads, configuration files, or sensitive
+  data at runtime. CreateDecryptor() is part of legitimate .NET cryptographic operations,
+  but its presence in PowerShell ScriptBlock or CommandLine activity — especially
+  outside normal application behavior — often signals malware unpacking, fileless
+  attacks, or ransomware staging. This use case detects references to CreateDecryptor
+  in PowerShell activity, potentially indicating obfuscated payload execution or preparation
+  for in-memory attacks.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_sysmon` (TERM(EventCode=1) OR "<EventID>1<")
+  (TERM(powershell) OR TERM(pwsh)) "CreateDecryptor" | regex process="(?i)CreateDecryptor"
+  | table _time, host, user process, process_*, signature_id | bin span=1s | stats
+  values(*) as * by _time, host '
+techniques:
+- execution:command and scripting interpreter:powershell
+- defense-evasion:obfuscated files or information
+technique_id:
+- T1059.001
+- T1027
+data_category:
+- Windows Sysmon
+references:
+- https://www.cybereason.com/blog/threat-analysis-lummastealer-2.0
+- https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.createdecryptor?view=net-9.0
+- https://www.virustotal.com/gui/file/034694376c291c82789e7dc2c8771a4dff47c1c447f2ea7427edb968f480fa71
