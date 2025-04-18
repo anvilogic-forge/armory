@@ -1,0 +1,27 @@
+id: '45179.90471'
+title: Exfiltration via curl.exe - Windows
+description: Threat actors may abuse curl.exe on Windows systems to exfiltrate data
+  or upload files to remote servers using command-line options like -d, -T, --form,
+  or --upload-file. These flags are commonly used for HTTP POST requests, enabling
+  attackers to transmit files or sensitive information during post-compromise activity.
+  This use case detects process creation events where curl.exe is used with data or
+  file upload arguments, potentially indicating data exfiltration, C2 communication,
+  or malicious use of legitimate tools.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_powershell` (TERM(EventCode=4103) OR
+  "<EventID>4103<" OR TERM(EventCode=4104) OR "<EventID>4104<") TERM(curl) ("-d" OR
+  "-T" OR "-F" OR " --form" OR "--upload-file " OR "--data " OR "--data-") | where
+  match(process, "(?i)curl") and (match(process, "\s-[dTF]\s") or match(process, "(?i)\s--(form|upload-file|data)\s|\s--data-"))
+  | table _time, host, user, process, process_path, process_name, parent_process_name,
+  user | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- exfiltration:exfiltration over alternative protocol
+technique_id: 
+- T1048
+data_category:
+- PowerShell logs
+references:
+- https://github.com/SigmaHQ/sigma/blob/master/rules-threat-hunting/windows/process_creation/proc_creation_win_curl_fileupload.yml
+- https://x.com/d1r4c/status/1279042657508081664
+- https://medium.com/@petehouston/upload-files-with-curl-93064dcccc76
+- https://curl.se/docs/manpage.html

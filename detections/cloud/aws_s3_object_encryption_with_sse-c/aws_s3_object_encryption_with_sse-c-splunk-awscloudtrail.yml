@@ -1,0 +1,27 @@
+id: '45222.90635'
+title: AWS S3 Object Encryption with SSE-C
+description: Threat actors may use S3 object uploads with customer-provided encryption
+  (SSE-C) to hide or obfuscate exfiltrated data, as the encryption key is never stored
+  or managed by AWS. The use of the x-amz-server-side-encryption-customer-algorithm
+  header in a PutObject API call indicates that SSE-C encryption was used, which can
+  limit forensic visibility and detection. This use case detects S3 PutObject operations
+  where SSE-C headers are present, potentially signaling data exfiltration using customer-supplied
+  encryption keys to evade monitoring.
+logic_format: Splunk
+logic: ' `get_cloud_data` `get_cloud_data_storage` eventType="AwsApiCall" eventName="PutObject"
+  requestParameters.x-amz-server-side-encryption-customer-algorithm | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, file_name,
+  bucket_name, bytes_*, file_path, requester_account, duration | bin span=60s | stats
+  values(*) as * by _time, user | lookup dnslookup clientip as src_ip OUTPUT clienthost
+  as src_dns | iplocation prefix="src_" src_ip | rename src_Country as src_country '
+techniques:
+- impact:data encrypted for impact
+technique_id: 
+- T1486
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.elastic.co/security-labs/emulating-aws-s3-sse-c
+- https://www.halcyon.ai/blog/abusing-aws-native-services-ransomware-encrypting-s3-buckets-with-sse-c
