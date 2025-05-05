@@ -1,0 +1,22 @@
+id: '45488.91368'
+title: Data Exfiltration via AWS CLI - *nix
+description: Threat actors may abuse the AWS CLI s3 cp command with recursive and
+  custom endpoint flags to exfiltrate large volumes of data to an S3-compatible storage
+  service outside of the target environment. The use of --recursive, --region, and
+  --endpoint-url flags together is indicative of bulk data transfers, potentially
+  to unauthorized or attacker-controlled storage. This use case detects such activity
+  on Linux or macOS systems, helping identify suspicious data movement or staging
+  for exfiltration.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "s3 " " cp " " --recursive" "
+  --region" " --endpoint-url" | table _time, host, user, process, parent_process_name,
+  process_name | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- exfiltration:exfiltration over web service
+technique_id: 
+- T1567
+data_category:
+- EDR Logs
+references:
+- https://thedfirreport.com/2024/04/29/from-icedid-to-dagon-locker-ransomware-in-29-days/
+- https://x.com/Kostastsale/status/1714343784799223877
