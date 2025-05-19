@@ -1,0 +1,28 @@
+id: '46908.93830'
+title: AWS DisableAWSServiceAccess
+description: The DisableAWSServiceAccess API call in AWS CloudTrail indicates when
+  a service-linked role is being disabled for an AWS service. Service-linked roles
+  are used by AWS services to perform actions on your behalf, and disabling them can
+  prevent those services from operating properly. This use case detects attempts to
+  disable service-linked roles via the DisableAWSServiceAccess API call in AWS CloudTrail.
+  Such activity may indicate efforts to disrupt or evade monitoring services, particularly
+  if performed outside of normal administrative operations.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_aws` "DisableAWSServiceAccess" | table _time,
+  host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id | bin
+  span=1s | stats values(*) as * by _time, src_ip | lookup dnslookup clientip as src_ip
+  OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip | rename src_Country
+  as src_country '
+techniques:
+- defense-evasion:impair defenses
+- defense-evasion:exploitation for defense evasion
+technique_id: 
+- T1562
+- T1211
+data_category:
+- AWS CloudTrail logs
+references:
+- https://docs.aws.amazon.com/organizations/latest/APIReference/API_DisableAWSServiceAccess.html
+- https://securitylabs.datadoghq.com/articles/tales-from-the-cloud-trenches-the-attacker-doth-persist-too-much/

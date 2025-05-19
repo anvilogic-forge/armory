@@ -1,0 +1,26 @@
+id: '44956.90090'
+title: AWS GetFederationToken
+description: Threat actors may attempt to obtain temporary AWS credentials by calling
+  the GetFederationToken API, which grants limited-time access to AWS resources using
+  specified permissions. Abuse of federation tokens can enable unauthorized access
+  without needing long-term credentials, making detection more difficult. This use
+  case detects requests to the GetFederationToken API, which may indicate initial
+  access, privilege escalation, or persistence attempts in a compromised AWS environment.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_iam` eventName=GetFederationToken | table
+  _time, host, user, account, region, src_ip, http_user_agent, access_key, user, user_id,
+  identity_type, role, event_name, event_category, cloud_service, request_parameters,
+  response, mfa_enabled, permissions, identity, action, resource_id, object_id, dest_*
+  | bin span=1s | stats values(*) as * by _time, user | lookup dnslookup clientip
+  as src_ip OUTPUT clienthost as src_dns | iplocation prefix="src_" src_ip| rename
+  src_Country as src_country '
+techniques:
+- credential-access:steal application access token
+technique_id: 
+- T1528
+data_category:
+- AWS CloudTrail logs
+references:
+- https://www.crowdstrike.com/en-us/blog/how-adversaries-persist-with-aws-user-federation/?utm_medium=soc&utm_source=lnkd&utm_term=spklr&utm_content=8789150951&utm_campaign=%5Bglobal%5D
+- https://permiso.io/blog/strategies-used-by-adversaries-to-steal-application-access-tokens
+- https://docs.aws.amazon.com/STS/latest/APIReference/API_GetFederationToken.html
