@@ -1,0 +1,19 @@
+id: '6583.7596'
+title: Dxcap Proxy Execution
+description: DXCap.exe is a command-line tool for graphics diagnostics capture and
+  playback. It supports Direct3D 10 through Direct3D 12 across all feature levels.
+  Local execution of a process as a subprocess of Dxcap.exe Living Off the Land Binary
+  and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=process) "dxcap" | table _time, host, user user, process,
+  process_*, parent_* | bin span=1s | stats values(*) as * by _time, host | where
+  match(parent_process_name, "(?i)dxcap") OR match(process, "(?i)dxcap.+?\-c") '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218
+data_category:
+- Windows event logs
+references:
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Dxcap/

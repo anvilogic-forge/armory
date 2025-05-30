@@ -1,0 +1,18 @@
+id: '6582.7595'
+title: Dotnet.exe Execution
+description: dotnet.exe comes with .NET Framework, is trusted binary and Default AppLocker
+  rule does not block it so it will execute any dll even if applocker is enabled.
+  Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<") ("dotnet") | table _time, host, user user, process, process_*,
+  parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:system binary proxy execution
+technique_id: 
+- T1218
+data_category:
+- Windows event logs
+references:
+- https://bohops.com/2019/08/19/dotnet-core-a-vector-for-awl-bypass-defense-evasion/
+- https://lolbas-project.github.io/lolbas/OtherMSBinaries/Dotnet/
