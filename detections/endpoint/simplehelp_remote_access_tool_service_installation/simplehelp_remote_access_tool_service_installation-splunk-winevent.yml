@@ -1,0 +1,33 @@
+id: '44542.87313'
+title: SimpleHelp Remote Access Tool Service Installation
+description: 'Threat actors may install remote access tools (RATs) as Windows services
+  to maintain persistent access to compromised systems. Tools like SimpleHelp or JWrapper
+  Remote Access are often abused for stealthy remote control, masquerading as legitimate
+  IT support tools. This use case detects the installation of Windows services (event
+  codes 4697 or 7045) where the service binary path matches known patterns associated
+  with SimpleHelp, JWrapper Remote Access, or similarly named executables, indicating
+  potential unauthorized remote access setup. - Windows Security event 4697: The minimum
+  OS version is Server 2016 or Windows 10. Windows Server event 7045: Windows Server
+  2008 R2 and 7, Windows Server 2012 R2 and 8.1, Windows Server 2016 and 10 - LOLRMM'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4697) OR
+  "<EventID>4697<" OR TERM(EventCode=7045) OR "<EventID>7045<") "jwrapper" OR "simplehelp"
+  OR "simpleservice" OR "simplegatewayservice" OR "remote access" OR "windowslauncher.exe"
+  | rex field=_raw "<Data Name=''ServiceFileName''>\"?(?<service_file_path>[^<\"]+)\"?</Data>"|
+  where match(service_file_path, "(?i)\x5c(Program\sFiles|ProgramData)\x5c(SimpleHelp|JWrapper-Remote\s(Access|Support))(\x5c.*)?\x5c((simplehelpcustomer|simpleservice|simplegatewayservice|remote\saccess)\.exe|windowslauncher\.exe)$")
+  | table _time, host, user, signature_id, service_* | bin span=1s | stats values(*)
+  as * by _time, host '
+techniques:
+- execution:system services
+- persistence:create or modify system process
+- command-and-control:remote access software
+technique_id: 
+- T1569.002
+- T1543
+- T1219
+data_category:
+- Windows event logs
+references:
+- https://lolrmm.io/tools/simplehelp
+- https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_remote_access_tools_simple_help/
+- https://simple-help.com/downloads
