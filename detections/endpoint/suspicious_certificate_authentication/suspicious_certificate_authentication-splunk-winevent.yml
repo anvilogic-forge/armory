@@ -1,0 +1,19 @@
+id: '8651.11135'
+title: Suspicious Certificate Authentication
+description: 'Adversaries may steal an AD CA’s root certificate, and forge a certificate
+  for any active user or computer. This use case looks for Kerberos ticket requests
+  with certificate thumbprints. '
+logic_format: Splunk
+logic: ' `get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4768) OR
+  "<EventID>4768<") Certificate_Issuer_Name=* | eval certificate_name=Certificate_Issuer_Name
+  | table _time, host, user process, process_*, parent_process, parent_process_*,
+  src_*, dest_*, subject, certificate_* | bin span=1s | stats values(*) as * by _time,
+  host '
+techniques:
+- persistence:modify authentication process
+technique_id: 
+- T1556
+data_category:
+- Windows event logs
+references:
+- https://www.specterops.io/assets/resources/Certified_Pre-Owned.pdf
