@@ -1,0 +1,23 @@
+id: '5713.5986'
+title: Azure External Invite
+description: Azure AD is extended to include collaboration, allowing you to invite
+  people from outside your organization to be guest users in your cloud account. Adversaries
+  may leverage this in order to establish secondary persistence or valid accounts.
+logic_format: Splunk
+logic: '`get_cloud_data` `get_cloud_data_azure` "Invite external user" | rex field=additionalDetails{}.value
+  (?<invited_user1>"\S+\@\S+") | rex field=properties.additionalDetails{}.value (?<invited_user2>"\S+\@\S+")|
+  eval invited_user=coalesce(invited_user1, invited_user2) | table _time, host, user,account,
+  region, src_ip, http_user_agent, access_key, user, user_id, identity_type, role,
+  event_name, event_category, cloud_service, request_parameters, response, mfa_enabled,
+  permissions, identity, action, resource_id, object_id, invited_user | bin span=1s
+  | stats values(*) as * by _time, user '
+techniques:
+- persistence:valid accounts
+- persistence:create account
+technique_id: 
+- T1078
+- T1136
+data_category:
+- Azure activity logs
+references:
+- https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/add-external-user?view=azure-devops
