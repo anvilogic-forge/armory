@@ -1,0 +1,24 @@
+id: '48595.99069'
+title: Suspicious Browser Child Process - Windows
+description: This use case detects instances where a web browser (e.g., Chrome, Edge,
+  Firefox) launches a LOLBAS utility or script engine such as powershell.exe, cmd.exe,
+  or rundll32.exe. This process relationship is atypical in normal user activity and
+  may indicate drive-by download execution, malicious browser extensions, or browser
+  exploit payloads delivering additional tools or establishing persistence. This behavior
+  is consistent with initial access or execution techniques observed in malware campaigns
+  and red team operations.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` (TERM(chrome) OR TERM(msedge) OR TERM(firefox) OR TERM(opera) OR TERM(brave) OR TERM(vivaldi) OR TERM(iexplore)) (TERM(cmd) OR TERM(powershell) OR TERM(pwsh) OR TERM(regsvr32) OR TERM(bitsadmin) OR TERM(certutil) OR TERM(mshta) OR TERM(wscript) OR TERM(cscript) OR TERM(rundll32) OR TERM(msc) OR TERM(wmic) OR TERM(curl) OR TERM(wget)) | search (parent_process_name="chrome.exe" OR parent_process_name="msedge.exe" OR parent_process_name="firefox.exe" OR parent_process_name="opera.exe" OR parent_process_name="brave.exe" OR parent_process_name="vivaldi.exe" OR parent_process_name="iexplore.exe")
+AND
+(process_name="cmd.exe" OR process_name="powershell.exe" OR process_name="pwsh.exe" OR process_name="regsvr32.exe" OR process_name="bitsadmin.exe" OR process_name="certutil.exe" OR process_name="mshta.exe" OR process_name="wscript.exe" OR process_name="cscript.exe" OR process_name="rundll32.exe" OR process_name="msiexec.exe" OR process_name="wmic.exe" OR process_name="curl.exe" OR process_name="wget.exe") | table _time, host, user event_id, parent_*, process_*, process, signature_id,
+  src_*, dest_* | bin span=1s | stats values(*) as * by _time, host | where isnotnull(user) `hec_collect`'
+techniques:
+- defense-evasion:system binary proxy execution
+- execution:command and scripting interpreter
+technique_id: 
+- T1218
+- T1059
+data_category:
+- EDR Logs
+references:
+- https://mrd0x.com/filefix-clickfix-alternative/
