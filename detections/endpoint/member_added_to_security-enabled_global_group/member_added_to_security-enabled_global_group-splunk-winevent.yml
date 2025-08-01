@@ -1,0 +1,18 @@
+id: '15211.22728'
+title: Member added to security-enabled global group
+description: In Active Directory Users and Computers "Security Enabled" groups are
+  simply referred to as Security groups. This use case looks for when a member has
+  been added to a security enabled global group.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=632) OR "<EventID>632<"
+  OR signature_id=632 OR TERM(EventCode=4728) OR "<EventID>4728<" OR signature_id=4728)
+  | table _time, host, user dest_*, parent_*, process_*, process, signature_id, src_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- persistence:account manipulation
+technique_id: 
+- T1098
+data_category:
+- Windows event logs
+references:
+- https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4728

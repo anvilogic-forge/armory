@@ -1,0 +1,19 @@
+id: '8199.10096'
+title: Certutil Root Certificate Install
+description: 'Adversaries may install a root certificate on a compromised system to
+  avoid warnings when connecting to adversary controlled web servers. Root certificates
+  are used in public key cryptography to identify a root certificate authority (CA).
+  Atomics T1553.004 Test #5'
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<") TERM(-addstore) | table _time, host, user, signature_id, process,
+  process_*, parent_* | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:subvert trust controls:install root certificate
+technique_id:
+- T1553.004
+data_category:
+- Windows event logs
+- Process command-line parameters
+references:
+- https://unit42.paloaltonetworks.com/retefe-banking-trojan-targets-sweden-switzerland-and-japan/
