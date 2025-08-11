@@ -1,0 +1,31 @@
+id: '25922.47940'
+title: WmiPrvSE Suspicious Child Process
+description: Windows Management Instrumentation Provider Service (WmiPrvSE.exe) is
+  a Windows component used for system management, monitoring, and reporting. While
+  it is legitimately used by system administrators, its system privileges make it
+  an attractive target for abuse by threat actors. This use case detects unusual child
+  processes of WmiPrvSe.exe. It specifically looks for instances where known scripting
+  or executable processes are spawned by WmiPrvSe.exe. The rule excludes certain system
+  processes like 'werfault' and 'wmiprvse' and specific user accounts to reduce false
+  positives, focusing on patterns that are often associated with security threats
+  or attacks. Living Off the Land Binary and Scripts (LOLBAS) (LOLBIN)
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_winevent` (TERM(EventCode=4688) OR
+  "<EventID>4688<" OR Type=Process) (TERM(wmiprvse) OR "wmiprvse.exe") (TERM(certutil)
+  OR TERM(cscript) OR TERM(mshta) OR TERM(msiexec) OR TERM(regsvr32) OR TERM(rundll32)
+  OR TERM(verclsid) OR TERM(wscript) OR "certutil" OR "cscript" OR "mshta" OR "msiexec"
+  OR "regsvr32" OR "rundll32" OR "verclsid" OR "wscript") | where match(parent_process_path,
+  "(?i)(\x5cwbem\x5cwmiprvse\.exe)") and (match(process_name, "(?i)(certutil|cscript|mshta|msiexec|regsvr32|rundll32|verclsid|wscript)\.exe")
+  or match(process_name, "(?i)cmd\.exe") and match(process, "(?i)(cscript|mshta|powershell|pwsh|regsvr32|rundll32|wscript)"))
+  and not match(process_name, "(?i)(werfault|wmiprvse)\.exe") and not match(user,
+  "AUTHORI|AUTORI") | table _time, host, user, process, process_*, parent_process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- execution:windows management instrumentation
+technique_id: 
+- T1047
+data_category:
+- Windows event logs
+references:
+- https://thedfirreport.com/2021/03/29/sodinokibi-aka-revil-ransomware/
+- https://blog.osarmor.com/319/onenote-attachment-delivers-asyncrat-malware/

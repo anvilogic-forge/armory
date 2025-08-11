@@ -1,0 +1,24 @@
+id: '32338.57977'
+title: Consent.exe Suspicious Child Process
+description: Consent.exe is a process created by Microsoft Windows that is responsible
+  for managing User Account Control (UAC) consent. This use case detects any suspicious
+  child process of consent.exe in attempt to escalate privileges.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` "consent.exe" | regex parent_process_name="(?i)consent\.exe"
+  | regex process_path!="(?i):\x5cWindows\x5csystem32\x5cWerFault\.exe"| table _time,
+  host, user, process, process_*, parent_* | bin span=1s | stats values(*) as * by
+  _time, host '
+techniques:
+- execution:command and scripting interpreter
+- privilege-escalation:exploitation for privilege escalation
+technique_id: 
+- T1059
+- T1068
+data_category:
+- EDR Logs
+references:
+- https://blog.snapattack.com/hunting-cve-2024-30051-8de021f0cf77
+- https://www.youtube.com/watch?v=G5tlqwWZdJA
+- https://attack.mitre.org/techniques/T1059/
+- https://attack.mitre.org/techniques/T1068/
+- https://attack.mitre.org/techniques/T1548/002/
