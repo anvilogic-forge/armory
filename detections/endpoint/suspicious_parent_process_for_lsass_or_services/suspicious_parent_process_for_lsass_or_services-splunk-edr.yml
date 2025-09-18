@@ -1,0 +1,23 @@
+id: '16171.32215'
+title: Suspicious Parent Process for lsass.exe or services.exe
+description: This use case detects when either the Windows local security authority
+  subsystem (lsass.exe) or service control manager (services.exe) are executed as
+  a child from an unexpected parent process. This can indicate process injection/hollowing,
+  masquerading, or other suspicious activity. The expected parent process for these
+  services is wininit.exe.
+logic_format: Splunk
+logic: '`get_endpoint_data` `get_endpoint_data_edr` ("lsass.exe" OR "services.exe")
+  | regex process_path="(?i)\x5csystem32\x5c(lsass|services)\.exe"| regex parent_process_name!="(?i)wininit\.exe"|
+  where isnotnull(parent_process_name) and not match(parent_process_name, "^-$") |
+  table _time, host, user process, process_*, parent_process_name, parent_process_*
+  | bin span=1s | stats values(*) as * by _time, host '
+techniques:
+- defense-evasion:masquerading:masquerade task or service
+- defense-evasion:process injection
+technique_id:
+- T1036.004
+- T1055
+data_category:
+- EDR Logs
+references:
+- https://andreafortuna.org/2017/06/15/standard-windows-processes-a-brief-reference/
